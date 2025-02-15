@@ -7,13 +7,13 @@ export interface BaseInputProps<T extends FieldValues>
   errMsg?: string;
   isRequired?: boolean;
   placeHolder?: string;
+  size?: "small" | "medium";
 }
 
 export interface TextInputProps<T extends FieldValues>
   extends BaseInputProps<T> {
   type?: React.HTMLInputTypeAttribute;
   isRequired?: boolean;
-  size?: "small" | "medium";
 }
 
 interface Option {
@@ -25,7 +25,6 @@ export interface SelectInputProps<T extends FieldValues>
   extends BaseInputProps<T> {
   options: Option[];
   disable?: boolean;
-  size?: "small" | "medium";
 }
 
 export interface DateInputProps<T extends FieldValues>

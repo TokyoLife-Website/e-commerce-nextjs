@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Avatar } from "@mui/material";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import LibraryBooksOutlinedIcon from "@mui/icons-material/LibraryBooksOutlined";
@@ -7,12 +7,27 @@ import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import YoutubeSearchedForOutlinedIcon from "@mui/icons-material/YoutubeSearchedForOutlined";
 import { CustomTitle } from "@/components/CustomTitle";
 import CustomButton from "@/components/CustomBtn";
-import { AuthModal } from "@/components/AuthModal";
+import { RootState, useAppDispatch, useAppSelector } from "@/redux/store";
+import { logout } from "@/redux/authSlice";
+import { openModal } from "@/redux/modalSlice";
+import { AuthModalType } from "@/types/authModal";
 
 export const HeaderProfile = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(true);
-  const [authModal, setAuthModal] = useState<boolean>(true);
+  const { isAuthenticated } = useAppSelector((state: RootState) => state.auth);
+  const { firstName } = useAppSelector((state: RootState) => state.user);
+  const dispatch = useAppDispatch();
+  const handleLogout = () => {
+    dispatch(logout());
+  };
+
+  const [authModal, setAuthModal] = useState<boolean>(false);
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
+  useEffect(() => {
+    if (isAuthenticated) {
+      setAuthModal(false);
+      setShowDropdown(false);
+    }
+  }, [isAuthenticated]);
 
   return (
     <div
@@ -20,10 +35,8 @@ export const HeaderProfile = () => {
       onMouseEnter={() => setShowDropdown(true)}
       onMouseLeave={() => setShowDropdown(false)}
     >
-      <AuthModal isOpen={authModal} onClose={() => setAuthModal(false)} />
-
-      {isLoggedIn ? (
-        <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+      {isAuthenticated ? (
+        <Avatar alt={firstName} src="/static/images/avatar/1.jpg" />
       ) : (
         <AccountCircleOutlinedIcon />
       )}
@@ -33,10 +46,10 @@ export const HeaderProfile = () => {
           showDropdown && !authModal ? "block" : "hidden"
         }`}
       >
-        {isLoggedIn ? (
+        {isAuthenticated ? (
           <>
             <div className="mx-4 p-5 pb-2 flex border-b border-[#e9e9e9] gap-2">
-              <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+              <Avatar alt={firstName} src="/static/images/avatar/1.jpg" />
               <div className="text-xs leading-4">
                 <div className="font-extrabold  ">Le Minh Tien</div>
                 <div className="mt-[5px] font-medium"> Điểm thưởng: 0</div>
@@ -52,7 +65,7 @@ export const HeaderProfile = () => {
                 <span>Sản phẩm đã xem</span>
               </div>
               <div
-                onClick={() => setIsLoggedIn(false)}
+                onClick={handleLogout}
                 className="flex text-primary gap-[10px] py-2 pl-6 text-sm font-medium leading-[18px] hover:bg-secondary"
               >
                 <LogoutOutlinedIcon fontSize="small" />
@@ -71,10 +84,7 @@ export const HeaderProfile = () => {
                 Đăng nhập tài khoản của Quý Khách
               </h3>
               <CustomButton
-                onClick={() => {
-                  setAuthModal(true);
-                  setShowDropdown(false);
-                }}
+                onClick={() => dispatch(openModal(AuthModalType.LOGIN))}
                 size="small"
                 className="rounded text-secondary"
               >
@@ -85,6 +95,7 @@ export const HeaderProfile = () => {
               <CustomTitle className="mb-6" content="Đăng ký thành viên" />
               <CustomButton
                 size="small"
+                onClick={() => dispatch(openModal(AuthModalType.REGISTER))}
                 className="rounded bg-inherit border border-[#eeeeee] ease-in duration-150 text-black bg-white hover:bg-primary hover:text-secondary"
               >
                 Đăng ký

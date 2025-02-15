@@ -3,7 +3,6 @@ interface CustomLabelProps {
   isRequired?: boolean;
 }
 
-import { Typography } from "@mui/material";
 import React from "react";
 
 const CustomLabel: React.FC<CustomLabelProps> = ({

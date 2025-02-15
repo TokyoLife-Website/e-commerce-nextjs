@@ -1,6 +1,7 @@
 "use client";
 import { SectionTitle } from "@/components/SectionTitle";
 import { Rating } from "@mui/material";
+import Image from "next/image";
 
 export default function Home() {
   return (
@@ -8,9 +9,14 @@ export default function Home() {
       <SectionTitle title="CÓ TOKYOLIFE TẾT AI CŨNG VUI!" />
       <div className="grid grid-cols-5 gap-4 p-4 ">
         <div className="px-[6px] py-3">
-          <img
-            src="https://tokyolife.vn/_next/image?url=https%3A%2F%2Fhcm.fstorage.vn%2Fgppm2%2Fprod%2Fcms%2F17359609200742244_512.jpg&w=1920&q=75"
-            alt="product img"
+          <Image
+            unoptimized
+            width={300}
+            height={200}
+            alt="Product Image"
+            src={
+              "https://tokyolife.vn/_next/image?url=https%3A%2F%2Fhcm.fstorage.vn%2Fgppm2%2Fprod%2Fcms%2F17359609200742244_512.jpg&w=1920&q=75"
+            }
           />
           <div className="py-3">
             <h3 className="leading-[18px] my-2 text-black line-clamp-2">
@@ -38,9 +44,14 @@ export default function Home() {
           </div>
         </div>
         <div className="px-[6px] py-3">
-          <img
-            src="https://tokyolife.vn/_next/image?url=https%3A%2F%2Fhcm.fstorage.vn%2Fgppm2%2Fprod%2Fcms%2F17359609200742244_512.jpg&w=1920&q=75"
-            alt="product img"
+          <Image
+            unoptimized
+            width={300}
+            height={200}
+            alt="Product Image"
+            src={
+              "https://tokyolife.vn/_next/image?url=https%3A%2F%2Fhcm.fstorage.vn%2Fgppm2%2Fprod%2Fcms%2F17359609200742244_512.jpg&w=1920&q=75"
+            }
           />
           <div className="py-3">
             <h3 className="leading-[18px] my-2 text-black line-clamp-2">
@@ -68,9 +79,14 @@ export default function Home() {
           </div>
         </div>
         <div className="px-[6px] py-3">
-          <img
-            src="https://tokyolife.vn/_next/image?url=https%3A%2F%2Fhcm.fstorage.vn%2Fgppm2%2Fprod%2Fcms%2F17359609200742244_512.jpg&w=1920&q=75"
-            alt="product img"
+          <Image
+            unoptimized
+            width={300}
+            height={200}
+            alt="Product Image"
+            src={
+              "https://tokyolife.vn/_next/image?url=https%3A%2F%2Fhcm.fstorage.vn%2Fgppm2%2Fprod%2Fcms%2F17359609200742244_512.jpg&w=1920&q=75"
+            }
           />
           <div className="py-3">
             <h3 className="leading-[18px] my-2 text-black line-clamp-2">
@@ -98,9 +114,14 @@ export default function Home() {
           </div>
         </div>
         <div className="px-[6px] py-3">
-          <img
-            src="https://tokyolife.vn/_next/image?url=https%3A%2F%2Fhcm.fstorage.vn%2Fgppm2%2Fprod%2Fcms%2F17359609200742244_512.jpg&w=1920&q=75"
-            alt="product img"
+          <Image
+            unoptimized
+            width={300}
+            height={200}
+            alt="Product Image"
+            src={
+              "https://tokyolife.vn/_next/image?url=https%3A%2F%2Fhcm.fstorage.vn%2Fgppm2%2Fprod%2Fcms%2F17359609200742244_512.jpg&w=1920&q=75"
+            }
           />
           <div className="py-3">
             <h3 className="leading-[18px] my-2 text-black line-clamp-2">
@@ -128,9 +149,14 @@ export default function Home() {
           </div>
         </div>
         <div className="px-[6px] py-3">
-          <img
-            src="https://tokyolife.vn/_next/image?url=https%3A%2F%2Fhcm.fstorage.vn%2Fgppm2%2Fprod%2Fcms%2F17359609200742244_512.jpg&w=1920&q=75"
-            alt="product img"
+          <Image
+            unoptimized
+            width={300}
+            height={200}
+            alt="Product Image"
+            src={
+              "https://tokyolife.vn/_next/image?url=https%3A%2F%2Fhcm.fstorage.vn%2Fgppm2%2Fprod%2Fcms%2F17359609200742244_512.jpg&w=1920&q=75"
+            }
           />
           <div className="py-3">
             <h3 className="leading-[18px] my-2 text-black line-clamp-2">
@@ -158,9 +184,14 @@ export default function Home() {
           </div>
         </div>
         <div className="px-[6px] py-3">
-          <img
-            src="https://tokyolife.vn/_next/image?url=https%3A%2F%2Fhcm.fstorage.vn%2Fgppm2%2Fprod%2Fcms%2F17359609200742244_512.jpg&w=1920&q=75"
-            alt="product img"
+          <Image
+            unoptimized
+            width={300}
+            height={200}
+            alt="Product Image"
+            src={
+              "https://tokyolife.vn/_next/image?url=https%3A%2F%2Fhcm.fstorage.vn%2Fgppm2%2Fprod%2Fcms%2F17359609200742244_512.jpg&w=1920&q=75"
+            }
           />
           <div className="py-3">
             <h3 className="leading-[18px] my-2 text-black line-clamp-2">
@@ -188,9 +219,14 @@ export default function Home() {
           </div>
         </div>
         <div className="px-[6px] py-3">
-          <img
-            src="https://tokyolife.vn/_next/image?url=https%3A%2F%2Fhcm.fstorage.vn%2Fgppm2%2Fprod%2Fcms%2F17359609200742244_512.jpg&w=1920&q=75"
-            alt="product img"
+          <Image
+            unoptimized
+            width={300}
+            height={200}
+            alt="Product Image"
+            src={
+              "https://tokyolife.vn/_next/image?url=https%3A%2F%2Fhcm.fstorage.vn%2Fgppm2%2Fprod%2Fcms%2F17359609200742244_512.jpg&w=1920&q=75"
+            }
           />
           <div className="py-3">
             <h3 className="leading-[18px] my-2 text-black line-clamp-2">

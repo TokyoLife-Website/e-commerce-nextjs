@@ -5,8 +5,8 @@ import CustomLabel from "./CustomLabel";
 import { TextInputProps } from "@/types/input";
 
 const TextInput = <T extends FieldValues>({
-  // name,
-  // control,
+  name,
+  control,
   label,
   isError,
   errMsg,
@@ -19,27 +19,30 @@ const TextInput = <T extends FieldValues>({
     <div>
       <Stack spacing={0.5}>
         {label && <CustomLabel label={label} isRequired={isRequired} />}
-        {/* <Controller
+        <Controller
           name={name}
           control={control}
-          render={({ field }) => ( */}
-        <TextField
-          hiddenLabel
-          placeholder={placeHolder || label}
-          // {...field}
-          color="success"
-          fullWidth
-          margin="normal"
-          error={isError}
-          helperText={errMsg}
-          type={type}
-          // onChange={(e) =>
-          //   field.onChange(type === "number" ? +e.target.value : e.target.value)
-          // }
-          size={size}
+          render={({ field }) => (
+            <TextField
+              hiddenLabel
+              placeholder={placeHolder || label}
+              {...field}
+              color="success"
+              fullWidth
+              margin="normal"
+              error={isError}
+              helperText={errMsg}
+              type={type}
+              onChange={(e) =>
+                field.onChange(
+                  type === "number" ? +e.target.value : e.target.value
+                )
+              }
+              size={size}
+              slotProps={{ formHelperText: { sx: { marginLeft: 0 } } }}
+            />
+          )}
         />
-        {/* )}
-        /> */}
       </Stack>
     </div>
   );

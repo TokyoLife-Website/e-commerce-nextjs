@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
-import { Header } from "@/components/layouts/header/Header";
-import { Footer } from "@/components/layouts/Footer";
+import ReactQueryProvider from "@/providers/ReactQueryProvider";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import StoreProvider from "@/providers/StoreProvider";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -25,11 +27,12 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${poppins.variable}  antialiased `}>
-        <div className="min-h-screen flex flex-col">
-          <Header />
-          <main className="flex-grow">{children}</main>
-          <Footer />
-        </div>
+        <StoreProvider>
+          <ReactQueryProvider>
+            {children}
+            <ToastContainer />
+          </ReactQueryProvider>
+        </StoreProvider>
       </body>
     </html>
   );
