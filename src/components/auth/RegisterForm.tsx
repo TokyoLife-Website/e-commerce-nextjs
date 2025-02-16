@@ -23,7 +23,7 @@ const defaultValues: RegisterFormData = {
   confirmPassword: "",
   firstName: "",
   lastName: "",
-  dob: dayjs().toDate(),
+  dob: dayjs().format("YYYY-MM-DD"),
   gender: Gender.MALE,
 };
 
@@ -42,19 +42,9 @@ export const RegisterForm = () => {
 
   const onSubmit: SubmitHandler<RegisterFormData> = async (payload) => {
     try {
-      console.log(payload.dob);
       const { message } = await mutateAsync(payload);
       showSuccess(message);
-      // const decoded = jwtDecode<{ id: string | number }>(access_token);
-      // dispatch(
-      //   login({
-      //     accessToken: access_token,
-      //     refreshToken: refresh_token,
-      //     userId: decoded.id,
-      //   })
-      // );
     } catch (error) {
-      console.log(error);
       handleRequestError(error);
     }
   };

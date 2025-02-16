@@ -6,6 +6,7 @@ import { AuthForm } from "./AuthForm";
 import { AuthModalType } from "@/types/authModal";
 import { ForgotPasswordForm } from "./ForgotPasswordForm";
 import { VerifyCodeForm } from "./VerifyCodeForm";
+import { ResetPasswordForm } from "./ResetPasswordForm";
 
 export const Modal = () => {
   const { isOpen, type } = useAppSelector((state: RootState) => state.modal);
@@ -18,6 +19,8 @@ export const Modal = () => {
         return <AuthForm />;
       case AuthModalType.FORGOT_PASSWORD:
         return <ForgotPasswordForm />;
+      case AuthModalType.RESET_PASSWORD:
+        return <ResetPasswordForm />;
       case AuthModalType.VERIFY_CODE:
         return <VerifyCodeForm />;
       default:

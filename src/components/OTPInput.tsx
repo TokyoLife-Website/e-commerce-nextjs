@@ -4,7 +4,7 @@ interface OTPInputProps {
   separator?: React.ReactNode;
   length?: number;
   value: string;
-  onChange: React.Dispatch<React.SetStateAction<string>>;
+  onChange: (val: string) => void;
 }
 
 const OTPInput: React.FC<OTPInputProps> = ({
@@ -50,26 +50,16 @@ const OTPInput: React.FC<OTPInputProps> = ({
         }
         break;
       case "Delete":
-        event.preventDefault();
-        onChange((prevOtp) => {
-          const otp =
-            prevOtp.slice(0, currentIndex) + prevOtp.slice(currentIndex + 1);
-          return otp;
-        });
-
-        break;
       case "Backspace":
         event.preventDefault();
+        const newOtp = value.split("");
+        newOtp[currentIndex] = "";
+        onChange(newOtp.join(""));
+
         if (currentIndex > 0) {
           focusInput(currentIndex - 1);
           selectInput(currentIndex - 1);
         }
-
-        onChange((prevOtp) => {
-          const otp =
-            prevOtp.slice(0, currentIndex) + prevOtp.slice(currentIndex + 1);
-          return otp;
-        });
         break;
 
       default:
@@ -94,16 +84,11 @@ const OTPInput: React.FC<OTPInputProps> = ({
         break;
       }
     }
-    onChange((prev) => {
-      const otpArray = prev.split("");
-      const lastValue = currentValue[currentValue.length - 1];
-      otpArray[indexToEnter] = lastValue;
-      return otpArray.join("");
-    });
-    if (currentValue !== "") {
-      if (currentIndex < length - 1) {
-        focusInput(currentIndex + 1);
-      }
+    const newOtp = value.split("");
+    newOtp[currentIndex] = currentValue.slice(-1);
+    onChange(newOtp.join(""));
+    if (currentValue !== "" && currentIndex < length - 1) {
+      focusInput(currentIndex + 1);
     }
   };
 

@@ -3,6 +3,7 @@ import axiosInstance from "./axios";
 import { ResponseData } from "@/types/response";
 import { LoginFormData } from "@/components/auth/LoginForm";
 import { RegisterFormData } from "@/components/auth/RegisterForm";
+import { ForgotPasswordFormData } from "@/schemas/forgotPasswordSchema";
 
 export interface TokenResponse {
   access_token: string;
@@ -48,7 +49,9 @@ export const fetchRefreshToken = async (
   return response.data;
 };
 
-const fetchForgotPassword = async (data): Promise<ResponseData<null>> => {
+const fetchForgotPassword = async (
+  data: ForgotPasswordFormData
+): Promise<ResponseData<null>> => {
   const response = await axiosInstance.post("/auth/forgot-password", data);
   return response.data;
 };
@@ -81,7 +84,7 @@ export const useRegisterMutation = () => {
 
 export const useForgotPasswordMutation = () => {
   return useMutation({
-    mutationFn: (data) => fetchForgotPassword(data),
+    mutationFn: (data: ForgotPasswordFormData) => fetchForgotPassword(data),
   });
 };
 

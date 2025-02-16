@@ -7,8 +7,8 @@ interface ModalState {
 }
 
 const initialState: ModalState = {
-  isOpen: false,
-  type: AuthModalType.NONE,
+  isOpen: true,
+  type: AuthModalType.VERIFY_CODE,
 };
 
 const modalSlice = createSlice({

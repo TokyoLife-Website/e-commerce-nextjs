@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import CustomButton from "../CustomBtn";
-import { forgotPasswordSchema } from "@/schemas/forgotPasswordSchema";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useVerifyOTPMutation } from "@/hooks/api/auth.api";
+import {
+  useForgotPasswordMutation,
+  useVerifyOTPMutation,
+} from "@/hooks/api/auth.api";
 import { handleRequestError } from "@/utils/errorHandler";
 import useToast from "@/hooks/useToastify";
 import OTPInput from "../OTPInput";
@@ -11,25 +13,27 @@ import { RootState, useAppDispatch, useAppSelector } from "@/redux/store";
 import { z } from "zod";
 import { openModal } from "@/redux/modalSlice";
 import { AuthModalType } from "@/types/authModal";
+import Countdown from "../CountDown";
 
 const otpSchema = z.object({
-  otp: z.string().length(6, "OTP must be 6 digits"), // Validate đủ 6 ký tự
+  otp: z.string().length(6, "OTP must be 6 digits"),
 });
 
 type OTPFormData = z.infer<typeof otpSchema>;
 
 export const VerifyCodeForm = () => {
-  // const [otp, setOtp] = useState("");
   const { showSuccess } = useToast();
   const dispatch = useAppDispatch();
-  const { mutateAsync } = useVerifyOTPMutation();
+  const { mutateAsync: verifyOTP } = useVerifyOTPMutation();
+  const { mutateAsync: resendOTP } = useForgotPasswordMutation();
   const { email } = useAppSelector((state: RootState) => state.auth);
+  const [canResend, setCanResend] = useState(false);
+  const [countdownKey, setCountdownKey] = useState(0);
 
   const {
     control,
-    setValue,
     handleSubmit,
-    formState: { errors, isSubmitting, isValid },
+    formState: { errors },
   } = useForm<OTPFormData>({
     defaultValues: { otp: "" },
     mode: "onChange",
@@ -38,13 +42,23 @@ export const VerifyCodeForm = () => {
 
   const onSubmit: SubmitHandler<OTPFormData> = async (data) => {
     try {
-      const { message } = await mutateAsync({ email, otp: data.otp });
+      const { message } = await verifyOTP({ email, otp: data.otp });
       showSuccess(message);
-      dispatch(openModal(AuthModalType.LOGIN));
+      dispatch(openModal(AuthModalType.RESET_PASSWORD));
     } catch (error) {
       handleRequestError(error);
     }
   };
+
+  const handleResendOTP = async () => {
+    if (canResend) {
+      await resendOTP({ email: email });
+      showSuccess("Mã OTP mới đã được gửi!");
+      setCanResend(false);
+      setCountdownKey((prev) => prev + 1);
+    }
+  };
+
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
@@ -66,24 +80,37 @@ export const VerifyCodeForm = () => {
           control={control}
           render={({ field }) => (
             <OTPInput
+              length={6}
               value={field.value}
-              onChange={(val) => setValue("otp", val)}
+              onChange={field.onChange}
             />
           )}
         />
         {errors.otp && (
-          <p className="text-red-500 mt-2">{errors.otp.message}</p>
+          <p className="text-center text-red-500 mt-2">{errors.otp.message}</p>
         )}
-        {/* <OTPInput length={6} onChange={setOtp} value={otp} /> */}
       </div>
       <div className="mb-10 text-center font-medium text-sm leading-[18px]">
-        Còn lại 00:16
+        Còn lại{" "}
+        <Countdown
+          key={countdownKey}
+          initialTime={60}
+          onComplete={() => setCanResend(true)}
+        />
       </div>
+
       <CustomButton className="w-full text-white">Hoàn thành</CustomButton>
-      <div className="mt-6 text-center font-medium text-xs leading-[18px]">
-        Chưa nhận được mã OTP?{" "}
-        <span className="text-primary cursor-pointer underline">Gửi lại</span>
-      </div>
+      {canResend && (
+        <div className="mt-6 text-center font-medium text-xs leading-[18px]">
+          Chưa nhận được mã OTP?{" "}
+          <span
+            onClick={handleResendOTP}
+            className="text-primary cursor-pointer underline"
+          >
+            Gửi lại
+          </span>
+        </div>
+      )}
     </form>
   );
 };

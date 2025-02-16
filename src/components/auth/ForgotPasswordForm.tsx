@@ -27,7 +27,7 @@ export const ForgotPasswordForm = () => {
   const {
     control,
     handleSubmit,
-    formState: { errors, isSubmitting, isValid },
+    formState: { errors },
   } = useForm<ForgotPasswordFormData>({
     defaultValues,
     mode: "onChange",
