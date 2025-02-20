@@ -1,4 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
+import { store } from "@/redux/store";
 
 class Http {
   private static instance: Http;
@@ -15,16 +16,16 @@ class Http {
 
     this.axiosInstance = axios.create(axiosConfig);
 
-    // this.axiosInstance.interceptors.request.use(
-    //   (config) => {
-    //     const token = localStorage.getItem("access_token");
-    //     if (token) {
-    //       config.headers.Authorization = `Bearer ${token}`;
-    //     }
-    //     return config;
-    //   },
-    //   (error) => Promise.reject(error)
-    // );
+    this.axiosInstance.interceptors.request.use(
+      (config) => {
+        const token = store.getState().auth?.accessToken;
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+      },
+      (error) => Promise.reject(error)
+    );
 
     // this.axiosInstance.interceptors.response.use(
     //   (response) => response,

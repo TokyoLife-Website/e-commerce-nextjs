@@ -22,7 +22,7 @@ const ListItem: FC<ListItemProps> = ({ content, to = "/" }) => {
 export const Footer = () => {
   return (
     <footer>
-      <div className="mx-36 flex justify-between gap-x-4">
+      <div className="mx-36 flex justify-between gap-x-4 pt-[60px]">
         <div className="grid grid-cols-4 gap-x-4 md:max-w-[900px]">
           <ul>
             <CustomTitle className="mb-6" content="VỀ TOKYOLIFE" />
@@ -99,7 +99,7 @@ export const Footer = () => {
                   alt="Next.js logo"
                   width={24}
                   height={24}
-                  priority
+                  unoptimized
                 />
                 <h6 className="text-[11px] font-medium text-black leading-3">
                   TokyoLife
