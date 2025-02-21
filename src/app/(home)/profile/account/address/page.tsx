@@ -1,3 +1,3 @@
-export default function Adress() {
+export default function Address() {
   return <div>address</div>;
 }

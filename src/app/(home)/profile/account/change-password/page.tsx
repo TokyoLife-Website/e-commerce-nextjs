@@ -23,7 +23,7 @@ export default function ChangePassword() {
     control,
     reset,
     handleSubmit,
-    formState: { errors, isSubmitting, isValid },
+    formState: { errors },
   } = useForm<ChangePasswordFormData>({
     defaultValues,
     mode: "onChange",

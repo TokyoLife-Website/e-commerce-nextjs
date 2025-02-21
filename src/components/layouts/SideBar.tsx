@@ -53,7 +53,10 @@ const Sidebar: FC = () => {
           {item.children ? (
             <div>
               <div
-                className={`flex items-center gap-2.5 p-2 rounded-[4px] cursor-pointer hover:bg-primary hover:text-white
+                className={`flex items-center gap-2.5 p-2 rounded-[4px] cursor-pointer hover:bg-primary hover:text-white ${
+                  item.children.some((child) => child.href === pathname) &&
+                  "bg-primary text-white"
+                }
                 }`}
                 onClick={() => handleToggle(item.label)}
               >
