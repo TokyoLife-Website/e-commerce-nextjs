@@ -12,7 +12,7 @@ import OTPInput from "../OTPInput";
 import { RootState, useAppDispatch, useAppSelector } from "@/redux/store";
 import { z } from "zod";
 import { openModal } from "@/redux/modalSlice";
-import { AuthModalType } from "@/types/authModal";
+import { ModalType } from "@/types/modal";
 import Countdown from "../CountDown";
 
 const otpSchema = z.object({
@@ -44,7 +44,7 @@ export const VerifyCodeForm = () => {
     try {
       const { message } = await verifyOTP({ email, otp: data.otp });
       showSuccess(message);
-      dispatch(openModal(AuthModalType.RESET_PASSWORD));
+      dispatch(openModal(ModalType.RESET_PASSWORD));
     } catch (error) {
       handleRequestError(error);
     }

@@ -7,7 +7,7 @@ import { handleRequestError } from "@/utils/errorHandler";
 import useToast from "@/hooks/useToastify";
 import { RootState, useAppDispatch, useAppSelector } from "@/redux/store";
 import { openModal } from "@/redux/modalSlice";
-import { AuthModalType } from "@/types/authModal";
+import { ModalType } from "@/types/modal";
 import {
   ResetPasswordFormData,
   resetPasswordSchema,
@@ -38,7 +38,7 @@ export const ResetPasswordForm = () => {
         newPassword: data.newPassword,
       });
       showSuccess(message);
-      dispatch(openModal(AuthModalType.LOGIN));
+      dispatch(openModal(ModalType.LOGIN));
     } catch (error) {
       handleRequestError(error);
     }

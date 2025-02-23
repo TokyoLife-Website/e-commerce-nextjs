@@ -7,13 +7,12 @@ import { loginSchema } from "@/schemas";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import useToast from "@/hooks/useToastify";
-import { useRouter } from "next/navigation";
 import { useLoginMutation } from "@/hooks/api/auth.api";
 import { handleRequestError } from "@/utils/errorHandler";
 import { useAppDispatch } from "@/redux/store";
 import { login } from "@/redux/authSlice";
 import { closeModal, openModal } from "@/redux/modalSlice";
-import { AuthModalType } from "@/types/authModal";
+import { ModalType } from "@/types/modal";
 
 export type LoginFormData = z.infer<typeof loginSchema>;
 
@@ -23,7 +22,6 @@ const defaultValues = {
 };
 
 export const LoginForm = () => {
-  const router = useRouter();
   const { showSuccess } = useToast();
   const { mutateAsync } = useLoginMutation();
   const dispatch = useAppDispatch();
@@ -91,7 +89,7 @@ export const LoginForm = () => {
         />
       </div>
       <p
-        onClick={() => dispatch(openModal(AuthModalType.FORGOT_PASSWORD))}
+        onClick={() => dispatch(openModal(ModalType.FORGOT_PASSWORD))}
         className="underline text-xs leading-4 cursor-pointer my-3 float-right"
       >
         Quên mật khẩu?

@@ -13,7 +13,7 @@ import useToast from "@/hooks/useToastify";
 import { useAppDispatch } from "@/redux/store";
 import { setEmail } from "@/redux/authSlice";
 import { openModal } from "@/redux/modalSlice";
-import { AuthModalType } from "@/types/authModal";
+import { ModalType } from "@/types/modal";
 
 const defaultValues = {
   email: "",
@@ -39,7 +39,7 @@ export const ForgotPasswordForm = () => {
       const { message } = await mutateAsync(data);
       showSuccess(message);
       dispatch(setEmail(data));
-      dispatch(openModal(AuthModalType.VERIFY_CODE));
+      dispatch(openModal(ModalType.VERIFY_CODE));
     } catch (error) {
       handleRequestError(error);
     }

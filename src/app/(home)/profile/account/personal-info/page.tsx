@@ -1,22 +1,29 @@
 "use client";
 import CustomButton from "@/components/CustomBtn";
+import DateInput from "@/components/DateInput";
+import SelectInput from "@/components/SelectInput";
 import TextInput from "@/components/TextInput";
-import { useUpdatePasswordMutation } from "@/hooks/api/user.api";
+import { useUpdateUserMutation } from "@/hooks/api/user.api";
 import useToast from "@/hooks/useToastify";
 import {
-  ChangePasswordFormData,
-  changePasswordSchema,
-} from "@/schemas/changePasswordSchema";
+  personalInfoFormData,
+  personalInfoSchema,
+} from "@/schemas/personalInfoSchema";
+import { Gender } from "@/types/gender";
 import { handleRequestError } from "@/utils/errorHandler";
 import { zodResolver } from "@hookform/resolvers/zod";
+import dayjs from "dayjs";
 import Image from "next/image";
 import { ChangeEvent, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
-const defaultValues = {
-  currentPassword: "",
-  newPassword: "",
-  confirmNewPassword: "",
+const defaultValues: personalInfoFormData = {
+  firstName: "",
+  lastName: "",
+  dob: dayjs().toDate(),
+  gender: Gender.MALE,
+  phone: "0373635003",
+  email: "leminhtien4323@gmail.com",
 };
 
 export default function PeronalInfo() {
@@ -56,14 +63,14 @@ export default function PeronalInfo() {
     reset,
     handleSubmit,
     formState: { errors },
-  } = useForm<ChangePasswordFormData>({
+  } = useForm<personalInfoFormData>({
     defaultValues,
     mode: "onChange",
-    resolver: zodResolver(changePasswordSchema),
+    resolver: zodResolver(personalInfoSchema),
   });
 
-  const { mutateAsync } = useUpdatePasswordMutation();
-  const onSubmit: SubmitHandler<ChangePasswordFormData> = async (payload) => {
+  const { mutateAsync } = useUpdateUserMutation();
+  const onSubmit: SubmitHandler<personalInfoFormData> = async (payload) => {
     try {
       const { message } = await mutateAsync(payload);
       showSuccess(message);
@@ -108,15 +115,22 @@ export default function PeronalInfo() {
             <label htmlFor="name" className="text-[#525252] min-w-[30%]">
               Họ và tên
             </label>
-            <div className="w-full">
+            <div className="flex items-start gap-5 mb-[15px] w-full">
               <TextInput
-                name="currentPassword"
+                name="lastName"
                 control={control}
-                placeHolder="Nhập mật khẩu"
+                errMsg={errors.lastName?.message}
+                isError={!!errors.lastName}
                 size="small"
-                isRequired
-                errMsg={errors.currentPassword?.message}
-                isError={!!errors.currentPassword}
+                placeHolder="Nhập họ của bạn"
+              />
+              <TextInput
+                name="firstName"
+                control={control}
+                errMsg={errors.firstName?.message}
+                isError={!!errors.firstName}
+                size="small"
+                placeHolder="Nhập tên của bạn"
               />
             </div>
           </div>
@@ -125,14 +139,13 @@ export default function PeronalInfo() {
               Ngày sinh
             </label>
             <div className="w-full">
-              <TextInput
-                name="currentPassword"
-                control={control}
-                placeHolder="Nhập mật khẩu"
+              <DateInput
+                name="dob"
                 size="small"
-                isRequired
-                errMsg={errors.currentPassword?.message}
-                isError={!!errors.currentPassword}
+                control={control}
+                isError={!!errors.dob}
+                errMsg={errors.dob?.message}
+                disabledFuture
               />
             </div>
           </div>
@@ -141,14 +154,17 @@ export default function PeronalInfo() {
               Giới tính
             </label>
             <div className="w-full">
-              <TextInput
-                name="currentPassword"
-                control={control}
-                placeHolder="Nhập mật khẩu"
+              <SelectInput
+                name="gender"
                 size="small"
-                isRequired
-                errMsg={errors.currentPassword?.message}
-                isError={!!errors.currentPassword}
+                control={control}
+                isError={!!errors.gender}
+                errMsg={errors.gender?.message}
+                options={[
+                  { id: Gender.MALE, name: "Nam" },
+                  { id: Gender.FEMALE, name: "Nữ" },
+                  { id: Gender.OTHER, name: "Khác" },
+                ]}
               />
             </div>
           </div>
@@ -158,13 +174,14 @@ export default function PeronalInfo() {
             </label>
             <div className="w-full">
               <TextInput
-                name="currentPassword"
+                disabled
+                name="phone"
                 control={control}
-                placeHolder="Nhập mật khẩu"
+                placeHolder="Nhập số điện thoại"
                 size="small"
                 isRequired
-                errMsg={errors.currentPassword?.message}
-                isError={!!errors.currentPassword}
+                errMsg={errors.phone?.message}
+                isError={!!errors.phone}
               />
             </div>
           </div>
@@ -174,13 +191,14 @@ export default function PeronalInfo() {
             </label>
             <div className="w-full">
               <TextInput
-                name="currentPassword"
+                disabled
+                name="email"
                 control={control}
-                placeHolder="Nhập mật khẩu"
+                placeHolder="Nhập email của bạn"
                 size="small"
                 isRequired
-                errMsg={errors.currentPassword?.message}
-                isError={!!errors.currentPassword}
+                errMsg={errors.email?.message}
+                isError={!!errors.email}
               />
             </div>
           </div>

@@ -10,7 +10,8 @@ import CustomButton from "@/components/CustomBtn";
 import { RootState, useAppDispatch, useAppSelector } from "@/redux/store";
 import { logout } from "@/redux/authSlice";
 import { openModal } from "@/redux/modalSlice";
-import { AuthModalType } from "@/types/authModal";
+import { ModalType } from "@/types/modal";
+import Link from "next/link";
 
 export const HeaderProfile = () => {
   const { isAuthenticated } = useAppSelector((state: RootState) => state.auth);
@@ -36,7 +37,9 @@ export const HeaderProfile = () => {
       onMouseLeave={() => setShowDropdown(false)}
     >
       {isAuthenticated ? (
-        <Avatar alt={firstName} src="/static/images/avatar/1.jpg" />
+        <Link href={"/profile"}>
+          <Avatar alt={firstName} />
+        </Link>
       ) : (
         <AccountCircleOutlinedIcon />
       )}
@@ -49,7 +52,7 @@ export const HeaderProfile = () => {
         {isAuthenticated ? (
           <>
             <div className="mx-4 p-5 pb-2 flex border-b border-[#e9e9e9] gap-2">
-              <Avatar alt={firstName} src="/static/images/avatar/1.jpg" />
+              <Avatar alt={firstName} />
               <div className="text-xs leading-4">
                 <div className="font-extrabold  ">Le Minh Tien</div>
                 <div className="mt-[5px] font-medium"> Điểm thưởng: 0</div>
@@ -84,7 +87,7 @@ export const HeaderProfile = () => {
                 Đăng nhập tài khoản của Quý Khách
               </h3>
               <CustomButton
-                onClick={() => dispatch(openModal(AuthModalType.LOGIN))}
+                onClick={() => dispatch(openModal(ModalType.LOGIN))}
                 size="small"
                 className="rounded text-secondary"
               >
@@ -95,7 +98,7 @@ export const HeaderProfile = () => {
               <CustomTitle className="mb-6" content="Đăng ký thành viên" />
               <CustomButton
                 size="small"
-                onClick={() => dispatch(openModal(AuthModalType.REGISTER))}
+                onClick={() => dispatch(openModal(ModalType.REGISTER))}
                 className="rounded bg-inherit border border-[#eeeeee] ease-in duration-150 text-black bg-white hover:bg-primary hover:text-secondary"
               >
                 Đăng ký

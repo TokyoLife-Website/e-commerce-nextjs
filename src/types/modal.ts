@@ -1,4 +1,4 @@
-export enum AuthModalType {
+export enum ModalType {
   LOGIN = "login",
   REGISTER = "register",
   FORGOT_PASSWORD = "forgot-password",

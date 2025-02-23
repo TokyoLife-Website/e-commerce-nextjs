@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { RootState, useAppDispatch, useAppSelector } from "@/redux/store";
 import { closeModal } from "@/redux/modalSlice";
 import { AuthForm } from "./AuthForm";
-import { AuthModalType } from "@/types/authModal";
+import { ModalType } from "@/types/modal";
 import { ForgotPasswordForm } from "./ForgotPasswordForm";
 import { VerifyCodeForm } from "./VerifyCodeForm";
 import { ResetPasswordForm } from "./ResetPasswordForm";
@@ -13,15 +13,15 @@ export const Modal = () => {
   const dispatch = useAppDispatch();
   const renderContent = () => {
     switch (type) {
-      case AuthModalType.LOGIN:
+      case ModalType.LOGIN:
         return <AuthForm />;
-      case AuthModalType.REGISTER:
+      case ModalType.REGISTER:
         return <AuthForm />;
-      case AuthModalType.FORGOT_PASSWORD:
+      case ModalType.FORGOT_PASSWORD:
         return <ForgotPasswordForm />;
-      case AuthModalType.RESET_PASSWORD:
+      case ModalType.RESET_PASSWORD:
         return <ResetPasswordForm />;
-      case AuthModalType.VERIFY_CODE:
+      case ModalType.VERIFY_CODE:
         return <VerifyCodeForm />;
       default:
         return null;

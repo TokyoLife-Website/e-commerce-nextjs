@@ -14,6 +14,7 @@ const TextInput = <T extends FieldValues>({
   isRequired = false,
   placeHolder,
   size = "medium",
+  disabled = false,
 }: TextInputProps<T>) => {
   return (
     <div>
@@ -33,6 +34,7 @@ const TextInput = <T extends FieldValues>({
               error={isError}
               helperText={errMsg}
               type={type}
+              disabled={disabled}
               onChange={(e) =>
                 field.onChange(
                   type === "number" ? +e.target.value : e.target.value

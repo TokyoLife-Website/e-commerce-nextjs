@@ -1,27 +1,27 @@
-import { AuthModalType } from "@/types/authModal";
+import { ModalType } from "@/types/modal";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface ModalState {
   isOpen: boolean;
-  type: AuthModalType;
+  type: ModalType;
 }
 
 const initialState: ModalState = {
   isOpen: false,
-  type: AuthModalType.NONE,
+  type: ModalType.NONE,
 };
 
 const modalSlice = createSlice({
   name: "modal",
   initialState,
   reducers: {
-    openModal: (state, action: PayloadAction<AuthModalType>) => {
+    openModal: (state, action: PayloadAction<ModalType>) => {
       state.isOpen = true;
       state.type = action.payload;
     },
     closeModal: (state) => {
       state.isOpen = false;
-      state.type = AuthModalType.NONE;
+      state.type = ModalType.NONE;
     },
   },
 });

@@ -14,7 +14,6 @@ export default function ProfileLayout({
           <Avatar
             sizes="small"
             alt={"tien"}
-            src="/static/images/avatar/1.jpg"
             sx={{ position: "unset", width: 52, height: 52 }}
           />
           <div className="flex flex-col gap-1 leading-[18px] text-sm font-normal">
