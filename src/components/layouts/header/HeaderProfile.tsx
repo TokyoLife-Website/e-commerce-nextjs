@@ -87,7 +87,7 @@ export const HeaderProfile = () => {
                 Đăng nhập tài khoản của Quý Khách
               </h3>
               <CustomButton
-                onClick={() => dispatch(openModal(ModalType.LOGIN))}
+                onClick={() => dispatch(openModal({ type: ModalType.LOGIN }))}
                 size="small"
                 className="rounded text-secondary"
               >
@@ -98,7 +98,9 @@ export const HeaderProfile = () => {
               <CustomTitle className="mb-6" content="Đăng ký thành viên" />
               <CustomButton
                 size="small"
-                onClick={() => dispatch(openModal(ModalType.REGISTER))}
+                onClick={() =>
+                  dispatch(openModal({ type: ModalType.REGISTER }))
+                }
                 className="rounded bg-inherit border border-[#eeeeee] ease-in duration-150 text-black bg-white hover:bg-primary hover:text-secondary"
               >
                 Đăng ký

@@ -25,9 +25,11 @@ export enum AddressType {
 
 export interface Address {
   id: string;
+  fullName: string;
+  email: string;
+  phone: string;
   detail: string;
   userId: string;
-  user: User;
   isDefault: boolean;
   type: AddressType;
   province: Province;

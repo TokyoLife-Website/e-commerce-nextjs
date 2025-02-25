@@ -44,7 +44,7 @@ export const VerifyCodeForm = () => {
     try {
       const { message } = await verifyOTP({ email, otp: data.otp });
       showSuccess(message);
-      dispatch(openModal(ModalType.RESET_PASSWORD));
+      dispatch(openModal({ type: ModalType.RESET_PASSWORD }));
     } catch (error) {
       handleRequestError(error);
     }

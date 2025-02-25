@@ -38,7 +38,7 @@ export const ResetPasswordForm = () => {
         newPassword: data.newPassword,
       });
       showSuccess(message);
-      dispatch(openModal(ModalType.LOGIN));
+      dispatch(openModal({ type: ModalType.LOGIN }));
     } catch (error) {
       handleRequestError(error);
     }

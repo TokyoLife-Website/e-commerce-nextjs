@@ -3,6 +3,7 @@ import axiosInstance from "./axios";
 import { QUERY_KEYS } from "./queryKeys";
 import { Address } from "@/types/address";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { AddressFormData } from "@/schemas/addressSchema";
 
 const fetchUserAddresses = async (): Promise<ResponseData<Address[]>> => {
   const response = await axiosInstance.get(`/users/addresses`);
@@ -14,8 +15,13 @@ const deleteUserAddress = async (addressId: number) => {
   return response.data;
 };
 
-const updateUserAddress = async (addressId: number, data: any) => {
-  const response = await axiosInstance.patch(`/addresses/${addressId}`, data); // Add the data parameter
+const updateUserAddress = async (addressId: number, data: AddressFormData) => {
+  const response = await axiosInstance.patch(`/addresses/${addressId}`, data);
+  return response.data;
+};
+
+const createUserAddress = async (data: AddressFormData) => {
+  const response = await axiosInstance.post(`/addresses`, data);
   return response.data;
 };
 
@@ -47,8 +53,21 @@ export const useUpdateUserAddressMutation = () => {
       updateAddressDto,
     }: {
       addressId: number;
-      updateAddressDto: any;
+      updateAddressDto: AddressFormData;
     }) => updateUserAddress(addressId, updateAddressDto),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.USER_ADDRESSES] });
+    },
+  });
+};
+
+export const useCreateUserAddressMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (createAddressDto: AddressFormData) =>
+      createUserAddress(createAddressDto),
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.USER_ADDRESSES] });

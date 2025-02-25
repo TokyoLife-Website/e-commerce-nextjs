@@ -23,7 +23,7 @@ const defaultValues: RegisterFormData = {
   confirmPassword: "",
   firstName: "",
   lastName: "",
-  dob: dayjs().format("YYYY-MM-DD"),
+  dob: dayjs().toDate(),
   gender: Gender.MALE,
 };
 

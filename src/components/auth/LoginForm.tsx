@@ -89,7 +89,7 @@ export const LoginForm = () => {
         />
       </div>
       <p
-        onClick={() => dispatch(openModal(ModalType.FORGOT_PASSWORD))}
+        onClick={() => dispatch(openModal({ type: ModalType.FORGOT_PASSWORD }))}
         className="underline text-xs leading-4 cursor-pointer my-3 float-right"
       >
         Quên mật khẩu?

@@ -10,6 +10,12 @@ export interface BaseInputProps<T extends FieldValues>
   size?: "small" | "medium";
 }
 
+export interface CheckBoxProps<T extends FieldValues>
+  extends BaseInputProps<T> {
+  id: string;
+  isChecked: boolean;
+}
+
 export interface TextInputProps<T extends FieldValues>
   extends BaseInputProps<T> {
   type?: React.HTMLInputTypeAttribute;
@@ -25,6 +31,11 @@ export interface SelectInputProps<T extends FieldValues>
   extends BaseInputProps<T> {
   options: Option[];
   disable?: boolean;
+}
+
+export interface AutoCompleteInputProps<T extends FieldValues>
+  extends SelectInputProps<T> {
+  disableClearable?: boolean;
 }
 
 export interface DateInputProps<T extends FieldValues>

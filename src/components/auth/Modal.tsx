@@ -7,12 +7,15 @@ import { ModalType } from "@/types/modal";
 import { ForgotPasswordForm } from "./ForgotPasswordForm";
 import { VerifyCodeForm } from "./VerifyCodeForm";
 import { ResetPasswordForm } from "./ResetPasswordForm";
+import { AddressForm } from "./AddressForm";
 
 export const Modal = () => {
   const { isOpen, type } = useAppSelector((state: RootState) => state.modal);
   const dispatch = useAppDispatch();
   const renderContent = () => {
     switch (type) {
+      case ModalType.ADDRESS:
+        return <AddressForm />;
       case ModalType.LOGIN:
         return <AuthForm />;
       case ModalType.REGISTER:

@@ -39,7 +39,7 @@ export const ForgotPasswordForm = () => {
       const { message } = await mutateAsync(data);
       showSuccess(message);
       dispatch(setEmail(data));
-      dispatch(openModal(ModalType.VERIFY_CODE));
+      dispatch(openModal({ type: ModalType.VERIFY_CODE }));
     } catch (error) {
       handleRequestError(error);
     }

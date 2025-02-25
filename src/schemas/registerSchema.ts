@@ -23,8 +23,7 @@ export const registerSchema = z
       .refine(
         (date) => date <= new Date(),
         "Ngày sinh không được là ngày tương lai"
-      )
-      .transform((date) => dayjs(date).format("YYYY-MM-DD")),
+      ),
     gender: z.string().default(Gender.MALE),
   })
   .refine((data) => data.password === data.confirmPassword, {

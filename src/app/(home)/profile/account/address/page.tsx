@@ -5,11 +5,15 @@ import {
   useUserAddressesQuery,
 } from "@/hooks/api/address.api";
 import useToast from "@/hooks/useToastify";
+import { openModal } from "@/redux/modalSlice";
+import { useAppDispatch } from "@/redux/store";
 import { AddressType } from "@/types/address";
+import { ModalType } from "@/types/modal";
 import { handleRequestError } from "@/utils/errorHandler";
 
 export default function Address() {
   const { showSuccess } = useToast();
+  const dispatch = useAppDispatch();
   const { data } = useUserAddressesQuery();
   const { mutateAsync: deleteAddress } = useDeleteUserAddressMutation();
   const { mutateAsync: updateAddress } = useUpdateUserAddressMutation();
@@ -47,7 +51,9 @@ export default function Address() {
         >
           <div className="flex flex-col gap-[11px]">
             <div className="flex items-center gap-[22px]">
-              <p className="font-extrabold leading-[18px]">{`${address.user.firstName} ${address.user.lastName}`}</p>
+              <p className="font-extrabold leading-[18px]">
+                {address.fullName}
+              </p>
               {address.isDefault && (
                 <div className="font-semibold px-1.5 py-1 text-xs text-[#555555] bg-secondary rounded">
                   Mặc định
@@ -77,8 +83,7 @@ export default function Address() {
                 </span>
               </p>
               <p className="font-medium text-sm leading-[18px] text-[#555555]">
-                Điện thoại:{" "}
-                <span className="text-black">{address.user.phone}</span>
+                Điện thoại: <span className="text-black">{address.phone}</span>
               </p>
             </div>
           </div>
@@ -92,19 +97,36 @@ export default function Address() {
                   Đặt mặc định
                 </p>
               )}
-              <p className="cursor-pointer">Chỉnh sửa</p>
+              <p
+                onClick={(e) => {
+                  dispatch(
+                    openModal({ type: ModalType.ADDRESS, data: address })
+                  );
+                }}
+                className="cursor-pointer"
+              >
+                Chỉnh sửa
+              </p>
             </div>
-            <p
-              onClick={() => handleDeleteAddress(+address.id)}
-              className="text-primary cursor-pointer"
-            >
-              Xóa
-            </p>
+            {!address.isDefault && (
+              <p
+                onClick={() => handleDeleteAddress(+address.id)}
+                className="text-primary w-fit cursor-pointer"
+              >
+                Xóa
+              </p>
+            )}
           </div>
         </div>
       ))}
 
-      <button className="hover:bg-primary hover:text-white ease-in duration-150 px-8 py-2.5 font-semibold text-xs leading-4 w-full border border-dashed border-[#999999]">
+      <button
+        onClick={(e) => {
+          e.preventDefault();
+          dispatch(openModal({ type: ModalType.ADDRESS }));
+        }}
+        className="hover:bg-primary hover:text-white ease-in duration-150 px-8 py-2.5 font-semibold text-xs leading-4 w-full border border-dashed border-[#999999]"
+      >
         THÊM ĐỊA CHỈ MỚI
       </button>
     </form>
