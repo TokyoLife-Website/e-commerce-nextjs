@@ -1,18 +1,18 @@
 import Link from "next/link";
 import React from "react";
 import CustomButton from "../CustomBtn";
-import TextInput from "../TextInput";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { registerSchema } from "@/schemas/registerSchema";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Gender } from "@/types/gender";
 import dayjs from "dayjs";
-import DateInput from "../DateInput";
 import { handleRequestError } from "@/utils/errorHandler";
-import SelectInput from "../SelectInput";
+import SelectInput from "../inputs/SelectInput";
 import useToast from "@/hooks/useToastify";
 import { useRegisterMutation } from "@/hooks/api/auth.api";
+import TextInput from "../inputs/TextInput";
+import DateInput from "../inputs/DateInput";
 
 export type RegisterFormData = z.infer<typeof registerSchema>;
 

@@ -1,8 +1,8 @@
 "use client";
 import CustomButton from "@/components/CustomBtn";
-import DateInput from "@/components/DateInput";
-import SelectInput from "@/components/SelectInput";
-import TextInput from "@/components/TextInput";
+import DateInput from "@/components/inputs/DateInput";
+import SelectInput from "@/components/inputs/SelectInput";
+import TextInput from "@/components/inputs/TextInput";
 import { useUpdateUserMutation } from "@/hooks/api/user.api";
 import useToast from "@/hooks/useToastify";
 import {

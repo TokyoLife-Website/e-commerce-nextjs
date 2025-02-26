@@ -1,6 +1,5 @@
 import React from "react";
 import CustomButton from "../CustomBtn";
-import TextInput from "../TextInput";
 import {
   ForgotPasswordFormData,
   forgotPasswordSchema,
@@ -14,6 +13,7 @@ import { useAppDispatch } from "@/redux/store";
 import { setEmail } from "@/redux/authSlice";
 import { openModal } from "@/redux/modalSlice";
 import { ModalType } from "@/types/modal";
+import TextInput from "../inputs/TextInput";
 
 const defaultValues = {
   email: "",

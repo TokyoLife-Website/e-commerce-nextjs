@@ -1,6 +1,5 @@
 import React from "react";
 import CustomButton from "../CustomBtn";
-import TextInput from "../TextInput";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { handleRequestError } from "@/utils/errorHandler";
@@ -11,14 +10,19 @@ import { IoCloseOutline } from "react-icons/io5";
 import { Address, AddressType } from "@/types/address";
 import { AddressFormData, addressSchema } from "@/schemas/addressSchema";
 import useAddress from "@/hooks/useAddress";
-import CheckboxInput from "../CheckboxInput";
-import { useCreateUserAddressMutation } from "@/hooks/api/address.api";
-import AutoCompleteInput from "../AutoCompleteInput";
+import CheckboxInput from "../inputs/CheckboxInput";
+import {
+  useCreateUserAddressMutation,
+  useUpdateUserAddressMutation,
+} from "@/hooks/api/address.api";
 import { useAppSelector } from "@/redux/store";
+import AutoCompleteInput from "../inputs/AutoCompleteInput";
+import TextInput from "../inputs/TextInput";
 
 export const AddressForm = () => {
   const { showSuccess } = useToast();
-  const { mutateAsync } = useCreateUserAddressMutation();
+  const { mutateAsync: createUserAddress } = useCreateUserAddressMutation();
+  const { mutateAsync: updateUserAddress } = useUpdateUserAddressMutation();
   const dispatch = useAppDispatch();
 
   const currentAddressData = useAppSelector(
@@ -33,7 +37,7 @@ export const AddressForm = () => {
     districtId: +currentAddressData?.district.id || 0,
     wardId: +currentAddressData?.ward.id || 0,
     detail: currentAddressData?.detail || "",
-    isDefault: currentAddressData?.isDefault || true,
+    isDefault: currentAddressData?.isDefault || false,
     type: currentAddressData?.type || AddressType.HOME,
   };
 
@@ -51,11 +55,20 @@ export const AddressForm = () => {
 
   const onSubmit: SubmitHandler<AddressFormData> = async (data) => {
     try {
-      const { message } = await mutateAsync(data);
-      showSuccess(message);
-      dispatch(closeModal());
+      if (currentAddressData) {
+        const { message } = await updateUserAddress({
+          addressId: +currentAddressData.id,
+          updateAddressDto: data,
+        });
+        showSuccess(message);
+      } else {
+        const { message } = await createUserAddress(data);
+        showSuccess(message);
+      }
     } catch (error) {
       handleRequestError(error);
+    } finally {
+      dispatch(closeModal());
     }
   };
   const selectedProvince = watch("provinceId");
@@ -180,7 +193,6 @@ export const AddressForm = () => {
         </div>
         <div className="flex items-center gap-2 mb-5">
           <CheckboxInput
-            isChecked={currentAddressData?.isDefault}
             id="defaultAddress"
             name="isDefault"
             control={control}

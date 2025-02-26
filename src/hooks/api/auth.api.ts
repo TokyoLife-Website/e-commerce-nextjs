@@ -1,8 +1,8 @@
 import { useMutation } from "@tanstack/react-query";
 import axiosInstance from "./axios";
 import { ResponseData } from "@/types/response";
-import { LoginFormData } from "@/components/auth/LoginForm";
-import { RegisterFormData } from "@/components/auth/RegisterForm";
+import { LoginFormData } from "@/components/modals/LoginForm";
+import { RegisterFormData } from "@/components/modals/RegisterForm";
 import { ForgotPasswordFormData } from "@/schemas/forgotPasswordSchema";
 
 export interface TokenResponse {

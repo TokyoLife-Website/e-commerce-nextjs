@@ -8,7 +8,7 @@ import {
 } from "@/hooks/api/auth.api";
 import { handleRequestError } from "@/utils/errorHandler";
 import useToast from "@/hooks/useToastify";
-import OTPInput from "../OTPInput";
+import OTPInput from "../inputs/OTPInput";
 import { RootState, useAppDispatch, useAppSelector } from "@/redux/store";
 import { z } from "zod";
 import { openModal } from "@/redux/modalSlice";

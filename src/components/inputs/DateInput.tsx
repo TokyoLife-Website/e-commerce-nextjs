@@ -4,8 +4,8 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import React from "react";
 import { Controller, FieldValues } from "react-hook-form";
-import CustomLabel from "./CustomLabel";
 import { DateInputProps } from "@/types/input";
+import CustomLabel from "../CustomLabel";
 
 const DateInput = <T extends FieldValues>({
   name,

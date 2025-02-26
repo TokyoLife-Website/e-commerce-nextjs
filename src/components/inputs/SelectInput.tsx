@@ -7,7 +7,7 @@ import {
 } from "@mui/material";
 import React from "react";
 import { Controller, FieldValues } from "react-hook-form";
-import CustomLabel from "./CustomLabel";
+import CustomLabel from "../CustomLabel";
 import { SelectInputProps } from "@/types/input";
 
 const ITEM_HEIGHT = 48;

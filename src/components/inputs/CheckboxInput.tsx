@@ -17,7 +17,8 @@ const CheckboxInput = <T extends FieldValues>({
           id={id}
           type="checkbox"
           {...field}
-          checked={isChecked}
+          checked={field.value}
+          // defaultChecked={isChecked}
           className="w-4 h-4 border-gray-300 rounded cursor-pointer"
         />
       )}

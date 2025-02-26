@@ -13,7 +13,6 @@ export interface BaseInputProps<T extends FieldValues>
 export interface CheckBoxProps<T extends FieldValues>
   extends BaseInputProps<T> {
   id: string;
-  isChecked: boolean;
 }
 
 export interface TextInputProps<T extends FieldValues>

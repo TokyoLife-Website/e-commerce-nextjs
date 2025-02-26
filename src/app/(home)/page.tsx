@@ -1,5 +1,5 @@
 "use client";
-import { SectionTitle } from "@/components/SectionTitle";
+import { SectionTitle } from "@/components/inputs/SectionTitle";
 import { Rating } from "@mui/material";
 import Image from "next/image";
 

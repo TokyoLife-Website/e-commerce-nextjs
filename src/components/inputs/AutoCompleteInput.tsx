@@ -1,9 +1,9 @@
 import { FormHelperText, Stack, TextField } from "@mui/material";
 import React from "react";
 import { Controller, FieldValues } from "react-hook-form";
-import CustomLabel from "./CustomLabel";
 import { AutoCompleteInputProps } from "@/types/input";
 import Autocomplete from "@mui/material/Autocomplete";
+import CustomLabel from "../CustomLabel";
 
 const AutoCompleteInput = <T extends FieldValues>({
   name,

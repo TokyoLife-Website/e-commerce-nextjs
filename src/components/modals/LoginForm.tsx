@@ -1,7 +1,6 @@
 import React from "react";
 import { jwtDecode } from "jwt-decode";
 import CustomButton from "../CustomBtn";
-import TextInput from "../TextInput";
 import { z } from "zod";
 import { loginSchema } from "@/schemas";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -13,6 +12,7 @@ import { useAppDispatch } from "@/redux/store";
 import { login } from "@/redux/authSlice";
 import { closeModal, openModal } from "@/redux/modalSlice";
 import { ModalType } from "@/types/modal";
+import TextInput from "../inputs/TextInput";
 
 export type LoginFormData = z.infer<typeof loginSchema>;
 
