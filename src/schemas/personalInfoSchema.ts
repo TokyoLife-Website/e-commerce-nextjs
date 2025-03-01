@@ -23,6 +23,7 @@ export const personalInfoSchema = z.object({
     .string()
     .regex(/^(\+84|0)[3|5|7|8|9][0-9]{8}$/, "Số điện thoại không hợp lệ"),
   email: emailSchema,
+  avatar: z.string().url("Ảnh đại diện phải là một URL hợp lệ").optional(),
 });
 
 export type personalInfoFormData = z.infer<typeof personalInfoSchema>;

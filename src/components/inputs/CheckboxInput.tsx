@@ -6,7 +6,6 @@ const CheckboxInput = <T extends FieldValues>({
   id,
   name,
   control,
-  isChecked,
 }: CheckBoxProps<T>) => {
   return (
     <Controller
@@ -18,7 +17,6 @@ const CheckboxInput = <T extends FieldValues>({
           type="checkbox"
           {...field}
           checked={field.value}
-          // defaultChecked={isChecked}
           className="w-4 h-4 border-gray-300 rounded cursor-pointer"
         />
       )}

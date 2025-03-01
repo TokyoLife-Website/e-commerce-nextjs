@@ -12,10 +12,15 @@ import { logout } from "@/redux/authSlice";
 import { openModal } from "@/redux/modalSlice";
 import { ModalType } from "@/types/modal";
 import Link from "next/link";
+import { useCurrentUserQuery } from "@/hooks/api/user.api";
+import { setUser } from "@/redux/userSlice";
 
 export const HeaderProfile = () => {
   const { isAuthenticated } = useAppSelector((state: RootState) => state.auth);
-  const { firstName } = useAppSelector((state: RootState) => state.user);
+  const { firstName, lastName, avatar } = useAppSelector(
+    (state: RootState) => state.user
+  );
+  const { data } = useCurrentUserQuery(isAuthenticated);
   const dispatch = useAppDispatch();
   const handleLogout = () => {
     dispatch(logout());
@@ -27,8 +32,11 @@ export const HeaderProfile = () => {
     if (isAuthenticated) {
       setAuthModal(false);
       setShowDropdown(false);
+      if (data?.data) {
+        dispatch(setUser(data?.data));
+      }
     }
-  }, [isAuthenticated]);
+  }, [data?.data, dispatch, isAuthenticated]);
 
   return (
     <div
@@ -38,7 +46,7 @@ export const HeaderProfile = () => {
     >
       {isAuthenticated ? (
         <Link href={"/profile"}>
-          <Avatar alt={firstName} />
+          <Avatar src={avatar.url} alt={firstName} />
         </Link>
       ) : (
         <AccountCircleOutlinedIcon />
@@ -52,9 +60,9 @@ export const HeaderProfile = () => {
         {isAuthenticated ? (
           <>
             <div className="mx-4 p-5 pb-2 flex border-b border-[#e9e9e9] gap-2">
-              <Avatar alt={firstName} />
+              <Avatar src={avatar.url} alt={firstName} />
               <div className="text-xs leading-4">
-                <div className="font-extrabold  ">Le Minh Tien</div>
+                <div className="font-extrabold  ">{`${firstName} ${lastName}`}</div>
                 <div className="mt-[5px] font-medium"> Điểm thưởng: 0</div>
               </div>
             </div>

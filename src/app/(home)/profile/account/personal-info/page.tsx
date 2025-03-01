@@ -3,32 +3,39 @@ import CustomButton from "@/components/CustomBtn";
 import DateInput from "@/components/inputs/DateInput";
 import SelectInput from "@/components/inputs/SelectInput";
 import TextInput from "@/components/inputs/TextInput";
-import { useUpdateUserMutation } from "@/hooks/api/user.api";
+import {
+  useUpdateUserMutation,
+  useUploadAvatarMutation,
+} from "@/hooks/api/user.api";
 import useToast from "@/hooks/useToastify";
+import { RootState, useAppSelector } from "@/redux/store";
 import {
   personalInfoFormData,
   personalInfoSchema,
 } from "@/schemas/personalInfoSchema";
 import { Gender } from "@/types/gender";
+import { convertToBase64 } from "@/utils/converToBase64";
 import { handleRequestError } from "@/utils/errorHandler";
 import { zodResolver } from "@hookform/resolvers/zod";
 import dayjs from "dayjs";
 import Image from "next/image";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 const defaultValues: personalInfoFormData = {
+  avatar: "",
   firstName: "",
   lastName: "",
   dob: dayjs().toDate(),
   gender: Gender.MALE,
-  phone: "0373635003",
-  email: "leminhtien4323@gmail.com",
+  phone: "",
+  email: "",
 };
 
 export default function PeronalInfo() {
   const { showSuccess } = useToast();
-  const [avatar, setAvatar] = useState<string>("");
+  const [file, setFile] = useState<File | null>(null);
+  const userData = useAppSelector((state: RootState) => state.user);
   const handleFileInputChange = async (
     event: ChangeEvent<HTMLInputElement>
   ) => {
@@ -36,31 +43,19 @@ export default function PeronalInfo() {
     if (file) {
       try {
         const base64 = await convertToBase64(file);
-        setAvatar(base64);
+        setValue("avatar", base64);
+        setFile(file);
       } catch (error) {
         console.error("Failed to convert file to base64:", error);
       }
     }
   };
-  const convertToBase64 = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => {
-        if (typeof reader.result === "string") {
-          resolve(reader.result);
-        } else {
-          reject(new Error("File conversion failed."));
-        }
-      };
-      reader.onerror = (error) => {
-        reject(error);
-      };
-    });
-  };
+
   const {
     control,
+    getValues,
     reset,
+    setValue,
     handleSubmit,
     formState: { errors },
   } = useForm<personalInfoFormData>({
@@ -69,12 +64,33 @@ export default function PeronalInfo() {
     resolver: zodResolver(personalInfoSchema),
   });
 
+  useEffect(() => {
+    if (userData) {
+      reset({
+        avatar: userData.avatar?.url || "/upload.jpg",
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        dob: userData.dob ? dayjs(userData.dob).toDate() : dayjs().toDate(),
+        gender: userData.gender,
+        phone: userData.phone,
+        email: userData.email,
+      });
+    }
+  }, [userData, reset]);
+
   const { mutateAsync } = useUpdateUserMutation();
+  const { mutateAsync: uploadAvatar } = useUploadAvatarMutation();
+
   const onSubmit: SubmitHandler<personalInfoFormData> = async (payload) => {
     try {
-      const { message } = await mutateAsync(payload);
+      if (file) {
+        await uploadAvatar(file);
+        setFile(null);
+      }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { avatar, ...other } = payload;
+      const { message } = await mutateAsync(other);
       showSuccess(message);
-      reset(defaultValues);
     } catch (error) {
       handleRequestError(error);
     }
@@ -87,9 +103,9 @@ export default function PeronalInfo() {
       <div className="flex items-center w-full">
         <div className="text-center mr-[30px] pr-[30px] border-r">
           <Image
-            src={avatar || "/upload.jpg"}
+            src={getValues("avatar") || "/upload.jpg"}
             className="rounded-full w-[120px] h-[120px] object-cover  mx-auto mb-6"
-            alt={""}
+            alt="Avatar"
             width={120}
             height={120}
           ></Image>

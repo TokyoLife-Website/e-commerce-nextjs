@@ -7,6 +7,15 @@ import storage from "redux-persist/lib/storage";
 
 const initialState: User = {
   id: "",
+  avatar: {
+    id: 0,
+    url: "",
+    folder: "",
+    format: "",
+    height: 0,
+    width: 0,
+    public_id: "",
+  },
   lastName: "",
   firstName: "",
   dob: "",
@@ -21,9 +30,19 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     setUser(state, action: PayloadAction<User>) {
-      const { id, dob, email, gender, firstName, lastName, phone, role } =
-        action.payload;
+      const {
+        id,
+        dob,
+        email,
+        gender,
+        firstName,
+        lastName,
+        phone,
+        role,
+        avatar,
+      } = action.payload;
       state.id = id;
+      state.avatar = avatar;
       state.dob = dob;
       state.email = email;
       state.gender = gender;

@@ -1,4 +1,6 @@
+"use client";
 import SideBar from "@/components/layouts/SideBar";
+import { RootState, useAppSelector } from "@/redux/store";
 import { Avatar } from "@mui/material";
 import React from "react";
 
@@ -7,18 +9,26 @@ export default function ProfileLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const { firstName, lastName, avatar } = useAppSelector(
+    (state: RootState) => state.user
+  );
   return (
     <div className="bg-[#faf9f8] pt-10">
       <div className="mx-40 px-6">
         <div className="flex gap-4 items-center pt-8">
           <Avatar
+            src={avatar.url}
             sizes="small"
-            alt={"tien"}
-            sx={{ position: "unset", width: 52, height: 52 }}
+            alt={"avatar"}
+            sx={{
+              position: "unset",
+              width: 52,
+              height: 52,
+            }}
           />
           <div className="flex flex-col gap-1 leading-[18px] text-sm font-normal">
             <div>Xin chào,</div>
-            <div className="font-bold">Tiến Lê</div>
+            <div className="font-bold">{`${firstName} ${lastName}`}</div>
           </div>
         </div>
         <div className="grid grid-cols-4 gap-5 pb-9 mt-7">
