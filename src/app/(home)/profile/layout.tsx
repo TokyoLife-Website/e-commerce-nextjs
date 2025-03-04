@@ -1,14 +1,11 @@
 "use client";
+import isAuth from "@/components/isAuth";
 import SideBar from "@/components/layouts/SideBar";
 import { RootState, useAppSelector } from "@/redux/store";
 import { Avatar } from "@mui/material";
 import React from "react";
 
-export default function ProfileLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+const ProfileLayout = ({ children }: { children: React.ReactNode }) => {
   const { firstName, lastName, avatar } = useAppSelector(
     (state: RootState) => state.user
   );
@@ -17,7 +14,7 @@ export default function ProfileLayout({
       <div className="mx-40 px-6">
         <div className="flex gap-4 items-center pt-8">
           <Avatar
-            src={avatar.url}
+            src={avatar?.url}
             sizes="small"
             alt={"avatar"}
             sx={{
@@ -40,4 +37,6 @@ export default function ProfileLayout({
       </div>
     </div>
   );
-}
+};
+
+export default isAuth(ProfileLayout);

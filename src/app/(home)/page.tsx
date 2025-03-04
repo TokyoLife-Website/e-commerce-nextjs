@@ -5,12 +5,11 @@ import Image from "next/image";
 
 export default function Home() {
   return (
-    <div className="mx-40">
+    <div className="mx-5 mt-10 sm:mx-10 md:mx-20 lg:mx-40 font-font-poppins">
       <SectionTitle title="CÓ TOKYOLIFE TẾT AI CŨNG VUI!" />
-      <div className="grid grid-cols-5 gap-4 p-4 ">
+      <div className="grid  grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5  gap-4 p-4">
         <div className="px-[6px] py-3">
           <Image
-            unoptimized
             width={300}
             height={200}
             alt="Product Image"
@@ -45,7 +44,6 @@ export default function Home() {
         </div>
         <div className="px-[6px] py-3">
           <Image
-            unoptimized
             width={300}
             height={200}
             alt="Product Image"
@@ -80,7 +78,6 @@ export default function Home() {
         </div>
         <div className="px-[6px] py-3">
           <Image
-            unoptimized
             width={300}
             height={200}
             alt="Product Image"
@@ -115,7 +112,6 @@ export default function Home() {
         </div>
         <div className="px-[6px] py-3">
           <Image
-            unoptimized
             width={300}
             height={200}
             alt="Product Image"
@@ -150,7 +146,6 @@ export default function Home() {
         </div>
         <div className="px-[6px] py-3">
           <Image
-            unoptimized
             width={300}
             height={200}
             alt="Product Image"
@@ -185,7 +180,6 @@ export default function Home() {
         </div>
         <div className="px-[6px] py-3">
           <Image
-            unoptimized
             width={300}
             height={200}
             alt="Product Image"
@@ -220,7 +214,6 @@ export default function Home() {
         </div>
         <div className="px-[6px] py-3">
           <Image
-            unoptimized
             width={300}
             height={200}
             alt="Product Image"

@@ -9,6 +9,9 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        "font-poppins": "var(--font-poppins)",
+      },
       boxShadow: {
         custom: "0px 0px 24px 0px rgba(0, 0, 0, 0.08)",
       },

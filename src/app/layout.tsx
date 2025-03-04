@@ -1,17 +1,16 @@
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
+import { Roboto } from "next/font/google";
 import "./globals.css";
 import ReactQueryProvider from "@/providers/ReactQueryProvider";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import StoreProvider from "@/providers/StoreProvider";
 
-const poppins = Poppins({
+const roboto = Roboto({
+  weight: ["100", "300", "400", "500", "900", "700"],
+  style: ["normal"],
   subsets: ["latin"],
   display: "swap",
-  variable: "--poppins-font",
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
-  style: ["normal"],
 });
 
 export const metadata: Metadata = {
@@ -26,7 +25,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${poppins.variable}  antialiased `}>
+      <body className={`${roboto.className}  antialiased `}>
         <StoreProvider>
           <ReactQueryProvider>
             {children}

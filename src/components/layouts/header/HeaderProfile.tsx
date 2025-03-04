@@ -14,6 +14,7 @@ import { ModalType } from "@/types/modal";
 import Link from "next/link";
 import { useCurrentUserQuery } from "@/hooks/api/user.api";
 import { setUser } from "@/redux/userSlice";
+import { redirect } from "next/navigation";
 
 export const HeaderProfile = () => {
   const { isAuthenticated } = useAppSelector((state: RootState) => state.auth);
@@ -24,6 +25,7 @@ export const HeaderProfile = () => {
   const dispatch = useAppDispatch();
   const handleLogout = () => {
     dispatch(logout());
+    redirect("/");
   };
 
   const [authModal, setAuthModal] = useState<boolean>(false);
@@ -46,7 +48,7 @@ export const HeaderProfile = () => {
     >
       {isAuthenticated ? (
         <Link href={"/profile"}>
-          <Avatar src={avatar.url} alt={firstName} />
+          <Avatar src={avatar?.url} alt={firstName} />
         </Link>
       ) : (
         <AccountCircleOutlinedIcon />
@@ -60,7 +62,7 @@ export const HeaderProfile = () => {
         {isAuthenticated ? (
           <>
             <div className="mx-4 p-5 pb-2 flex border-b border-[#e9e9e9] gap-2">
-              <Avatar src={avatar.url} alt={firstName} />
+              <Avatar src={avatar?.url} alt={firstName} />
               <div className="text-xs leading-4">
                 <div className="font-extrabold  ">{`${firstName} ${lastName}`}</div>
                 <div className="mt-[5px] font-medium"> Điểm thưởng: 0</div>

@@ -4,12 +4,15 @@ import Image from "next/image";
 import React from "react";
 import { CategoryList } from "../category/CategoryList";
 import { HeaderProfile } from "./HeaderProfile";
+import Link from "next/link";
 
 export const Header = () => {
   return (
     <div className="top-0 sticky w-full bg-secondary">
       <div className="flex items-center justify-between py-3 mx-40">
-        <Image src="/logo.svg" alt="logo" width={212} height={32} priority />
+        <Link href={"/"}>
+          <Image src="/logo.svg" alt="logo" width={212} height={32} priority />
+        </Link>
         <div className="relative w-[50%]">
           <input
             type="search"
