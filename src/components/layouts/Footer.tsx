@@ -1,6 +1,6 @@
 import Image from "next/image";
 import React, { FC } from "react";
-import { CustomTitle } from "../CustomTitle";
+import { CustomTitle } from "./CustomTitle";
 import Link from "next/link";
 
 interface ListItemProps {

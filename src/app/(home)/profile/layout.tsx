@@ -1,5 +1,5 @@
 "use client";
-import isAuth from "@/components/isAuth";
+import isAuth from "@/components/layouts/isAuth";
 import SideBar from "@/components/layouts/SideBar";
 import { RootState, useAppSelector } from "@/redux/store";
 import { Avatar } from "@mui/material";

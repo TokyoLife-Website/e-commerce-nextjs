@@ -13,7 +13,7 @@ import { useAppDispatch } from "@/redux/store";
 import { setEmail } from "@/redux/authSlice";
 import { openModal } from "@/redux/modalSlice";
 import { ModalType } from "@/types/modal";
-import TextInput from "../inputs/TextInput";
+import TextInput from "../../inputs/TextInput";
 
 const defaultValues = {
   email: "",

@@ -22,14 +22,7 @@ export default function Home() {
               Áo khoác lông vũ Nam siêu nhẹ cổ cao 40003326
             </h3>
             <div className="flex items-center gap-1 mb-2 text-xs text-[#555555] font-normal leading-4">
-              <Rating
-                sx={{ zIndex: -10 }}
-                name="half-rating"
-                size="small"
-                readOnly
-                value={5}
-              />{" "}
-              (10)
+              <Rating name="half-rating" size="small" readOnly value={5} /> (10)
             </div>
             <span className="flex flex-col gap-2 text-primary font-bold">
               <div className="">419.300đ</div>
@@ -56,14 +49,7 @@ export default function Home() {
               Áo khoác lông vũ Nam siêu nhẹ cổ cao 40003326
             </h3>
             <div className="flex items-center gap-1 mb-2 text-xs text-[#555555] font-normal leading-4">
-              <Rating
-                sx={{ zIndex: -10 }}
-                name="half-rating"
-                size="small"
-                readOnly
-                value={5}
-              />{" "}
-              (10)
+              <Rating name="half-rating" size="small" readOnly value={5} /> (10)
             </div>
             <span className="flex flex-col gap-2 text-primary font-bold">
               <div className="">419.300đ</div>
@@ -90,14 +76,7 @@ export default function Home() {
               Áo khoác lông vũ Nam siêu nhẹ cổ cao 40003326
             </h3>
             <div className="flex items-center gap-1 mb-2 text-xs text-[#555555] font-normal leading-4">
-              <Rating
-                sx={{ zIndex: -10 }}
-                name="half-rating"
-                size="small"
-                readOnly
-                value={5}
-              />{" "}
-              (10)
+              <Rating name="half-rating" size="small" readOnly value={5} /> (10)
             </div>
             <span className="flex flex-col gap-2 text-primary font-bold">
               <div className="">419.300đ</div>
@@ -124,14 +103,7 @@ export default function Home() {
               Áo khoác lông vũ Nam siêu nhẹ cổ cao 40003326
             </h3>
             <div className="flex items-center gap-1 mb-2 text-xs text-[#555555] font-normal leading-4">
-              <Rating
-                sx={{ zIndex: -10 }}
-                name="half-rating"
-                size="small"
-                readOnly
-                value={5}
-              />{" "}
-              (10)
+              <Rating name="half-rating" size="small" readOnly value={5} /> (10)
             </div>
             <span className="flex flex-col gap-2 text-primary font-bold">
               <div className="">419.300đ</div>
@@ -158,14 +130,7 @@ export default function Home() {
               Áo khoác lông vũ Nam siêu nhẹ cổ cao 40003326
             </h3>
             <div className="flex items-center gap-1 mb-2 text-xs text-[#555555] font-normal leading-4">
-              <Rating
-                sx={{ zIndex: -10 }}
-                name="half-rating"
-                size="small"
-                readOnly
-                value={5}
-              />{" "}
-              (10)
+              <Rating name="half-rating" size="small" readOnly value={5} /> (10)
             </div>
             <span className="flex flex-col gap-2 text-primary font-bold">
               <div className="">419.300đ</div>
@@ -192,14 +157,7 @@ export default function Home() {
               Áo khoác lông vũ Nam siêu nhẹ cổ cao 40003326
             </h3>
             <div className="flex items-center gap-1 mb-2 text-xs text-[#555555] font-normal leading-4">
-              <Rating
-                sx={{ zIndex: -10 }}
-                name="half-rating"
-                size="small"
-                readOnly
-                value={5}
-              />{" "}
-              (10)
+              <Rating name="half-rating" size="small" readOnly value={5} /> (10)
             </div>
             <span className="flex flex-col gap-2 text-primary font-bold">
               <div className="">419.300đ</div>
@@ -226,14 +184,7 @@ export default function Home() {
               Áo khoác lông vũ Nam siêu nhẹ cổ cao 40003326
             </h3>
             <div className="flex items-center gap-1 mb-2 text-xs text-[#555555] font-normal leading-4">
-              <Rating
-                sx={{ zIndex: -10 }}
-                name="half-rating"
-                size="small"
-                readOnly
-                value={5}
-              />{" "}
-              (10)
+              <Rating name="half-rating" size="small" readOnly value={5} /> (10)
             </div>
             <span className="flex flex-col gap-2 text-primary font-bold">
               <div className="">419.300đ</div>

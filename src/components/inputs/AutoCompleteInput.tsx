@@ -3,7 +3,7 @@ import React from "react";
 import { Controller, FieldValues } from "react-hook-form";
 import { AutoCompleteInputProps } from "@/types/input";
 import Autocomplete from "@mui/material/Autocomplete";
-import CustomLabel from "../CustomLabel";
+import CustomLabel from "../layouts/CustomLabel";
 
 const AutoCompleteInput = <T extends FieldValues>({
   name,
@@ -26,6 +26,7 @@ const AutoCompleteInput = <T extends FieldValues>({
         <Stack spacing={0.5}>
           {label && <CustomLabel label={label} isRequired={isRequired} />}
           <Autocomplete
+            disablePortal={true}
             disableClearable={disableClearable}
             options={options}
             getOptionLabel={(option) => option.name || ""}

@@ -5,8 +5,8 @@ import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined
 import LibraryBooksOutlinedIcon from "@mui/icons-material/LibraryBooksOutlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import YoutubeSearchedForOutlinedIcon from "@mui/icons-material/YoutubeSearchedForOutlined";
-import { CustomTitle } from "@/components/CustomTitle";
-import CustomButton from "@/components/CustomBtn";
+import { CustomTitle } from "@/components/layouts/CustomTitle";
+import CustomButton from "@/components/layouts/CustomBtn";
 import { RootState, useAppDispatch, useAppSelector } from "@/redux/store";
 import { logout } from "@/redux/authSlice";
 import { openModal } from "@/redux/modalSlice";

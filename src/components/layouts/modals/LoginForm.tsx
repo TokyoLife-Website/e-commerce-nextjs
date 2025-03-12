@@ -12,7 +12,7 @@ import { useAppDispatch } from "@/redux/store";
 import { login } from "@/redux/authSlice";
 import { closeModal, openModal } from "@/redux/modalSlice";
 import { ModalType } from "@/types/modal";
-import TextInput from "../inputs/TextInput";
+import TextInput from "../../inputs/TextInput";
 
 export type LoginFormData = z.infer<typeof loginSchema>;
 

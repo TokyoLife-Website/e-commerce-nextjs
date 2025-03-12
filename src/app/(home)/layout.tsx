@@ -1,4 +1,4 @@
-import { Modal } from "@/components/modals/Modal";
+import { Modal } from "@/components/layouts/modals/Modal";
 import { Footer } from "@/components/layouts/Footer";
 import { Header } from "@/components/layouts/header/Header";
 import React from "react";

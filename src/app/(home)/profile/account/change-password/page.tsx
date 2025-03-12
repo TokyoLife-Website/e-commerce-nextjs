@@ -1,5 +1,5 @@
 "use client";
-import CustomButton from "@/components/CustomBtn";
+import CustomButton from "@/components/layouts/CustomBtn";
 import TextInput from "@/components/inputs/TextInput";
 import { useUpdatePasswordMutation } from "@/hooks/api/user.api";
 import useToast from "@/hooks/useToastify";

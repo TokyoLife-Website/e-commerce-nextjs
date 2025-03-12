@@ -26,6 +26,18 @@ interface Option {
   name: string;
 }
 
+export interface RadioInputProps<T extends FieldValues>
+  extends BaseInputProps<T> {
+  options: Option[];
+}
+export interface RangeInputProps<T extends FieldValues>
+  extends BaseInputProps<T> {
+  min?: number;
+  max?: number;
+  step?: number;
+  disabled?: boolean;
+}
+
 export interface SelectInputProps<T extends FieldValues>
   extends BaseInputProps<T> {
   options: Option[];

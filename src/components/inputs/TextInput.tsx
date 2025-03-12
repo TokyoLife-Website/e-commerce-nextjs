@@ -2,7 +2,7 @@ import { Stack, TextField } from "@mui/material";
 import React from "react";
 import { Controller, FieldValues } from "react-hook-form";
 import { TextInputProps } from "@/types/input";
-import CustomLabel from "../CustomLabel";
+import CustomLabel from "../layouts/CustomLabel";
 
 const TextInput = <T extends FieldValues>({
   name,

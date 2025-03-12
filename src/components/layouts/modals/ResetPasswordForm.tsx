@@ -13,7 +13,7 @@ import {
   resetPasswordSchema,
   defaultValues,
 } from "@/schemas/resetPasswordSchema";
-import TextInput from "../inputs/TextInput";
+import TextInput from "../../inputs/TextInput";
 
 export const ResetPasswordForm = () => {
   const { showSuccess } = useToast();

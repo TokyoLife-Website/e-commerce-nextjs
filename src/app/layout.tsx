@@ -5,6 +5,9 @@ import ReactQueryProvider from "@/providers/ReactQueryProvider";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import StoreProvider from "@/providers/StoreProvider";
+import { SidebarProvider } from "@/contexts/SidebarContext";
+import { ThemeProvider } from "@/contexts/ThemeContext";
+import { AntdRegistry } from "@ant-design/nextjs-registry";
 
 const roboto = Roboto({
   weight: ["100", "300", "400", "500", "900", "700"],
@@ -26,12 +29,18 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${roboto.className}  antialiased `}>
-        <StoreProvider>
-          <ReactQueryProvider>
-            {children}
-            <ToastContainer />
-          </ReactQueryProvider>
-        </StoreProvider>
+        <ThemeProvider>
+          <AntdRegistry>
+            <SidebarProvider>
+              <StoreProvider>
+                <ReactQueryProvider>
+                  {children}
+                  <ToastContainer />
+                </ReactQueryProvider>
+              </StoreProvider>
+            </SidebarProvider>
+          </AntdRegistry>
+        </ThemeProvider>
       </body>
     </html>
   );

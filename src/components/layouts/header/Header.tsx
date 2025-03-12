@@ -8,7 +8,7 @@ import Link from "next/link";
 
 export const Header = () => {
   return (
-    <div className="top-0 sticky w-full bg-secondary">
+    <div className="top-0 sticky w-full bg-secondary z-50">
       <div className="flex items-center justify-between py-3 mx-40">
         <Link href={"/"}>
           <Image src="/logo.svg" alt="logo" width={212} height={32} priority />

@@ -1,5 +1,5 @@
 "use client";
-import CustomButton from "@/components/CustomBtn";
+import CustomButton from "@/components/layouts/CustomBtn";
 import DateInput from "@/components/inputs/DateInput";
 import SelectInput from "@/components/inputs/SelectInput";
 import TextInput from "@/components/inputs/TextInput";

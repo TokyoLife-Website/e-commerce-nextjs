@@ -8,11 +8,11 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { Gender } from "@/types/gender";
 import dayjs from "dayjs";
 import { handleRequestError } from "@/utils/errorHandler";
-import SelectInput from "../inputs/SelectInput";
+import SelectInput from "../../inputs/SelectInput";
 import useToast from "@/hooks/useToastify";
 import { useRegisterMutation } from "@/hooks/api/auth.api";
-import TextInput from "../inputs/TextInput";
-import DateInput from "../inputs/DateInput";
+import TextInput from "../../inputs/TextInput";
+import DateInput from "../../inputs/DateInput";
 
 export type RegisterFormData = z.infer<typeof registerSchema>;
 

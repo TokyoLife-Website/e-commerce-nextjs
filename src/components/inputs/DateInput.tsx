@@ -5,7 +5,7 @@ import dayjs from "dayjs";
 import React from "react";
 import { Controller, FieldValues } from "react-hook-form";
 import { DateInputProps } from "@/types/input";
-import CustomLabel from "../CustomLabel";
+import CustomLabel from "../layouts/CustomLabel";
 
 const DateInput = <T extends FieldValues>({
   name,

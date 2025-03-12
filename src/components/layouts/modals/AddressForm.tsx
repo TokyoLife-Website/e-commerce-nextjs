@@ -10,14 +10,14 @@ import { IoCloseOutline } from "react-icons/io5";
 import { Address, AddressType } from "@/types/address";
 import { AddressFormData, addressSchema } from "@/schemas/addressSchema";
 import useAddress from "@/hooks/useAddress";
-import CheckboxInput from "../inputs/CheckboxInput";
+import CheckboxInput from "../../inputs/CheckboxInput";
 import {
   useCreateUserAddressMutation,
   useUpdateUserAddressMutation,
 } from "@/hooks/api/address.api";
 import { useAppSelector } from "@/redux/store";
-import AutoCompleteInput from "../inputs/AutoCompleteInput";
-import TextInput from "../inputs/TextInput";
+import AutoCompleteInput from "../../inputs/AutoCompleteInput";
+import TextInput from "../../inputs/TextInput";
 
 export const AddressForm = () => {
   const { showSuccess } = useToast();
