@@ -37,7 +37,9 @@ const TextInput = <T extends FieldValues>({
               disabled={disabled}
               onChange={(e) =>
                 field.onChange(
-                  type === "number" ? +e.target.value : e.target.value
+                  type === "number"
+                    ? Math.max(+e.target.value, 0)
+                    : e.target.value
                 )
               }
               size={size}

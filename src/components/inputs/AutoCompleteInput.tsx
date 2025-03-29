@@ -16,6 +16,7 @@ const AutoCompleteInput = <T extends FieldValues>({
   size = "medium",
   isRequired = false,
   placeHolder,
+  defaultValue,
   disableClearable = false,
 }: AutoCompleteInputProps<T>) => {
   return (
@@ -26,13 +27,14 @@ const AutoCompleteInput = <T extends FieldValues>({
         <Stack spacing={0.5}>
           {label && <CustomLabel label={label} isRequired={isRequired} />}
           <Autocomplete
-            disablePortal={true}
             disableClearable={disableClearable}
             options={options}
             getOptionLabel={(option) => option.name || ""}
             isOptionEqualToValue={(option, value) => option.id === value.id}
-            onChange={(_, newValue) => onChange(newValue?.id ?? 0)}
-            value={options.find((option) => option.id === value) || null}
+            onChange={(_, newValue) => onChange(newValue?.id ?? defaultValue)}
+            value={
+              options.find((option) => option.id === value) || defaultValue
+            }
             disabled={disabled}
             size={size}
             renderInput={(params) => (

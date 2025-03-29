@@ -1,4 +1,6 @@
+import { Color } from "@/types/color";
 import { DiscountType } from "@/types/discountType";
+import { Size } from "@/types/size";
 import { z } from "zod";
 
 export const createProductSchema = z.object({
@@ -16,12 +18,16 @@ export const createProductSchema = z.object({
   skus: z
     .array(
       z.object({
-        color: z.number().min(0),
-        size: z.number().min(0),
+        color: z.nativeEnum(Color),
+        size: z.nativeEnum(Size),
         quantity: z.number().min(0),
       })
     )
     .min(1, "At least one SKU is required"),
+  images: z
+    .array(z.instanceof(File))
+    .max(5, "You can upload up to 5 images only")
+    .min(1, "At least one image is required"),
 });
 
 export type CreateProductFormValues = z.infer<typeof createProductSchema>;

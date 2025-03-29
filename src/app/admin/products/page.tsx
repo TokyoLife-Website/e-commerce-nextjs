@@ -1,5 +1,4 @@
 "use client";
-import AutoCompleteInput from "@/components/inputs/AutoCompleteInput";
 import RadioInput from "@/components/inputs/RadioInput";
 import RangeInput from "@/components/inputs/RangeInput";
 import SelectInput from "@/components/inputs/SelectInput";
@@ -18,7 +17,7 @@ import {
 import { DiscountType } from "@/types/discountType";
 import { handleRequestError } from "@/utils/errorHandler";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Controller,
   SubmitHandler,
@@ -30,6 +29,11 @@ import { Autocomplete, Stack, TextField } from "@mui/material";
 import { useCategoriesQuery } from "@/hooks/api/category.api";
 import { Category } from "@/types/category";
 import CustomLabel from "@/components/layouts/CustomLabel";
+import { useProductMutation } from "@/hooks/api/product.api";
+import { Color } from "@/types/color";
+import { Size } from "@/types/size";
+import Image from "next/image";
+import { useUploadImagesMutation } from "@/hooks/api/upload.api";
 const ProductCkEditor = dynamic(
   () => import("@/components/admin/ProductEditor"),
   {
@@ -41,26 +45,25 @@ const ProductCkEditor = dynamic(
 const defaultValues: CreateProductFormValues = {
   name: "",
   slug: "",
-  description: "abc",
+  description: "",
   price: 0,
   discountValue: 0,
   discountType: DiscountType.NONE,
   isActive: true,
-  categoryId: 9,
+  categoryId: 3,
   skus: [],
+  images: [],
 };
 
-const colorOptions = [
-  { id: 0, name: "Đỏ" },
-  { id: 1, name: "Xanh" },
-  { id: 2, name: "Vàng" },
-];
+const colorOptions = Object.values(Color).map((value) => ({
+  name: value,
+  id: value,
+}));
 
-const sizeOptions = [
-  { id: 0, name: "S" },
-  { id: 1, name: "M" },
-  { id: 2, name: "L" },
-];
+const sizeOptions = Object.values(Size).map((value) => ({
+  name: value,
+  id: value,
+}));
 
 const breadcrumbItems = [
   { label: "Home", path: "/" },
@@ -91,43 +94,90 @@ const useCategoryTreeData = (categories?: Category[]) => {
 export default function Product() {
   const { showSuccess } = useToast();
   const { data } = useCategoriesQuery();
+  const { mutateAsync } = useProductMutation();
+  const { mutateAsync: uploadImages } = useUploadImagesMutation();
   const categoryData = useCategoryTreeData(data?.data);
   const [option, setOption] = useState<{
-    color: number;
-    size: number;
+    color: Color;
+    size: Size;
     quantity: number;
-  }>({ color: 0, size: 0, quantity: 0 });
+  }>({ color: Color.BLACK, size: Size.S, quantity: 0 });
+  const [previewImages, setPreviewImages] = useState<string[]>([]);
   const {
     control,
+    reset,
     watch,
+    register,
     setValue,
     handleSubmit,
     formState: { errors },
   } = useForm<CreateProductFormValues>({
     defaultValues,
-    mode: "onChange",
+    mode: "all",
     resolver: zodResolver(createProductSchema),
   });
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, update } = useFieldArray({
     control,
     name: "skus",
   });
+  const isSKUDuplicate = fields.some(
+    (sku) => sku.color === option.color && sku.size === option.size
+  );
 
+  const watchSkus = watch("skus");
   const handleAddSku = () => {
+    if (isSKUDuplicate) return;
     append(option);
-    setOption({ color: 0, size: 0, quantity: 0 });
+    setOption({ color: Color.BLACK, size: Size.S, quantity: 0 });
+  };
+  const images = watch("images");
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      const fileArray = Array.from(files);
+      const newPreviewImages = fileArray.map((file) =>
+        URL.createObjectURL(file)
+      );
+      setPreviewImages((prev) => [...prev, ...newPreviewImages]);
+      setValue("images", [...(watch("images") || []), ...fileArray], {
+        shouldValidate: true,
+      });
+    }
+  };
+
+  const removeImage = (index: number) => {
+    const newFiles = Array.from(images || []).filter((_, i) => i !== index);
+    setValue("images", newFiles);
+    setPreviewImages(
+      newFiles.map((file) => URL.createObjectURL(file as unknown as Blob))
+    );
   };
 
   const onSubmit: SubmitHandler<CreateProductFormValues> = async (data) => {
     try {
-      showSuccess("ok");
+      let images: File[] = [];
+      if (data.images) {
+        const res = await uploadImages(data.images);
+        images = res?.data;
+        console.log(images);
+      }
+      const newProductData = { ...data, images };
+      const { message, data: product } = await mutateAsync(newProductData);
+      console.log(product.images);
+      showSuccess(message);
+      reset(defaultValues);
+      setOption({ color: Color.BLACK, size: Size.S, quantity: 0 });
+      setPreviewImages([]);
       console.log(data);
     } catch (error) {
       handleRequestError(error);
     }
   };
   const discountType = watch("discountType");
+  useEffect(() => {
+    setValue("discountValue", 0);
+  }, [discountType, setValue]);
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <PageBreadcrumb
@@ -149,12 +199,23 @@ export default function Product() {
             name={"description"}
             control={control}
             render={({ field }) => (
-              <ProductCkEditor
-                editorData={field.value}
-                setEditorData={(value) => setValue("description", value)}
-              />
+              <div
+                className={`${
+                  !!errors.description && "border border-[#d32f2f] rounded-sm"
+                }`}
+              >
+                <ProductCkEditor
+                  editorData={field.value}
+                  setEditorData={(value) => setValue("description", value)}
+                />
+              </div>
             )}
           />
+          {true && (
+            <span className="text-[#d32f2f] text-xs">
+              {errors.description?.message}
+            </span>
+          )}
         </ComponentCard>
         <ComponentCard title="Status" className="h-fit">
           <SelectInput
@@ -173,14 +234,26 @@ export default function Product() {
         <ComponentCard title="Media" className="col-span-2">
           <div
             onClick={() => document.getElementById("fileInput")?.click()}
-            className="transition border border-gray-300 border-dashed cursor-pointer dark:hover:border-brand-500 dark:border-gray-700 rounded-xl hover:border-brand-500"
+            className={`transition border-2 ${
+              !!errors.images ? "border-[#d32f2f]" : "border-[#007aff]"
+            }  border-dashed cursor-pointer dark:hover:border-brand-500 dark:border-gray-700 rounded-xl hover:border-brand-500`}
           >
             <div
-              className={`dropzone rounded-xl   border-dashed border-gray-300 p-7 lg:p-10
-                border-brand-500 bg-gray-100 dark:bg-gray-800`}
+              className={`${
+                !!errors.images ? "bg-[#fff8f8]" : "bg-[#e7f0fe]"
+              } rounded-xl   border-dashed border-gray-300 p-7 lg:p-10
+                border-brand-500  dark:bg-gray-800`}
             >
-              <input type="file" id="fileInput" className="hidden" />
-              <div className="dz-message flex flex-col items-center m-0!">
+              <input
+                multiple
+                {...register("images")}
+                accept="image/"
+                type="file"
+                id="fileInput"
+                className="hidden"
+                onChange={handleFileChange}
+              />
+              <div className="flex flex-col items-center m-0!">
                 <div className="mb-[22px] flex justify-center">
                   <div className="flex h-[68px] w-[68px]  items-center justify-center rounded-full bg-gray-200 text-gray-700 dark:bg-gray-800 dark:text-gray-400">
                     <svg
@@ -209,6 +282,33 @@ export default function Product() {
                 </span>
               </div>
             </div>
+          </div>
+          {!!errors.images && (
+            <span className="text-[#d32f2f] text-xs">
+              {errors.images?.message}
+            </span>
+          )}
+          <div className="flex flex-wrap gap-2">
+            {previewImages.map((image, index) => (
+              <div
+                key={index}
+                className="relative w-28 h-28 rounded-lg border border-gray-300 p-2 flex flex-col items-center justify-between"
+              >
+                <Image
+                  src={image}
+                  alt="preview"
+                  width={100}
+                  height={100}
+                  className="rounded-md object-cover w-full h-full"
+                />
+                <button
+                  onClick={() => removeImage(index)}
+                  className="mt-2 flex items-center gap-1 text-red-500 hover:text-red-600 text-sm"
+                >
+                  Xóa
+                </button>
+              </div>
+            ))}
           </div>
         </ComponentCard>
         <ComponentCard title="Product details" className="h-fit">
@@ -248,24 +348,69 @@ export default function Product() {
           {fields.map((field, index) => (
             <div key={field.id} className="grid grid-cols-10 gap-6">
               <div className="col-span-3">
-                <AutoCompleteInput
+                <Autocomplete
                   size="small"
-                  name={`skus.${index}.color`}
-                  control={control}
-                  isError={!!errors.skus?.[index]?.color}
-                  errMsg={errors.skus?.[index]?.color?.message}
-                  defaultValue={0}
-                  options={colorOptions}
+                  options={colorOptions.filter((option) => {
+                    const currentSize = fields[index].size;
+                    const usedColors = fields
+                      .filter(
+                        (sku, i) => sku.size === currentSize && i !== index
+                      )
+                      .map((sku) => sku.color);
+                    return !usedColors.includes(option.id);
+                  })}
+                  getOptionLabel={(option) => option.name}
+                  value={
+                    colorOptions.find(
+                      (item) => item.name === watch(`skus.${index}.color`)
+                    ) || null
+                  }
+                  onChange={(_, newValue) => {
+                    update(index, {
+                      ...watchSkus[index],
+                      color: newValue?.id || Color.BLACK,
+                    });
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      error={!!errors.skus?.[index]?.size}
+                      helperText={errors.skus?.[index]?.size?.message}
+                    />
+                  )}
                 />
               </div>
               <div className="col-span-3">
-                <AutoCompleteInput
+                <Autocomplete
                   size="small"
-                  name={`skus.${index}.size`}
-                  control={control}
-                  isError={!!errors.skus?.[index]?.size}
-                  errMsg={errors.skus?.[index]?.size?.message}
-                  options={sizeOptions}
+                  options={sizeOptions.filter((option) => {
+                    const currentColor = fields[index].color;
+                    const usedSizes = fields
+                      .filter(
+                        (sku, i) => sku.color === currentColor && i !== index
+                      )
+                      .map((sku) => sku.size);
+                    return !usedSizes.includes(option.id);
+                  })}
+                  getOptionLabel={(option) => option.name}
+                  value={
+                    sizeOptions.find(
+                      (item) => item.name === watch(`skus.${index}.size`)
+                    ) || null
+                  }
+                  onChange={(_, newValue) => {
+                    update(index, {
+                      ...watchSkus[index],
+                      size: newValue?.id || Size.S,
+                    });
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      error={!!errors.skus?.[index]?.size}
+                      helperText={errors.skus?.[index]?.size?.message}
+                    />
+                  )}
                 />
               </div>
               <div className="col-span-3">
@@ -294,7 +439,7 @@ export default function Product() {
             <Autocomplete
               className="col-span-3"
               onChange={(_, newValue) =>
-                setOption({ ...option, color: newValue?.id || 0 })
+                setOption({ ...option, color: newValue?.id || Color.BLACK })
               }
               value={
                 colorOptions.find((item) => item.id === option.color) || null
@@ -308,7 +453,7 @@ export default function Product() {
             <Autocomplete
               className="col-span-3"
               onChange={(_, newValue) =>
-                setOption({ ...option, size: newValue?.id || 0 })
+                setOption({ ...option, size: newValue?.id || Size.S })
               }
               value={
                 sizeOptions.find((item) => item.id === option.size) || null
@@ -323,6 +468,7 @@ export default function Product() {
               className="col-span-3"
               onChange={(e) => {
                 const value = (e.target as HTMLInputElement).value;
+                if (+value < 0) return;
                 setOption({ ...option, quantity: +value });
               }}
               value={option.quantity}
@@ -330,7 +476,11 @@ export default function Product() {
               size="small"
             />
             <button
-              onClick={handleAddSku}
+              disabled={isSKUDuplicate}
+              onClick={(e) => {
+                e.preventDefault();
+                handleAddSku();
+              }}
               className="flex flex-shrink-0 items-center justify-center cursor-pointer w-10 h-10 rounded-md border-[0.25px] border-[#000000de] bg-white dark:border-gray-800 dark:bg-white/[0.03]"
             >
               <FaPlus />
