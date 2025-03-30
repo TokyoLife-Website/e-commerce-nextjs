@@ -1,7 +1,6 @@
 "use client";
 import RadioInput from "@/components/inputs/RadioInput";
 import RangeInput from "@/components/inputs/RangeInput";
-import SelectInput from "@/components/inputs/SelectInput";
 import TextInput from "@/components/inputs/TextInput";
 import ComponentCard from "@/components/admin/common/ComponentCard";
 import PageBreadcrumb from "@/components/admin/common/PageBreadCrumb";
@@ -47,7 +46,7 @@ const defaultValues: CreateProductFormValues = {
   slug: "",
   description: "",
   price: 0,
-  discountValue: 0,
+  discountValue: null,
   discountType: DiscountType.NONE,
   isActive: true,
   categoryId: 3,
@@ -110,7 +109,7 @@ export default function Product() {
     register,
     setValue,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<CreateProductFormValues>({
     defaultValues,
     mode: "all",
@@ -147,20 +146,23 @@ export default function Product() {
   };
 
   const removeImage = (index: number) => {
-    const newFiles = Array.from(images || []).filter((_, i) => i !== index);
-    setValue("images", newFiles);
-    setPreviewImages(
-      newFiles.map((file) => URL.createObjectURL(file as unknown as Blob))
-    );
+    const isDelete = confirm("Bạn chắc chắn muốn xóa hình ảnh này?");
+    if (isDelete) {
+      const newFiles = Array.from(images || []).filter((_, i) => i !== index);
+      setValue("images", newFiles);
+      setPreviewImages(
+        newFiles.map((file) => URL.createObjectURL(file as unknown as Blob))
+      );
+    }
   };
 
   const onSubmit: SubmitHandler<CreateProductFormValues> = async (data) => {
+    console.log(data);
     try {
       let images: File[] = [];
       if (data.images) {
         const res = await uploadImages(data.images);
         images = res?.data;
-        console.log(images);
       }
       const newProductData = { ...data, images };
       const { message, data: product } = await mutateAsync(newProductData);
@@ -169,14 +171,14 @@ export default function Product() {
       reset(defaultValues);
       setOption({ color: Color.BLACK, size: Size.S, quantity: 0 });
       setPreviewImages([]);
-      console.log(data);
     } catch (error) {
       handleRequestError(error);
     }
   };
   const discountType = watch("discountType");
   useEffect(() => {
-    setValue("discountValue", 0);
+    if (discountType === DiscountType.NONE) setValue("discountValue", null);
+    else setValue("discountValue", 0);
   }, [discountType, setValue]);
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -217,18 +219,50 @@ export default function Product() {
             </span>
           )}
         </ComponentCard>
-        <ComponentCard title="Status" className="h-fit">
-          <SelectInput
+        <ComponentCard title="Product details" className="h-fit">
+          <Controller
             name="isActive"
             control={control}
-            isError={!!errors.isActive}
-            errMsg={errors.isActive?.message}
-            isRequired
-            label="Status"
-            options={[
-              { id: 0, name: "true" },
-              { id: 1, name: "false" },
-            ]}
+            render={({ field }) => (
+              <label className="flex w-fit items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="sr-only peer"
+                  checked={field.value}
+                  onChange={(e) => field.onChange(e.target.checked)}
+                />
+                <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600 dark:peer-checked:bg-blue-600"></div>
+                <span className="ml-2 text-sm font-medium">
+                  {watch("isActive") ? "Active" : "Inactive"}
+                </span>
+              </label>
+            )}
+          />
+          <Controller
+            name="categoryId"
+            control={control}
+            render={({ field }) => (
+              <Stack spacing={0.5}>
+                <CustomLabel label="Category" isRequired={true} />
+                <TreeSelect
+                  {...field}
+                  className="w-full h-14 rounded-full"
+                  dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
+                  placeholder="Please select"
+                  treeDefaultExpandAll
+                  treeData={categoryData}
+                  size="large"
+                />
+              </Stack>
+            )}
+          />
+          <TextInput
+            label="Slug"
+            name="slug"
+            control={control}
+            errMsg={errors.slug?.message}
+            isError={!!errors.slug}
+            placeHolder="Nhập slug cuả sản phẩm"
           />
         </ComponentCard>
         <ComponentCard title="Media" className="col-span-2">
@@ -288,18 +322,18 @@ export default function Product() {
               {errors.images?.message}
             </span>
           )}
-          <div className="flex flex-wrap gap-2">
+          <div className="grid grid-cols-5 gap-2">
             {previewImages.map((image, index) => (
               <div
                 key={index}
-                className="relative w-28 h-28 rounded-lg border border-gray-300 p-2 flex flex-col items-center justify-between"
+                className="relative h-fit w-fit rounded-lg border border-gray-300 p-2 flex flex-col items-center justify-between"
               >
                 <Image
                   src={image}
                   alt="preview"
-                  width={100}
-                  height={100}
-                  className="rounded-md object-cover w-full h-full"
+                  width={90}
+                  height={90}
+                  className="rounded-md object-cover w-32 h-32 overflow-hidden"
                 />
                 <button
                   onClick={() => removeImage(index)}
@@ -310,34 +344,6 @@ export default function Product() {
               </div>
             ))}
           </div>
-        </ComponentCard>
-        <ComponentCard title="Product details" className="h-fit">
-          <Controller
-            name="categoryId"
-            control={control}
-            render={({ field }) => (
-              <Stack spacing={0.5}>
-                <CustomLabel label="Category" isRequired={true} />
-                <TreeSelect
-                  {...field}
-                  className="w-full h-14 rounded-full"
-                  dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
-                  placeholder="Please select"
-                  treeDefaultExpandAll
-                  treeData={categoryData}
-                  size="large"
-                />
-              </Stack>
-            )}
-          />
-          <TextInput
-            label="Slug"
-            name="slug"
-            control={control}
-            errMsg={errors.slug?.message}
-            isError={!!errors.slug}
-            placeHolder="Nhập slug cuả sản phẩm"
-          />
         </ComponentCard>
         <ComponentCard title="SKU" className="col-span-2">
           <div className="grid grid-cols-10 gap-6">
@@ -538,7 +544,10 @@ export default function Product() {
           )}
         </ComponentCard>
       </div>
-      <CustomButton className="mt-6 text-white rounded-2xl">
+      <CustomButton
+        disabled={isSubmitting}
+        className="mt-6 text-white rounded-2xl"
+      >
         Create
       </CustomButton>
     </form>

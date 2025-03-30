@@ -7,8 +7,11 @@ export const createProductSchema = z.object({
   name: z.string().min(1, "Product name is required"),
   slug: z.string().optional(),
   description: z.string().min(1, "Description is required"),
-  price: z.number().min(0, "Price must be a positive number"),
-  discountValue: z.number().min(0, "Discount value must be a positive number"),
+  price: z.number().gt(0, "Price must be greater than 0"),
+  discountValue: z
+    .number()
+    .gt(0, "Discount value must be greater than 0")
+    .nullable(),
   discountType: z
     .nativeEnum(DiscountType)
     .optional()
