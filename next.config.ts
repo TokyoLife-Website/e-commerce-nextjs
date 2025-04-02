@@ -10,6 +10,11 @@ const nextConfig: NextConfig = {
         pathname: "**",
       },
       {
+        protocol: "http",
+        hostname: "localhost",
+        pathname: "**",
+      },
+      {
         protocol: "https",
         hostname: "tokyolife.vn",
         pathname: "**",
@@ -24,9 +29,9 @@ const nextConfig: NextConfig = {
   experimental: {
     turbo: {
       rules: {
-        '*.svg': {
-          loaders: ['@svgr/webpack'],
-          as: '*.js',
+        "*.svg": {
+          loaders: ["@svgr/webpack"],
+          as: "*.js",
         },
       },
     },
