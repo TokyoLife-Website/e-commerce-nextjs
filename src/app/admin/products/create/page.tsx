@@ -90,7 +90,7 @@ const useCategoryTreeData = (categories?: Category[]) => {
   );
 };
 
-export default function Product() {
+export default function ProductCreate() {
   const { showSuccess } = useToast();
   const { data } = useCategoriesQuery();
   const { mutateAsync } = useProductMutation();
@@ -149,7 +149,7 @@ export default function Product() {
     const isDelete = confirm("Bạn chắc chắn muốn xóa hình ảnh này?");
     if (isDelete) {
       const newFiles = Array.from(images || []).filter((_, i) => i !== index);
-      setValue("images", newFiles);
+      setValue("images", newFiles, { shouldValidate: true });
       setPreviewImages(
         newFiles.map((file) => URL.createObjectURL(file as unknown as Blob))
       );
@@ -157,7 +157,6 @@ export default function Product() {
   };
 
   const onSubmit: SubmitHandler<CreateProductFormValues> = async (data) => {
-    console.log(data);
     try {
       let images: File[] = [];
       if (data.images) {

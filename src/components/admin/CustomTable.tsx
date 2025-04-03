@@ -32,7 +32,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
   };
   return (
     <div>
-      <TableContainer sx={{ maxHeight: 450 }}>
+      <TableContainer sx={{ height: 450 }}>
         <Table stickyHeader>
           <TableHead>
             <TableRow>

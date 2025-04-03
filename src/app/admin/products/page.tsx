@@ -6,8 +6,10 @@ import { Column } from "@/types/table";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { formatDate } from "@/utils/formatDate";
 import { Chip, Rating } from "@mui/material";
+import { LuEye } from "react-icons/lu";
 import Image from "next/image";
 import React, { useState } from "react";
+import Link from "next/link";
 const breadcrumbItems = [
   { label: "Home", path: "/" },
   { label: "Product", path: "products" },
@@ -35,6 +37,11 @@ const columns: Column[] = [
         </div>
       </div>
     ),
+  },
+  {
+    id: "stock",
+    label: "Stock",
+    minWidth: 100,
   },
   {
     id: "price",
@@ -72,9 +79,11 @@ const columns: Column[] = [
     id: "action",
     label: "",
     render: (row) => (
-      <button onClick={() => alert(`Row ID: ${row.id}`)}>edit</button>
+      <Link href={`/admin/products/${row.id}`}>
+        <LuEye className="w-5 h-5" />
+      </Link>
     ),
-    minWidth: 100,
+    minWidth: 50,
   },
 ];
 const ProductList = () => {
