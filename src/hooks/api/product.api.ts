@@ -20,6 +20,41 @@ const fetchProducts = async (
   return response.data;
 };
 
+const fetchProduct = async (
+  id: string | number
+): Promise<ResponseData<any>> => {
+  const response = await axiosInstance.get(`/products/${id}`);
+  return response.data;
+};
+
+const updateProduct = async (id: number, data: CreateProductFormValues) => {
+  const response = await axiosInstance.patch(`/products/${id}`, data);
+  return response.data;
+};
+
+export const useUpdateProductMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: number; data: CreateProductFormValues }) =>
+      updateProduct(id, data),
+
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.PRODUCT(variables.id)],
+      });
+    },
+  });
+};
+
+export const useProductQuery = (id: string | number) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.PRODUCT(id)],
+    queryFn: () => fetchProduct(id),
+    enabled: !!id,
+  });
+};
+
 export const useProductsQuery = (
   page?: number | string,
   size?: number | string

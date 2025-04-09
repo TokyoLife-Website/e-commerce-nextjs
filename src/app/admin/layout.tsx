@@ -4,7 +4,7 @@ import AppHeader from "@/components/admin/AppHeader";
 import AppSidebar from "@/components/admin/AppSidebar";
 import Backdrop from "@/components/admin/Backdrop";
 import { useSidebar } from "@/contexts/SidebarContext";
-import React from "react";
+import React, { Suspense } from "react";
 
 export default function AdminLayout({
   children,
@@ -33,7 +33,7 @@ export default function AdminLayout({
         <AppHeader />
         {/* Page Content */}
         <div className="p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6">
-          {children}
+          <Suspense>{children}</Suspense>
         </div>
       </div>
     </div>

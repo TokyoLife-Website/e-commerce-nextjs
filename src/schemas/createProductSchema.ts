@@ -21,6 +21,8 @@ export const createProductSchema = z.object({
   skus: z
     .array(
       z.object({
+        id: z.number().optional(),
+        sku: z.string().optional(),
         color: z.nativeEnum(Color),
         size: z.nativeEnum(Size),
         quantity: z.number().min(0),
@@ -28,7 +30,7 @@ export const createProductSchema = z.object({
     )
     .min(1, "At least one SKU is required"),
   images: z
-    .array(z.instanceof(File))
+    .array(z.instanceof(File).or(z.string()))
     .max(5, "You can upload up to 5 images only")
     .min(1, "At least one image is required"),
 });

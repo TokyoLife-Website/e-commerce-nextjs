@@ -17,14 +17,12 @@ const ProductCkEditor = ({ editorData, setEditorData }: Props) => {
   };
 
   return (
-    <div>
-      <div className="max-w-3xl mx-auto">
-        <CkEditor
-          editorData={editorData}
-          setEditorData={setEditorData}
-          handleOnUpdate={handleOnUpdate}
-        />
-      </div>
+    <div className="max-w-3xl mx-auto">
+      <CkEditor
+        editorData={editorData}
+        setEditorData={setEditorData}
+        handleOnUpdate={handleOnUpdate}
+      />
     </div>
   );
 };

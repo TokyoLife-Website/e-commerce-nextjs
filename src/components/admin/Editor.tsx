@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useEffect } from "react";
+import React, { FC, useEffect, useRef } from "react";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import {
   ClassicEditor,
@@ -41,17 +41,13 @@ import "ckeditor5/ckeditor5.css";
 interface CkEditorProps {
   editorData: string;
   setEditorData: (data: string) => void;
-  handleOnUpdate: (editor: string, field: string) => void;
 }
 
-const CkEditor: FC<CkEditorProps> = ({
-  setEditorData,
-  editorData,
-  handleOnUpdate,
-}) => {
+const CkEditor: FC<CkEditorProps> = ({ setEditorData, editorData }) => {
   useEffect(() => {
     console.log("what is editorData: ", editorData);
   }, [editorData]);
+
   return (
     <CKEditor
       editor={ClassicEditor}
@@ -295,10 +291,8 @@ const CkEditor: FC<CkEditorProps> = ({
       onChange={(_event, editor: { getData: () => any }) => {
         const data = editor.getData();
         setEditorData(data);
-        handleOnUpdate(data, "description");
       }}
-      onFocus={() => console.log("Editor focused")}
-      onBlur={() => console.log("Editor blurred")}
+      data={editorData}
     />
   );
 };

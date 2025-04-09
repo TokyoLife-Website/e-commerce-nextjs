@@ -25,7 +25,7 @@ const columns: Column[] = [
         <Image
           className="w-16 h-16 object-cover rounded"
           alt="primary image"
-          src={row.images[0]}
+          src={row.images[0] || ""}
           width={90}
           height={90}
         />
@@ -41,6 +41,7 @@ const columns: Column[] = [
   {
     id: "stock",
     label: "Stock",
+    render: (row) => row.stock,
     minWidth: 100,
   },
   {

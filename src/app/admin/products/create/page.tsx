@@ -33,13 +33,11 @@ import { Color } from "@/types/color";
 import { Size } from "@/types/size";
 import Image from "next/image";
 import { useUploadImagesMutation } from "@/hooks/api/upload.api";
-const ProductCkEditor = dynamic(
-  () => import("@/components/admin/ProductEditor"),
-  {
-    loading: () => <p>Loading ckeditor...</p>,
-    ssr: false,
-  }
-);
+import CkEditor from "@/components/admin/Editor";
+// const ProductCkEditor = dynamic(() => import("@/components/admin/Editor"), {
+//   loading: () => <p>Loading ckeditor...</p>,
+//   ssr: false,
+// });
 
 const defaultValues: CreateProductFormValues = {
   name: "",
@@ -158,9 +156,9 @@ export default function ProductCreate() {
 
   const onSubmit: SubmitHandler<CreateProductFormValues> = async (data) => {
     try {
-      let images: File[] = [];
+      let images: string[] = [];
       if (data.images) {
-        const res = await uploadImages(data.images);
+        const res = await uploadImages(data.images as File[]);
         images = res?.data;
       }
       const newProductData = { ...data, images };
@@ -205,14 +203,14 @@ export default function ProductCreate() {
                   !!errors.description && "border border-[#d32f2f] rounded-sm"
                 }`}
               >
-                <ProductCkEditor
+                <CkEditor
                   editorData={field.value}
-                  setEditorData={(value) => setValue("description", value)}
+                  setEditorData={field.onChange}
                 />
               </div>
             )}
           />
-          {true && (
+          {!!errors.description && (
             <span className="text-[#d32f2f] text-xs">
               {errors.description?.message}
             </span>
