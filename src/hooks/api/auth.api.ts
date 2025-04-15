@@ -43,10 +43,15 @@ const fetchLogout = async (
 export const fetchRefreshToken = async (
   refreshToken: string
 ): Promise<ResponseData<TokenResponse>> => {
-  const response = await axiosInstance.post("/auth/refresh-token", {
-    refreshToken,
-  });
-  return response.data;
+  try {
+    const response = await axiosInstance.post("/auth/refresh-token", {
+      refreshToken,
+    });
+    return response.data;
+  } catch (error) {
+    // Optional: Log the error or process it as needed
+    throw error; // Re-throw the error to be handled by the caller
+  }
 };
 
 const fetchForgotPassword = async (

@@ -6,6 +6,8 @@ import { logout, setToken } from "@/redux/authSlice";
 class Http {
   private static instance: Http;
   private axiosInstance: AxiosInstance;
+  private isRefreshing = false;
+  private refreshSubscribers: Array<(token: string) => void> = [];
 
   private constructor() {
     const axiosConfig: AxiosRequestConfig = {
@@ -34,10 +36,17 @@ class Http {
       async (error) => {
         const originalRequest = error.config;
         if (error.response?.status === 401 && !originalRequest._retry) {
+          if (this.isRefreshing) {
+            return new Promise((resolve) => {
+              this.refreshSubscribers.push((token: string) => {
+                originalRequest.headers["Authorization"] = `Bearer ${token}`;
+                resolve(this.axiosInstance(originalRequest));
+              });
+            });
+          }
+
+          this.isRefreshing = true;
           originalRequest._retry = true;
-          // if (originalRequest?.url?.includes("/auth/login")) {
-          //   return Promise.reject(error);
-          // }
           try {
             const refreshToken = store.getState().auth?.refreshToken;
             if (!refreshToken) {
@@ -55,11 +64,17 @@ class Http {
               "Authorization"
             ] = `Bearer ${access_token}`;
             originalRequest.headers["Authorization"] = `Bearer ${access_token}`;
+            this.refreshSubscribers.forEach((callback) =>
+              callback(access_token)
+            );
+            this.refreshSubscribers = [];
             return axiosInstance(originalRequest);
           } catch (refreshError) {
-            console.log(refreshError);
             store.dispatch(logout());
+            window.location.href = "/";
             return Promise.reject(refreshError);
+          } finally {
+            this.isRefreshing = false;
           }
         }
         return Promise.reject(error);

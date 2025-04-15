@@ -389,7 +389,10 @@ const EditProductPage = () => {
                   className="rounded-md object-cover w-32 h-32 overflow-hidden"
                 />
                 <button
-                  onClick={() => removeImage(index)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    removeImage(index);
+                  }}
                   className="mt-2 flex items-center gap-1 text-red-500 hover:text-red-600 text-sm"
                 >
                   Xóa

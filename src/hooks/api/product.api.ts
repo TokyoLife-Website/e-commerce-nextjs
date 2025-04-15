@@ -27,6 +27,11 @@ const fetchProduct = async (
   return response.data;
 };
 
+const fetchProductBySlug = async (slug: string): Promise<ResponseData<any>> => {
+  const response = await axiosInstance.get(`/products/slug/${slug}`);
+  return response.data;
+};
+
 const updateProduct = async (id: number, data: CreateProductFormValues) => {
   const response = await axiosInstance.patch(`/products/${id}`, data);
   return response.data;
@@ -52,6 +57,14 @@ export const useProductQuery = (id: string | number) => {
     queryKey: [QUERY_KEYS.PRODUCT(id)],
     queryFn: () => fetchProduct(id),
     enabled: !!id,
+  });
+};
+
+export const useProductBySlugQuery = (slug: string) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.PRODUCT(slug)],
+    queryFn: () => fetchProductBySlug(slug),
+    enabled: !!slug,
   });
 };
 
