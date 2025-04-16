@@ -6,5 +6,6 @@ export enum ModalType {
   RESET_PASSWORD = "reset-password",
   VERIFY_EMAIL = "verify-email",
   VERIFY_CODE = "verify-code",
+  SIZE_GUIDE = "size-guide",
   NONE = "none",
 }

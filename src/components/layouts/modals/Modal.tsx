@@ -8,6 +8,7 @@ import { ForgotPasswordForm } from "./ForgotPasswordForm";
 import { VerifyCodeForm } from "./VerifyCodeForm";
 import { ResetPasswordForm } from "./ResetPasswordForm";
 import { AddressForm } from "./AddressForm";
+import SizeGuideForm from "./SizeGuideForm";
 
 export const Modal = () => {
   const { isOpen, type } = useAppSelector((state: RootState) => state.modal);
@@ -26,6 +27,8 @@ export const Modal = () => {
         return <ResetPasswordForm />;
       case ModalType.VERIFY_CODE:
         return <VerifyCodeForm />;
+      case ModalType.SIZE_GUIDE:
+        return <SizeGuideForm />;
       default:
         return null;
     }

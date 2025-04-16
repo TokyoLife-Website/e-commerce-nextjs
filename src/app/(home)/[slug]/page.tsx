@@ -21,10 +21,14 @@ import "swiper/css/effect-fade";
 import "swiper/css/scrollbar";
 import Image from "next/image";
 import { Rating } from "@mui/material";
+import { useAppDispatch } from "@/redux/store";
+import { openModal } from "@/redux/modalSlice";
+import { ModalType } from "@/types/modal";
 
 const sizes = ["Size S", "Size M", "Size L", "Size XL", "Size 2XL"];
 
 const ProductDetail = () => {
+  const dispatch = useAppDispatch();
   const { slug } = useParams<{ slug: string }>();
   const { data } = useProductBySlugQuery(slug || "");
   const [thumbsSwiper, setThumbsSwiper] = useState<any>(null);
@@ -211,7 +215,12 @@ const ProductDetail = () => {
               </div>
             </div>
           </div>
-          <div className="flex gap-2 items-center text-[13px] leading-[18px] my-4 cursor-pointer">
+          <div
+            onClick={() => {
+              dispatch(openModal({ type: ModalType.SIZE_GUIDE }));
+            }}
+            className="flex gap-2 items-center text-[13px] leading-[18px] my-4 cursor-pointer"
+          >
             <svg
               width="25"
               height="10"
