@@ -10,8 +10,11 @@ import {
   Thumbs,
 } from "swiper/modules";
 import { GrNext, GrPrevious } from "react-icons/gr";
-
+import { BsArrowRight } from "react-icons/bs";
 import { Swiper, SwiperSlide } from "swiper/react";
+import CartIcon from "../../../../public/cart.svg";
+import BagIcon from "../../../../public/bag.svg";
+import MapIcon from "../../../../public/map.svg";
 
 // Import Swiper styles
 import "swiper/css";
@@ -24,6 +27,8 @@ import { Rating } from "@mui/material";
 import { useAppDispatch } from "@/redux/store";
 import { openModal } from "@/redux/modalSlice";
 import { ModalType } from "@/types/modal";
+import Link from "next/link";
+import PolicyList from "@/components/product/PolicyList";
 
 const sizes = ["Size S", "Size M", "Size L", "Size XL", "Size 2XL"];
 
@@ -55,7 +60,7 @@ const ProductDetail = () => {
   };
   console.log(data);
   return (
-    <div className="lg:px-[117px] md:px-20 sm:px-10 px-5 font-font-poppins mt-6 min-h-full">
+    <div className="lg:px-[117px] md:px-20 sm:px-10 px-5 font-font-poppins mt-6 h-screen">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="h-screen flex gap-8">
           <div className="w-20 h-[400px]">
@@ -235,6 +240,48 @@ const ProductDetail = () => {
             </svg>
             <span>Hướng dẫn kích thước</span>
           </div>
+          <Link
+            target="_blank"
+            href={"https://zalo.me/0373635003"}
+            className="flex items-center gap-[5px] text-[#2f5acf] font-bold text-[14px] mb-[15px]"
+          >
+            <Image
+              src="/zalo.svg"
+              alt="Next.js logo"
+              width={30}
+              height={30}
+              priority
+            />
+            <p>Chat ngay để nhận tư vấn sản phẩm & ưu đãi</p>
+            <span className="text-black ">
+              <BsArrowRight size={20} />
+            </span>
+          </Link>
+          <div className="flex flex-col gap-y-4 mb-5">
+            <div className="flex items-center justify-between gap-x-3">
+              <button className="transition-shadow duration-300 ease-in-out hover:shadow-xl flex justify-center items-center gap-x-2 w-1/2 p-3 min-w-16 border-2 border-primary rounded outline-none select-none">
+                <CartIcon />
+                <p className="text-primary text-[14px] font-semibold leading-6 m-0">
+                  Thêm giỏ hàng
+                </p>
+              </button>
+              <button className="transition-shadow duration-300 ease-in-out hover:shadow-xl flex justify-center items-center gap-x-2 w-1/2 p-3 min-w-16 border-2 border-primary bg-primary rounded outline-none select-none">
+                <BagIcon />
+
+                <p className="text-white text-[14px] font-semibold leading-6 m-0">
+                  Mua ngay
+                </p>
+              </button>
+            </div>
+            <button className="transition-shadow duration-300 ease-in-out hover:shadow-xl flex justify-center items-center gap-x-2 w-full p-3 min-w-16 border border-[#555555] rounded outline-none select-none">
+              <MapIcon />
+
+              <p className="text-black text-[14px] font-semibold leading-6 m-0">
+                Cửa hàng có sẵn sản phẩm
+              </p>
+            </button>
+          </div>
+          <PolicyList />
         </div>
       </div>
     </div>

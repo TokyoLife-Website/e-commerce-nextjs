@@ -2,8 +2,6 @@ import { Gender } from "@/types/gender";
 import { Role } from "@/types/role";
 import { User } from "@/types/user";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { persistReducer } from "redux-persist";
-import storage from "redux-persist/lib/storage";
 
 const initialState: User = {
   id: "",
