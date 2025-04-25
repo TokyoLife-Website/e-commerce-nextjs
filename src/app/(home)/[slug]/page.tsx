@@ -29,6 +29,8 @@ import { openModal } from "@/redux/modalSlice";
 import { ModalType } from "@/types/modal";
 import Link from "next/link";
 import PolicyList from "@/components/product/PolicyList";
+import { RatingSummary } from "@/components/product/ProductReview";
+import CommentList from "@/components/product/CommentList";
 
 const sizes = ["Size S", "Size M", "Size L", "Size XL", "Size 2XL"];
 
@@ -60,9 +62,9 @@ const ProductDetail = () => {
   };
   console.log(data);
   return (
-    <div className="lg:px-[117px] md:px-20 sm:px-10 px-5 font-font-poppins mt-6 h-screen">
+    <div className="lg:px-[117px] md:px-20 sm:px-10 px-5 font-font-poppins mt-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="h-screen flex gap-8">
+        <div className="flex gap-8">
           <div className="w-20 h-[400px]">
             <Swiper
               direction="vertical"
@@ -89,7 +91,6 @@ const ProductDetail = () => {
             </Swiper>
           </div>
           <Swiper
-            // install Swiper modules
             modules={[Navigation, Pagination, Scrollbar, A11y, Thumbs]}
             spaceBetween={50}
             slidesPerView={1}
@@ -283,6 +284,52 @@ const ProductDetail = () => {
           </div>
           <PolicyList />
         </div>
+      </div>
+      <div className="pt-[30px] flex flex-wrap w-full justify-center">
+        <div className="flex justify-between w-2/3 border-b border-[#5555] pb-[30px]">
+          <p className="font-bold text-lg leading-6 uppercase">
+            Mô tả sản phẩm
+          </p>
+          <p className="p-0 text-sm font-normal leading-[18px]">
+            Mã SP: 40003298
+          </p>
+        </div>
+        <p className="pt-3 w-2/3">
+          ĐẶC ĐIỂM NỔI BẬT- Thiết kế năng động, trẻ trung phù hợp với mọi vóc
+          dáng.- Thấm hút mồ hôi tốt, thoáng mát.- Co giãn, có độ đàn hồi tối
+          đa.- Đem lại cảm giác thoải mái cho người mặc.- Sản phẩm có nhiều màu
+          sắc để bạn chọn lựa.- Áo ba lỗ nam phù hợp mặc lót bên trong các trang
+          phục khác, mặc ở nhà hoặc trong các hoạt động thể thao.CHẤT LIỆU:
+          Cotton, Polyester, SpandexMÀU SẮC: Đen/ghi/xanh/trắng...KIỂU DÁNG- cổ
+          tròn/cổ vuông- dáng ôm/dáng suôngHƯỚNG DẪN SỬ DỤNG BẢO QUẢN:- Không
+          ngâm trong bột giặt quá 30 phút- Sử dụng xà phòng trung tính- Không sử
+          dụng thuốc tẩy- Lột trái khi giặt máy, và giặt ở chế độ nhẹ nhàng,
+          nhiệt độ nước dưới 40 độ C- Không giặt chung đồ trắng với các sản phẩm
+          màu khác- Không phơi đồ trực tiếp dưới ánh nắng mặt trời, nên phơi ở
+          nơi thoáng mát- Là ở nhiệt độ dưới 120 độ C
+        </p>
+      </div>
+      <div>
+        <h6 className="text-lg font-semibold leading-6 uppercase my-6">
+          ĐÁNH GIÁ TỪ NGƯỜI MUA
+        </h6>
+        <div className="flex my-6">
+          <RatingSummary
+            average={3.3}
+            totalReviews={12}
+            breakdown={{ 5: 13, 4: 0, 3: 0, 2: 3, 1: 5 }}
+          />
+        </div>
+        <CommentList />
+        {/* <div className="w-full flex flex-col items-center gap-6 py-10 px-20 bg-[#fafafa]">
+          <Image
+            alt="empty_image"
+            src={"./empty_review.svg"}
+            width={314}
+            height={215}
+          />
+          <p className="text-[14px] font-normal">Sản phẩm chưa có đánh giá </p>
+        </div> */}
       </div>
     </div>
   );
