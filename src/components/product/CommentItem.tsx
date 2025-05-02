@@ -2,6 +2,7 @@ import { Avatar, Rating } from "@mui/material";
 
 type CommentItemProps = {
   avatarAlt: string;
+  // avatarUrl: string;
   userName: string;
   rating: number;
   color: string;
@@ -12,6 +13,7 @@ type CommentItemProps = {
 
 export default function CommentItem({
   avatarAlt,
+  // avatarUrl,
   userName,
   rating,
   color,

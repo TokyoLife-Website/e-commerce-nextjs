@@ -60,7 +60,6 @@ const ProductDetail = () => {
       setQuantity(1); // reset nếu người dùng xóa sạch
     }
   };
-  console.log(data);
   return (
     <div className="lg:px-[117px] md:px-20 sm:px-10 px-5 font-font-poppins mt-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -320,16 +319,7 @@ const ProductDetail = () => {
             breakdown={{ 5: 13, 4: 0, 3: 0, 2: 3, 1: 5 }}
           />
         </div>
-        <CommentList />
-        {/* <div className="w-full flex flex-col items-center gap-6 py-10 px-20 bg-[#fafafa]">
-          <Image
-            alt="empty_image"
-            src={"./empty_review.svg"}
-            width={314}
-            height={215}
-          />
-          <p className="text-[14px] font-normal">Sản phẩm chưa có đánh giá </p>
-        </div> */}
+        <CommentList productId={data?.data.id} />
       </div>
     </div>
   );
