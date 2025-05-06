@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "./queryKeys";
 import { ResponseData } from "@/types/response";
 import { Pagination } from "@/types/paginate";
+import { Product } from "@/types/product";
 
 const createProduct = async (data: CreateProductFormValues) => {
   const response = await axiosInstance.post("/products", data);
@@ -13,7 +14,7 @@ const createProduct = async (data: CreateProductFormValues) => {
 const fetchProducts = async (
   page?: number | string,
   size?: number | string
-): Promise<ResponseData<Pagination<any>>> => {
+): Promise<ResponseData<Pagination<Product>>> => {
   const response = await axiosInstance.get("/products", {
     params: { page, size },
   });
@@ -22,12 +23,14 @@ const fetchProducts = async (
 
 const fetchProduct = async (
   id: string | number
-): Promise<ResponseData<any>> => {
+): Promise<ResponseData<Product>> => {
   const response = await axiosInstance.get(`/products/${id}`);
   return response.data;
 };
 
-const fetchProductBySlug = async (slug: string): Promise<ResponseData<any>> => {
+const fetchProductBySlug = async (
+  slug: string
+): Promise<ResponseData<Product>> => {
   const response = await axiosInstance.get(`/products/slug/${slug}`);
   return response.data;
 };
@@ -57,14 +60,16 @@ export const useProductQuery = (id: string | number) => {
     queryKey: [QUERY_KEYS.PRODUCT(id)],
     queryFn: () => fetchProduct(id),
     enabled: !!id,
+    staleTime: 5000,
   });
 };
 
 export const useProductBySlugQuery = (slug: string) => {
   return useQuery({
-    queryKey: [QUERY_KEYS.PRODUCT(slug)],
+    queryKey: slug ? [QUERY_KEYS.PRODUCT(slug)] : [],
     queryFn: () => fetchProductBySlug(slug),
     enabled: !!slug,
+    staleTime: 5000,
   });
 };
 

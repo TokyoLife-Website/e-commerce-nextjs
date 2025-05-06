@@ -1,27 +1,13 @@
 "use client";
 import { useProductBySlugQuery } from "@/hooks/api/product.api";
 import { useParams } from "next/navigation";
-import React, { useState } from "react";
-import {
-  Navigation,
-  Pagination,
-  Scrollbar,
-  A11y,
-  Thumbs,
-} from "swiper/modules";
-import { GrNext, GrPrevious } from "react-icons/gr";
+import React, { useEffect } from "react";
+
 import { BsArrowRight } from "react-icons/bs";
-import { Swiper, SwiperSlide } from "swiper/react";
 import CartIcon from "../../../../public/cart.svg";
 import BagIcon from "../../../../public/bag.svg";
 import MapIcon from "../../../../public/map.svg";
 
-// Import Swiper styles
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
-import "swiper/css/effect-fade";
-import "swiper/css/scrollbar";
 import Image from "next/image";
 import { Rating } from "@mui/material";
 import { useAppDispatch } from "@/redux/store";
@@ -31,149 +17,186 @@ import Link from "next/link";
 import PolicyList from "@/components/product/PolicyList";
 import { RatingSummary } from "@/components/product/ProductReview";
 import CommentList from "@/components/product/CommentList";
-
-const sizes = ["Size S", "Size M", "Size L", "Size XL", "Size 2XL"];
-
+import NotFound from "@/app/not-found";
+import { formatCurrency } from "@/utils/formatCurrency";
+import DOMPurify from "dompurify";
+import { SKU } from "@/types/sku";
+import ProductImageGallery from "@/components/product/ProductImageGallery";
+import { Controller, useForm } from "react-hook-form";
+import { Product } from "@/types/product";
+interface AddToCartForm {
+  color: string;
+  size: string;
+  quantity: number;
+}
 const ProductDetail = () => {
   const dispatch = useAppDispatch();
   const { slug } = useParams<{ slug: string }>();
-  const { data } = useProductBySlugQuery(slug || "");
-  const [thumbsSwiper, setThumbsSwiper] = useState<any>(null);
-  const [selectedSize, setSelectedSize] = useState("Size S");
-  const [quantity, setQuantity] = useState(1);
+  const { data, isError } = useProductBySlugQuery(slug || "");
+
+  const { handleSubmit, control, watch, setValue, getValues } =
+    useForm<AddToCartForm>({
+      defaultValues: {
+        color: "",
+        size: "",
+        quantity: 1,
+      },
+    });
+  const selectedColor = watch("color");
+  const selectedSize = watch("size");
+  const product = data?.data;
+
+  const availableColors: string[] = React.useMemo(() => {
+    if (!product?.skus) return [];
+    return Array.from(
+      new Set(
+        product?.skus
+          .filter((sku: SKU) => sku.quantity !== 0)
+          .map((sku: SKU) => sku.color)
+      )
+    );
+  }, [product?.skus]);
+
+  const skusForColor: SKU[] = React.useMemo(() => {
+    return (
+      product?.skus.filter((sku: SKU) => sku.color === selectedColor) || []
+    );
+  }, [product?.skus, selectedColor]);
+
+  useEffect(() => {
+    if (product && product.skus.length > 0) {
+      const skus = product.skus;
+      const firstColor = availableColors[0];
+      setValue("color", firstColor);
+
+      const sizesWithStock = skus.filter(
+        (sku) => sku.color === firstColor && sku.quantity > 0
+      );
+
+      if (sizesWithStock.length > 0) {
+        setValue("size", sizesWithStock[0].size);
+      } else {
+        setValue("size", "");
+      }
+    }
+  }, [availableColors, product, setValue]);
 
   const handleDecrease = () => {
-    if (quantity > 1) {
-      setQuantity((prev) => prev - 1);
+    const current = getValues("quantity");
+    if (current > 1) {
+      setValue("quantity", current - 1);
     }
   };
 
   const handleIncrease = () => {
-    setQuantity((prev) => prev + 1);
+    const current = getValues("quantity");
+    setValue("quantity", current + 1);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    onChange: (val: number) => void
+  ) => {
     const value = parseInt(e.target.value);
     if (!isNaN(value) && value >= 1) {
-      setQuantity(value);
+      onChange(value);
     } else if (e.target.value === "") {
-      setQuantity(1); // reset nếu người dùng xóa sạch
+      onChange(1);
     }
   };
+
+  const handleChangeColor = (color: string) => {
+    if (!product) return;
+    setValue("color", color);
+    const skusForColor = product.skus.filter((sku) => sku.color === color);
+
+    const currentSku = skusForColor.find((sku) => sku.size === selectedSize);
+
+    if (!currentSku || currentSku.quantity === 0) {
+      const availableSize = skusForColor.find((sku) => sku.quantity > 0);
+      setValue("size", availableSize?.size || "");
+    }
+  };
+
+  if (isError) return <NotFound />;
+  if (!product) return null;
   return (
     <div className="lg:px-[117px] md:px-20 sm:px-10 px-5 font-font-poppins mt-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="flex gap-8">
-          <div className="w-20 h-[400px]">
-            <Swiper
-              direction="vertical"
-              spaceBetween={0}
-              freeMode={true}
-              watchSlidesProgress={true}
-              loop={true}
-              slidesPerView={4}
-              onSwiper={setThumbsSwiper}
-              modules={[Thumbs]}
-              className="h-full"
-            >
-              {data?.data.images.map((image, index) => (
-                <SwiperSlide key={index}>
-                  <Image
-                    width={90}
-                    height={90}
-                    src={image}
-                    alt={`Slide ${index}`}
-                    className="w-full h-20 object-cover cursor-pointer"
-                  />
-                </SwiperSlide>
-              ))}
-            </Swiper>
-          </div>
-          <Swiper
-            modules={[Navigation, Pagination, Scrollbar, A11y, Thumbs]}
-            spaceBetween={50}
-            slidesPerView={1}
-            loop={true}
-            navigation={{
-              nextEl: ".swiper-button-next-custom",
-              prevEl: ".swiper-button-prev-custom",
-            }}
-            pagination={{ clickable: true }}
-            scrollbar={{ draggable: true }}
-            thumbs={{ swiper: thumbsSwiper }}
-            onSlideChange={() => console.log("slide change")}
-            className="w-full h-full"
-          >
-            {data?.data.images.map((image, index) => (
-              <SwiperSlide key={index}>
-                <Image
-                  width={90}
-                  height={90}
-                  src={image}
-                  alt={`Slide ${index}`}
-                  className="w-full h-auto object-contain"
-                />
-              </SwiperSlide>
-            ))}
-            <div className="w-7 h-11 flex items-center justify-center swiper-button-prev-custom absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-black/50 text-white p-2 rounded-md cursor-pointer hover:bg-black">
-              <GrPrevious size={32} />
-            </div>
-            <div className="w-7 h-11 flex items-center justify-center swiper-button-next-custom absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-black/50 text-white p-2 rounded-md cursor-pointer hover:bg-black">
-              <GrNext size={32} />
-            </div>
-          </Swiper>
-        </div>
+        <ProductImageGallery images={product?.images || []} />
         <div className="h-screen">
           <h1 className="text-lg font-semibold leading-[24px] m-0">
-            Áo Polo cao cấp Unibody Premium thoải mái và thoáng khí X3
+            {product?.name || []}
           </h1>
           <div className="text-[14px] text-[#555555] mb-3">
-            SKU: 2400033340018
+            SKU:{" "}
+            {skusForColor.find(
+              (sku) =>
+                sku.color === selectedColor &&
+                sku.size === selectedSize &&
+                sku.quantity !== 0
+            )?.sku || "N/A"}
           </div>
           <div className="flex gap-1 items-center mb-6">
-            <Rating name="half-rating" size="medium" readOnly value={5} />
-            <h6 className="text-sm font-semibold leading-[18px]">5 sao</h6>
+            <Rating
+              name="half-rating"
+              size="medium"
+              readOnly
+              value={product.rating || 0}
+            />
+            <h6 className="text-sm font-semibold leading-[18px]">{`${product.rating} sao`}</h6>
             <h6 className="text-sm font-normal leading-[14px] pl-[5px] text-[#525252] border-l-2 border-[#525252]">
-              <span className="font-bold">13</span> đánh giá
+              <span className="font-bold">{product.reviewCount}</span> đánh giá
             </h6>
             <h6 className="text-sm font-normal leading-[14px] pl-[5px] text-[#525252] border-l-2 border-[#525252]">
-              <span className="font-bold">520</span> đã bán
+              <span className="font-bold">{product.soldCount || 0}</span> đã bán
             </h6>
           </div>
           <div className="flex justify-between items-center">
             <p className="text-primary text-[24px] font-semibold leading-[30px]">
-              399,000đ
+              {formatCurrency(product.price)}
             </p>
-            <div className="flex gap-1 items-center">
-              <p className="text-[16px] leading-6 font-semibold">Còn hàng</p>
-              <svg
-                width="17"
-                height="17"
-                viewBox="0 0 17 17"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <g id="icon-wrapper">
-                  <path
-                    id="Union"
-                    d="M8.60124 1.34619C4.9279 1.34619 1.93457 4.33952 1.93457 8.01286C1.93457 11.6862 4.9279 14.6795 8.60124 14.6795C12.2746 14.6795 15.2679 11.6862 15.2679 8.01286C15.2679 4.33952 12.2746 1.34619 8.60124 1.34619ZM11.7879 6.47952L8.0079 10.2595C7.91457 10.3529 7.7879 10.4062 7.65457 10.4062C7.52124 10.4062 7.39457 10.3529 7.30124 10.2595L5.41457 8.37286C5.22124 8.17952 5.22124 7.85952 5.41457 7.66619C5.6079 7.47286 5.9279 7.47286 6.12124 7.66619L7.65457 9.19952L11.0812 5.77286C11.2746 5.57952 11.5946 5.57952 11.7879 5.77286C11.9812 5.96619 11.9812 6.27952 11.7879 6.47952Z"
-                    fill="#00B578"
-                  ></path>
-                </g>
-              </svg>
-            </div>
+            {product.stock > 0 && (
+              <div className="flex gap-1 items-center">
+                <p className="text-[16px] leading-6 font-semibold">Còn hàng</p>
+                <svg
+                  width="17"
+                  height="17"
+                  viewBox="0 0 17 17"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g id="icon-wrapper">
+                    <path
+                      id="Union"
+                      d="M8.60124 1.34619C4.9279 1.34619 1.93457 4.33952 1.93457 8.01286C1.93457 11.6862 4.9279 14.6795 8.60124 14.6795C12.2746 14.6795 15.2679 11.6862 15.2679 8.01286C15.2679 4.33952 12.2746 1.34619 8.60124 1.34619ZM11.7879 6.47952L8.0079 10.2595C7.91457 10.3529 7.7879 10.4062 7.65457 10.4062C7.52124 10.4062 7.39457 10.3529 7.30124 10.2595L5.41457 8.37286C5.22124 8.17952 5.22124 7.85952 5.41457 7.66619C5.6079 7.47286 5.9279 7.47286 6.12124 7.66619L7.65457 9.19952L11.0812 5.77286C11.2746 5.57952 11.5946 5.57952 11.7879 5.77286C11.9812 5.96619 11.9812 6.27952 11.7879 6.47952Z"
+                      fill="#00B578"
+                    ></path>
+                  </g>
+                </svg>
+              </div>
+            )}
           </div>
           <div className="mt-4 border-t border-dashed border-[#999999] pt-4 flex flex-col gap-6">
             <div className="grid gap-3">
               <div className="flex font-semibold text-sm leading-[18px] text-black gap-2">
                 <p>MÀU SẮC</p>
                 <p className="font-normal">|</p>
-                <p className="font-normal">Ghi</p>
+                <p className="font-normal">{selectedColor}</p>
               </div>
               <div className="flex gap-2">
-                <div className="cursor-pointer w-9 h-9 aspect-square rounded-full bg-red-500 border border-black"></div>
-                <div className="cursor-pointer w-9 h-9 aspect-square rounded-full bg-blue-500 border border-black"></div>
-                <div className="cursor-pointer w-9 h-9 aspect-square rounded-full bg-yellow-500 border border-black"></div>
+                {availableColors.map((color) => (
+                  <div
+                    key={color}
+                    onClick={() => handleChangeColor(color)}
+                    className={`cursor-pointer w-9 h-9 aspect-square rounded-full border border-black ${
+                      selectedColor === color
+                        ? "outline-2 outline-offset-2 outline"
+                        : ""
+                    }`}
+                    style={{ background: color }}
+                  ></div>
+                ))}
               </div>
             </div>
             <div className="grid gap-3">
@@ -181,19 +204,28 @@ const ProductDetail = () => {
                 KÍCH THƯỚC
               </div>
               <div className="flex flex-wrap gap-2">
-                {sizes.map((size) => (
-                  <span
-                    key={size}
-                    onClick={() => setSelectedSize(size)}
-                    className={` ${
-                      selectedSize === size
-                        ? "bg-black text-white"
-                        : "bg-white text-black border-black"
-                    } transition duration-200 cursor-pointer select-none text-sm leading-[100%] px-4 py-[6px] flex items-center justify-center rounded-[50px] shadow-[0_0_0_1px_rgb(153,153,153)]`}
-                  >
-                    {size}
-                  </span>
-                ))}
+                {skusForColor.map((sku: SKU) => {
+                  const isDisabled = sku.quantity === 0;
+                  const isSelected = selectedSize === sku.size;
+                  const baseClass =
+                    "transition duration-200 select-none text-sm leading-[100%] px-4 py-[6px] flex items-center justify-center rounded-[50px] shadow-[0_0_0_1px_rgb(153,153,153)]";
+                  const className = isDisabled
+                    ? "bg-[#f5f5f5] text-[#00000042] cursor-not-allowed"
+                    : isSelected
+                    ? "bg-black text-white cursor-pointer"
+                    : "bg-white text-black border-black cursor-pointer";
+                  return (
+                    <span
+                      key={sku.size}
+                      onClick={() => {
+                        if (!isDisabled) setValue("size", sku.size);
+                      }}
+                      className={`${baseClass} ${className}`}
+                    >
+                      SIZE {sku.size}
+                    </span>
+                  );
+                })}
               </div>
             </div>
             <div className="flex justify-between">
@@ -205,11 +237,18 @@ const ProductDetail = () => {
                 >
                   -
                 </button>
-                <input
-                  min={1}
-                  value={quantity}
-                  onChange={handleChange}
-                  className="focus:ring-2 focus:ring-red-500 focus:border-red-500 w-10 h-7 text-center outline-none"
+                <Controller
+                  name="quantity"
+                  control={control}
+                  defaultValue={1}
+                  render={({ field }) => (
+                    <input
+                      min={1}
+                      value={field.value}
+                      onChange={(e) => handleChange(e, field.onChange)}
+                      className="focus:ring-2 focus:ring-red-500 focus:border-red-500 w-10 h-7 text-center outline-none"
+                    />
+                  )}
                 />
                 <button
                   onClick={handleIncrease}
@@ -293,20 +332,12 @@ const ProductDetail = () => {
             Mã SP: 40003298
           </p>
         </div>
-        <p className="pt-3 w-2/3">
-          ĐẶC ĐIỂM NỔI BẬT- Thiết kế năng động, trẻ trung phù hợp với mọi vóc
-          dáng.- Thấm hút mồ hôi tốt, thoáng mát.- Co giãn, có độ đàn hồi tối
-          đa.- Đem lại cảm giác thoải mái cho người mặc.- Sản phẩm có nhiều màu
-          sắc để bạn chọn lựa.- Áo ba lỗ nam phù hợp mặc lót bên trong các trang
-          phục khác, mặc ở nhà hoặc trong các hoạt động thể thao.CHẤT LIỆU:
-          Cotton, Polyester, SpandexMÀU SẮC: Đen/ghi/xanh/trắng...KIỂU DÁNG- cổ
-          tròn/cổ vuông- dáng ôm/dáng suôngHƯỚNG DẪN SỬ DỤNG BẢO QUẢN:- Không
-          ngâm trong bột giặt quá 30 phút- Sử dụng xà phòng trung tính- Không sử
-          dụng thuốc tẩy- Lột trái khi giặt máy, và giặt ở chế độ nhẹ nhàng,
-          nhiệt độ nước dưới 40 độ C- Không giặt chung đồ trắng với các sản phẩm
-          màu khác- Không phơi đồ trực tiếp dưới ánh nắng mặt trời, nên phơi ở
-          nơi thoáng mát- Là ở nhiệt độ dưới 120 độ C
-        </p>
+        <p
+          dangerouslySetInnerHTML={{
+            __html: DOMPurify.sanitize(product.description),
+          }}
+          className="pt-3 w-2/3"
+        ></p>
       </div>
       <div>
         <h6 className="text-lg font-semibold leading-6 uppercase my-6">
@@ -319,7 +350,7 @@ const ProductDetail = () => {
             breakdown={{ 5: 13, 4: 0, 3: 0, 2: 3, 1: 5 }}
           />
         </div>
-        <CommentList productId={data?.data.id} />
+        <CommentList productId={+data?.data.id} />
       </div>
     </div>
   );
