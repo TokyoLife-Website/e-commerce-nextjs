@@ -1,7 +1,7 @@
 "use client";
 import { useProductBySlugQuery } from "@/hooks/api/product.api";
 import { useParams } from "next/navigation";
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 
 import { BsArrowRight } from "react-icons/bs";
 import CartIcon from "../../../../public/cart.svg";
@@ -22,29 +22,170 @@ import { formatCurrency } from "@/utils/formatCurrency";
 import DOMPurify from "dompurify";
 import { SKU } from "@/types/sku";
 import ProductImageGallery from "@/components/product/ProductImageGallery";
-import { Controller, useForm } from "react-hook-form";
+import { useForm, Controller, Control } from "react-hook-form";
 import { Product } from "@/types/product";
+import Loading from '@/components/common/Loading';
+import { useLoading } from '@/hooks/useLoading';
+
 interface AddToCartForm {
   color: string;
   size: string;
   quantity: number;
 }
-const ProductDetail = () => {
-  const dispatch = useAppDispatch();
-  const { slug } = useParams<{ slug: string }>();
-  const { data, isError } = useProductBySlugQuery(slug || "");
 
-  const { handleSubmit, control, watch, setValue, getValues } =
-    useForm<AddToCartForm>({
-      defaultValues: {
-        color: "",
-        size: "",
-        quantity: 1,
-      },
-    });
+interface ProductDetailProps {
+  product: Product;
+  isLoading: boolean;
+  error: any;
+}
+
+// Product Color Selector Component
+const ProductColorSelector: React.FC<{
+  colors: string[];
+  selectedColor: string;
+  onColorChange: (color: string) => void;
+}> = ({ colors, selectedColor, onColorChange }) => (
+  <div className="grid gap-3">
+    <div className="flex font-semibold text-sm leading-[18px] text-black gap-2">
+      <p>MÀU SẮC</p>
+      <p className="font-normal">|</p>
+      <p className="font-normal">{selectedColor}</p>
+    </div>
+    <div className="flex gap-2">
+      {colors.map((color) => (
+        <div
+          key={color}
+          onClick={() => onColorChange(color)}
+          className={`cursor-pointer w-9 h-9 aspect-square rounded-full border border-black ${
+            selectedColor === color ? "outline-2 outline-offset-2 outline" : ""
+          }`}
+          style={{ background: color }}
+        ></div>
+      ))}
+    </div>
+  </div>
+);
+
+// Product Size Selector Component
+const ProductSizeSelector: React.FC<{
+  skus: SKU[];
+  selectedSize: string;
+  onSizeChange: (size: string) => void;
+}> = ({ skus, selectedSize, onSizeChange }) => (
+  <div className="grid gap-3">
+    <div className="flex font-semibold text-sm leading-[18px] text-black gap-2">
+      KÍCH THƯỚC
+    </div>
+    <div className="flex flex-wrap gap-2">
+      {skus.map((sku: SKU) => {
+        const isDisabled = sku.quantity === 0;
+        const isSelected = selectedSize === sku.size;
+        const baseClass =
+          "transition duration-200 select-none text-sm leading-[100%] px-4 py-[6px] flex items-center justify-center rounded-[50px] shadow-[0_0_0_1px_rgb(153,153,153)]";
+        const className = isDisabled
+          ? "bg-[#f5f5f5] text-[#00000042] cursor-not-allowed"
+          : isSelected
+          ? "bg-black text-white cursor-pointer"
+          : "bg-white text-black border-black cursor-pointer";
+        return (
+          <span
+            key={sku.size}
+            onClick={() => {
+              if (!isDisabled) onSizeChange(sku.size);
+            }}
+            className={`${baseClass} ${className}`}
+          >
+            SIZE {sku.size}
+          </span>
+        );
+      })}
+    </div>
+  </div>
+);
+
+// Quantity Selector Component
+const QuantitySelector: React.FC<{
+  control: Control<AddToCartForm>;
+  onDecrease: () => void;
+  onIncrease: () => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>, onChange: (val: number) => void) => void;
+}> = ({ control, onDecrease, onIncrease, onChange }) => (
+  <div className="flex justify-between">
+    <span className="text-sm font-bold uppercase">CHỌN SỐ LƯỢNG</span>
+    <div className="flex border border-[#c4c4c4] rounded overflow-hidden w-fit">
+      <button
+        onClick={onDecrease}
+        className="w-10 h-7 flex items-center justify-center border-r border-[#c4c4c4] text-gray-500 hover:bg-primary/5"
+      >
+        -
+      </button>
+      <Controller
+        name="quantity"
+        control={control}
+        defaultValue={1}
+        render={({ field }) => (
+          <input
+            min={1}
+            value={field.value}
+            onChange={(e) => onChange(e, field.onChange)}
+            className="focus:ring-2 focus:ring-red-500 focus:border-red-500 w-10 h-7 text-center outline-none"
+          />
+        )}
+      />
+      <button
+        onClick={onIncrease}
+        className="w-10 h-7 flex items-center justify-center border-l border-[#c4c4c4] text-black hover:bg-primary/5"
+      >
+        +
+      </button>
+    </div>
+  </div>
+);
+
+// Action Buttons Component
+const ActionButtons: React.FC<{
+  onSubmit: () => void;
+}> = ({ onSubmit }) => (
+  <div className="flex flex-col gap-y-4 mb-5">
+    <div className="flex items-center justify-between gap-x-3">
+      <button className="transition-shadow duration-300 ease-in-out hover:shadow-xl flex justify-center items-center gap-x-2 w-1/2 p-3 min-w-16 border-2 border-primary rounded outline-none select-none">
+        <CartIcon />
+        <p className="text-primary text-[14px] font-semibold leading-6 m-0">
+          Thêm giỏ hàng
+        </p>
+      </button>
+      <button 
+        onClick={onSubmit}
+        type="button"
+        className="transition-shadow duration-300 ease-in-out hover:shadow-xl flex justify-center items-center gap-x-2 w-1/2 p-3 min-w-16 border-2 border-primary bg-primary rounded outline-none select-none"
+      >
+        <BagIcon />
+        <p className="text-white text-[14px] font-semibold leading-6 m-0">
+          Mua ngay
+        </p>
+      </button>
+    </div>
+    <button className="transition-shadow duration-300 ease-in-out hover:shadow-xl flex justify-center items-center gap-x-2 w-full p-3 min-w-16 border border-[#555555] rounded outline-none select-none">
+      <MapIcon />
+      <p className="text-black text-[14px] font-semibold leading-6 m-0">
+        Cửa hàng có sẵn sản phẩm
+      </p>
+    </button>
+  </div>
+);
+
+const ProductDetail: React.FC<ProductDetailProps> = ({ product, isLoading, error }) => {
+  const dispatch = useAppDispatch();
+  const { handleSubmit, control, watch, setValue, getValues } = useForm<AddToCartForm>({
+    defaultValues: {
+      color: "",
+      size: "",
+      quantity: 1,
+    },
+  });
+
   const selectedColor = watch("color");
   const selectedSize = watch("size");
-  const product = data?.data;
 
   const availableColors: string[] = React.useMemo(() => {
     if (!product?.skus) return [];
@@ -58,9 +199,7 @@ const ProductDetail = () => {
   }, [product?.skus]);
 
   const skusForColor: SKU[] = React.useMemo(() => {
-    return (
-      product?.skus.filter((sku: SKU) => sku.color === selectedColor) || []
-    );
+    return product?.skus.filter((sku: SKU) => sku.color === selectedColor) || [];
   }, [product?.skus, selectedColor]);
 
   useEffect(() => {
@@ -81,52 +220,62 @@ const ProductDetail = () => {
     }
   }, [availableColors, product, setValue]);
 
-  const handleDecrease = () => {
+  const handleDecrease = useCallback(() => {
     const current = getValues("quantity");
     if (current > 1) {
       setValue("quantity", current - 1);
     }
-  };
+  }, [getValues, setValue]);
 
-  const handleIncrease = () => {
+  const handleIncrease = useCallback(() => {
     const current = getValues("quantity");
     setValue("quantity", current + 1);
+  }, [getValues, setValue]);
+
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>, onChange: (val: number) => void) => {
+      const value = parseInt(e.target.value);
+      if (!isNaN(value) && value >= 1) {
+        onChange(value);
+      } else if (e.target.value === "") {
+        onChange(1);
+      }
+    },
+    []
+  );
+
+  const handleChangeColor = useCallback(
+    (color: string) => {
+      if (!product) return;
+      setValue("color", color);
+      const skusForColor = product.skus.filter((sku) => sku.color === color);
+
+      const currentSku = skusForColor.find((sku) => sku.size === selectedSize);
+
+      if (!currentSku || currentSku.quantity === 0) {
+        const availableSize = skusForColor.find((sku) => sku.quantity > 0);
+        setValue("size", availableSize?.size || "");
+      }
+    },
+    [product, selectedSize, setValue]
+  );
+
+  const onSubmit = (data: AddToCartForm) => {
+    console.log('Form data:', data);
+    console.log('Product:', product);
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    onChange: (val: number) => void
-  ) => {
-    const value = parseInt(e.target.value);
-    if (!isNaN(value) && value >= 1) {
-      onChange(value);
-    } else if (e.target.value === "") {
-      onChange(1);
-    }
-  };
-
-  const handleChangeColor = (color: string) => {
-    if (!product) return;
-    setValue("color", color);
-    const skusForColor = product.skus.filter((sku) => sku.color === color);
-
-    const currentSku = skusForColor.find((sku) => sku.size === selectedSize);
-
-    if (!currentSku || currentSku.quantity === 0) {
-      const availableSize = skusForColor.find((sku) => sku.quantity > 0);
-      setValue("size", availableSize?.size || "");
-    }
-  };
-
-  if (isError) return <NotFound />;
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error loading product</div>;
   if (!product) return null;
+
   return (
     <div className="lg:px-[117px] md:px-20 sm:px-10 px-5 font-font-poppins mt-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <ProductImageGallery images={product?.images || []} />
         <div className="h-screen">
           <h1 className="text-lg font-semibold leading-[24px] m-0">
-            {product?.name || []}
+            {product?.name}
           </h1>
           <div className="text-[14px] text-[#555555] mb-3">
             SKU:{" "}
@@ -166,98 +315,31 @@ const ProductDetail = () => {
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
-                  <g id="icon-wrapper">
-                    <path
-                      id="Union"
-                      d="M8.60124 1.34619C4.9279 1.34619 1.93457 4.33952 1.93457 8.01286C1.93457 11.6862 4.9279 14.6795 8.60124 14.6795C12.2746 14.6795 15.2679 11.6862 15.2679 8.01286C15.2679 4.33952 12.2746 1.34619 8.60124 1.34619ZM11.7879 6.47952L8.0079 10.2595C7.91457 10.3529 7.7879 10.4062 7.65457 10.4062C7.52124 10.4062 7.39457 10.3529 7.30124 10.2595L5.41457 8.37286C5.22124 8.17952 5.22124 7.85952 5.41457 7.66619C5.6079 7.47286 5.9279 7.47286 6.12124 7.66619L7.65457 9.19952L11.0812 5.77286C11.2746 5.57952 11.5946 5.57952 11.7879 5.77286C11.9812 5.96619 11.9812 6.27952 11.7879 6.47952Z"
-                      fill="#00B578"
-                    ></path>
-                  </g>
+                  <path
+                    d="M8.60124 1.34619C4.9279 1.34619 1.93457 4.33952 1.93457 8.01286C1.93457 11.6862 4.9279 14.6795 8.60124 14.6795C12.2746 14.6795 15.2679 11.6862 15.2679 8.01286C15.2679 4.33952 12.2746 1.34619 8.60124 1.34619ZM11.7879 6.47952L8.0079 10.2595C7.91457 10.3529 7.7879 10.4062 7.65457 10.4062C7.52124 10.4062 7.39457 10.3529 7.30124 10.2595L5.41457 8.37286C5.22124 8.17952 5.22124 7.85952 5.41457 7.66619C5.6079 7.47286 5.9279 7.47286 6.12124 7.66619L7.65457 9.19952L11.0812 5.77286C11.2746 5.57952 11.5946 5.57952 11.7879 5.77286C11.9812 5.96619 11.9812 6.27952 11.7879 6.47952Z"
+                    fill="#00B578"
+                  ></path>
                 </svg>
               </div>
             )}
           </div>
           <div className="mt-4 border-t border-dashed border-[#999999] pt-4 flex flex-col gap-6">
-            <div className="grid gap-3">
-              <div className="flex font-semibold text-sm leading-[18px] text-black gap-2">
-                <p>MÀU SẮC</p>
-                <p className="font-normal">|</p>
-                <p className="font-normal">{selectedColor}</p>
-              </div>
-              <div className="flex gap-2">
-                {availableColors.map((color) => (
-                  <div
-                    key={color}
-                    onClick={() => handleChangeColor(color)}
-                    className={`cursor-pointer w-9 h-9 aspect-square rounded-full border border-black ${
-                      selectedColor === color
-                        ? "outline-2 outline-offset-2 outline"
-                        : ""
-                    }`}
-                    style={{ background: color }}
-                  ></div>
-                ))}
-              </div>
-            </div>
-            <div className="grid gap-3">
-              <div className="flex font-semibold text-sm leading-[18px] text-black gap-2">
-                KÍCH THƯỚC
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {skusForColor.map((sku: SKU) => {
-                  const isDisabled = sku.quantity === 0;
-                  const isSelected = selectedSize === sku.size;
-                  const baseClass =
-                    "transition duration-200 select-none text-sm leading-[100%] px-4 py-[6px] flex items-center justify-center rounded-[50px] shadow-[0_0_0_1px_rgb(153,153,153)]";
-                  const className = isDisabled
-                    ? "bg-[#f5f5f5] text-[#00000042] cursor-not-allowed"
-                    : isSelected
-                    ? "bg-black text-white cursor-pointer"
-                    : "bg-white text-black border-black cursor-pointer";
-                  return (
-                    <span
-                      key={sku.size}
-                      onClick={() => {
-                        if (!isDisabled) setValue("size", sku.size);
-                      }}
-                      className={`${baseClass} ${className}`}
-                    >
-                      SIZE {sku.size}
-                    </span>
-                  );
-                })}
-              </div>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-sm font-bold uppercase">CHỌN SỐ LƯỢNG</span>
-              <div className="flex border border-[#c4c4c4] rounded overflow-hidden w-fit">
-                <button
-                  onClick={handleDecrease}
-                  className="w-10 h-7 flex items-center justify-center border-r border-[#c4c4c4] text-gray-500 hover:bg-primary/5"
-                >
-                  -
-                </button>
-                <Controller
-                  name="quantity"
-                  control={control}
-                  defaultValue={1}
-                  render={({ field }) => (
-                    <input
-                      min={1}
-                      value={field.value}
-                      onChange={(e) => handleChange(e, field.onChange)}
-                      className="focus:ring-2 focus:ring-red-500 focus:border-red-500 w-10 h-7 text-center outline-none"
-                    />
-                  )}
-                />
-                <button
-                  onClick={handleIncrease}
-                  className="w-10 h-7 flex items-center justify-center border-l border-[#c4c4c4] text-black hover:bg-primary/5"
-                >
-                  +
-                </button>
-              </div>
-            </div>
+            <ProductColorSelector
+              colors={availableColors}
+              selectedColor={selectedColor}
+              onColorChange={handleChangeColor}
+            />
+            <ProductSizeSelector
+              skus={skusForColor}
+              selectedSize={selectedSize}
+              onSizeChange={(size) => setValue("size", size)}
+            />
+            <QuantitySelector
+              control={control}
+              onDecrease={handleDecrease}
+              onIncrease={handleIncrease}
+              onChange={handleChange}
+            />
           </div>
           <div
             onClick={() => {
@@ -296,30 +378,7 @@ const ProductDetail = () => {
               <BsArrowRight size={20} />
             </span>
           </Link>
-          <div className="flex flex-col gap-y-4 mb-5">
-            <div className="flex items-center justify-between gap-x-3">
-              <button className="transition-shadow duration-300 ease-in-out hover:shadow-xl flex justify-center items-center gap-x-2 w-1/2 p-3 min-w-16 border-2 border-primary rounded outline-none select-none">
-                <CartIcon />
-                <p className="text-primary text-[14px] font-semibold leading-6 m-0">
-                  Thêm giỏ hàng
-                </p>
-              </button>
-              <button className="transition-shadow duration-300 ease-in-out hover:shadow-xl flex justify-center items-center gap-x-2 w-1/2 p-3 min-w-16 border-2 border-primary bg-primary rounded outline-none select-none">
-                <BagIcon />
-
-                <p className="text-white text-[14px] font-semibold leading-6 m-0">
-                  Mua ngay
-                </p>
-              </button>
-            </div>
-            <button className="transition-shadow duration-300 ease-in-out hover:shadow-xl flex justify-center items-center gap-x-2 w-full p-3 min-w-16 border border-[#555555] rounded outline-none select-none">
-              <MapIcon />
-
-              <p className="text-black text-[14px] font-semibold leading-6 m-0">
-                Cửa hàng có sẵn sản phẩm
-              </p>
-            </button>
-          </div>
+          <ActionButtons onSubmit={() => handleSubmit(onSubmit)()} />
           <PolicyList />
         </div>
       </div>
@@ -345,15 +404,28 @@ const ProductDetail = () => {
         </h6>
         <div className="flex my-6">
           <RatingSummary
-            average={3.3}
-            totalReviews={12}
+            average={product.rating}
+            totalReviews={product.reviewCount}
             breakdown={{ 5: 13, 4: 0, 3: 0, 2: 3, 1: 5 }}
           />
         </div>
-        <CommentList productId={+data?.data.id} />
+        <CommentList productId={+product.id} />
       </div>
     </div>
   );
 };
 
-export default ProductDetail;
+const ProductDetailPage = () => {
+  const { slug } = useParams<{ slug: string }>();
+  const { data, isLoading, isFetching, error } = useProductBySlugQuery(slug || "");
+  const showLoading = useLoading({ isLoading, isFetching, delay: 0});
+  if(showLoading) return <Loading fullScreen size="large"/>
+  if (!data?.data || error) return <NotFound />;
+
+  return (
+      <ProductDetail product={data.data} isLoading={isLoading} error={error} />
+    
+  );
+};
+
+export default ProductDetailPage;
