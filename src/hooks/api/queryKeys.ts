@@ -4,5 +4,6 @@ export const QUERY_KEYS = {
   PRODUCTS: "products",
   CATEGORIES: "categories",
   USER_ADDRESSES: "user-addresses",
+  CART: "cart",
   PRODUCT: (id: string | number) => `product-${id}`,
 };

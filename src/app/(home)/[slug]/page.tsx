@@ -4,10 +4,6 @@ import { useParams } from "next/navigation";
 import React, { useEffect, useCallback } from "react";
 
 import { BsArrowRight } from "react-icons/bs";
-import CartIcon from "../../../../public/cart.svg";
-import BagIcon from "../../../../public/bag.svg";
-import MapIcon from "../../../../public/map.svg";
-
 import Image from "next/image";
 import { Rating } from "@mui/material";
 import { useAppDispatch } from "@/redux/store";
@@ -26,6 +22,11 @@ import { useForm, Controller, Control } from "react-hook-form";
 import { Product } from "@/types/product";
 import Loading from '@/components/common/Loading';
 import { useLoading } from '@/hooks/useLoading';
+import { useAddToCartMutation } from "@/hooks/api/cart.api";
+import useToast from "@/hooks/useToastify";
+import { handleRequestError } from "@/utils/errorHandler";
+import { useDebounce } from "@/hooks/useDebounce";
+import { Icon } from "@/components/icons";
 
 interface AddToCartForm {
   color: string;
@@ -145,11 +146,12 @@ const QuantitySelector: React.FC<{
 // Action Buttons Component
 const ActionButtons: React.FC<{
   onSubmit: () => void;
-}> = ({ onSubmit }) => (
+  isLoading: boolean;
+}> = ({ onSubmit, isLoading }) => (
   <div className="flex flex-col gap-y-4 mb-5">
     <div className="flex items-center justify-between gap-x-3">
-      <button className="transition-shadow duration-300 ease-in-out hover:shadow-xl flex justify-center items-center gap-x-2 w-1/2 p-3 min-w-16 border-2 border-primary rounded outline-none select-none">
-        <CartIcon />
+      <button onClick={onSubmit} disabled={isLoading} className="transition-shadow duration-300 ease-in-out hover:shadow-xl flex justify-center items-center gap-x-2 w-1/2 p-3 min-w-16 border-2 border-primary rounded outline-none select-none">
+        <Icon name="cart" size={24} />
         <p className="text-primary text-[14px] font-semibold leading-6 m-0">
           Thêm giỏ hàng
         </p>
@@ -159,14 +161,14 @@ const ActionButtons: React.FC<{
         type="button"
         className="transition-shadow duration-300 ease-in-out hover:shadow-xl flex justify-center items-center gap-x-2 w-1/2 p-3 min-w-16 border-2 border-primary bg-primary rounded outline-none select-none"
       >
-        <BagIcon />
+        <Icon name="bag" size={24} />
         <p className="text-white text-[14px] font-semibold leading-6 m-0">
           Mua ngay
         </p>
       </button>
     </div>
     <button className="transition-shadow duration-300 ease-in-out hover:shadow-xl flex justify-center items-center gap-x-2 w-full p-3 min-w-16 border border-[#555555] rounded outline-none select-none">
-      <MapIcon />
+      <Icon name="map" size={24} />
       <p className="text-black text-[14px] font-semibold leading-6 m-0">
         Cửa hàng có sẵn sản phẩm
       </p>
@@ -176,6 +178,8 @@ const ActionButtons: React.FC<{
 
 const ProductDetail: React.FC<ProductDetailProps> = ({ product, isLoading, error }) => {
   const dispatch = useAppDispatch();
+  const addToCartMutation = useAddToCartMutation();
+  const { showError, showSuccess } = useToast();
   const { handleSubmit, control, watch, setValue, getValues } = useForm<AddToCartForm>({
     defaultValues: {
       color: "",
@@ -260,14 +264,29 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product, isLoading, error
     [product, selectedSize, setValue]
   );
 
-  const onSubmit = (data: AddToCartForm) => {
-    console.log('Form data:', data);
-    console.log('Product:', product);
+  const onSubmit = async (data: AddToCartForm) => {
+    try {
+      const productSkuId = skusForColor.find(
+        (sku) =>
+          sku.color === data.color &&
+          sku.size === data.size &&
+          sku.quantity >= data.quantity
+      )?.id;
+      if (!productSkuId) {
+        showError("Sản phẩm không còn hàng");
+        return;
+      }
+      const { message } = await addToCartMutation.mutateAsync({
+        productSkuId: Number(productSkuId),
+        quantity: data.quantity,
+      });
+      showSuccess(message);
+    } catch (error) {
+      handleRequestError(error);
+    }
   };
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error loading product</div>;
-  if (!product) return null;
+  const debouncedSubmit = useDebounce(() => handleSubmit(onSubmit)(), 1000);
 
   return (
     <div className="lg:px-[117px] md:px-20 sm:px-10 px-5 font-font-poppins mt-6">
@@ -378,7 +397,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product, isLoading, error
               <BsArrowRight size={20} />
             </span>
           </Link>
-          <ActionButtons onSubmit={() => handleSubmit(onSubmit)()} />
+          <ActionButtons onSubmit={debouncedSubmit} isLoading={addToCartMutation.isPending} />
           <PolicyList />
         </div>
       </div>

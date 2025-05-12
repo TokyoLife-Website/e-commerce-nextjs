@@ -2,6 +2,7 @@ import Image from "next/image";
 import React, { FC } from "react";
 import { CustomTitle } from "./CustomTitle";
 import Link from "next/link";
+import { Icon } from "../icons";
 
 interface ListItemProps {
   content: string;
@@ -63,35 +64,11 @@ export const Footer = () => {
           </ul>
           <ul>
             <CustomTitle className="mb-6" content="Kết nối với TOKYOLIFE" />
-            <div className="flex gap-4">
-              <Image
-                src="/tiktok.svg"
-                alt="Next.js logo"
-                width={24}
-                height={24}
-                priority
-              />
-              <Image
-                src="/facebook.svg"
-                alt="Next.js logo"
-                width={24}
-                height={24}
-                priority
-              />
-              <Image
-                src="/zalo.svg"
-                alt="Next.js logo"
-                width={24}
-                height={24}
-                priority
-              />
-              <Image
-                src="/youtube.svg"
-                alt="Next.js logo"
-                width={24}
-                height={24}
-                priority
-              />
+            <div className="flex gap-x-2">
+              <Icon className="aspect-square" name="tiktok" size={24} />
+              <Icon className="aspect-square" name="facebook" size={24} />
+              <Icon className="aspect-square" name="zalo" size={24} />
+              <Icon className="aspect-square" name="youtube" size={24} />
               <span className="flex gap-x-2 items-center">
                 <Image
                   className="rounded-full"
@@ -147,40 +124,16 @@ export const Footer = () => {
                 priority
               />
               <div className="flex flex-col gap-2">
-                <Image
-                  src="/app_store.svg"
-                  alt="logo"
-                  width={125}
-                  height={41}
-                  priority
-                />
-                <Image
-                  src="/google_play.svg"
-                  alt="logo"
-                  width={125}
-                  height={41}
-                  priority
-                />
+                <Icon name="appStore" width={125} height={41} />
+                <Icon name="googlePlay" width={125} height={41} />
               </div>
             </div>
             <p className="text-[14px] leading-[18px] text-black">
               Chúng tôi kết nối thanh toán qua
             </p>
             <div className="flex gap-2">
-              <Image
-                src="/cod.svg"
-                alt="logo"
-                width={100}
-                height={40}
-                priority
-              />
-              <Image
-                src="/vnpay.svg"
-                alt="logo"
-                width={130}
-                height={40}
-                priority
-              />
+              <Icon name="cod" width={100} height={40} />
+              <Icon name="vnpay" width={130} height={40} />
             </div>
           </div>
         </div>
