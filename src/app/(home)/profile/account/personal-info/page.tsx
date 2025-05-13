@@ -220,7 +220,9 @@ export default function PeronalInfo() {
           </div>
         </div>
       </div>
-      <CustomButton className="text-white ml-auto">Lưu thay đổi</CustomButton>
+      <CustomButton size="small" className="text-white ml-auto">
+        Lưu thay đổi
+      </CustomButton>
     </form>
   );
 }

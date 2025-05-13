@@ -23,8 +23,8 @@ const ListItem: FC<ListItemProps> = ({ content, to = "/" }) => {
 export const Footer = () => {
   return (
     <footer>
-      <div className="mx-36 flex justify-between gap-x-4 pt-[60px]">
-        <div className="grid grid-cols-4 gap-x-4 md:max-w-[900px]">
+      <div className="container mx-auto px-4 lg:px-8 xl:px-36 flex flex-col lg:flex-row justify-between gap-8 pt-[60px]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-8 lg:gap-4">
           <ul>
             <CustomTitle className="mb-6" content="VỀ TOKYOLIFE" />
             <ListItem content="Chúng tôi là ai" />
@@ -62,9 +62,9 @@ export const Footer = () => {
               Giờ làm việc: 8:30 - 22:00 hàng ngày
             </li>
           </ul>
-          <ul>
+          <ul className="sm:col-span-2 lg:col-span-1">
             <CustomTitle className="mb-6" content="Kết nối với TOKYOLIFE" />
-            <div className="flex gap-x-2">
+            <div className="flex flex-wrap gap-2">
               <Icon className="aspect-square" name="tiktok" size={24} />
               <Icon className="aspect-square" name="facebook" size={24} />
               <Icon className="aspect-square" name="zalo" size={24} />
@@ -87,7 +87,7 @@ export const Footer = () => {
             </div>
           </ul>
         </div>
-        <div className="flex flex-col">
+        <div className="flex flex-col w-full lg:w-auto lg:min-w-[300px]">
           <CustomTitle
             className="mb-6"
             content="ĐĂNG KÝ NHẬN TIN TỪ TOKYOLIFE"
@@ -115,7 +115,7 @@ export const Footer = () => {
               <br />
               Tích Điểm Mọi Hóa Đơn
             </p>
-            <div className="flex items-center gap-x-4">
+            <div className="flex flex-col sm:flex-row items-center gap-4">
               <Image
                 src="/qrcode.webp"
                 alt="QR code"
@@ -131,16 +131,16 @@ export const Footer = () => {
             <p className="text-[14px] leading-[18px] text-black">
               Chúng tôi kết nối thanh toán qua
             </p>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <Icon name="cod" width={100} height={40} />
               <Icon name="vnpay" width={130} height={40} />
             </div>
           </div>
         </div>
       </div>
-      <div className="bg-white mx-36 pt-6 mt-6 pb-10 border-dashed border-t-[1px] border-[#999999]">
-        <div className="flex justify-between items-start gap-2 flex-wrap">
-          <div className="max-w-[670px]">
+      <div className="container mx-auto px-4 lg:px-8 xl:px-36 pt-6 mt-6 pb-10 border-dashed border-t-[1px] border-[#999999]">
+        <div className="flex flex-col lg:flex-row justify-between items-start gap-6">
+          <div className="w-full lg:max-w-[670px]">
             <CustomTitle className="mb-6" content="Công ty cổ phần STAAAR" />
             <div className="text-sm flex flex-wrap gap-x-2">
               <p>
@@ -176,10 +176,11 @@ export const Footer = () => {
             width={144}
             height={55}
             priority
+            className="mx-auto lg:mx-0"
           />
         </div>
       </div>
-      <div className="bg-black gap-4 flex items-center justify-center py-4">
+      <div className="bg-black gap-4 flex flex-col sm:flex-row items-center justify-center py-4 px-4">
         <Image
           src="/footer-logo.webp"
           alt="logo"
@@ -187,7 +188,7 @@ export const Footer = () => {
           height={34}
           priority
         />
-        <p className="text-[12px] leading-4 font-normal text-white">
+        <p className="text-[12px] leading-4 font-normal text-white text-center sm:text-left">
           Copyright © 2014-2025 Tokyolife.vn All Rights Reserved.
         </p>
       </div>

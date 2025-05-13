@@ -1,12 +1,14 @@
 import Link from "next/link";
 import React, { ReactNode } from "react";
 
+type ButtonSize = "small" | "medium" | "large";
+
 interface CustomButtonProps {
   href?: string;
   className?: string;
   children: ReactNode;
   style?: React.CSSProperties;
-  size?: string;
+  size?: ButtonSize;
   onClick?: () => void;
   disabled?: boolean;
   [key: string]: any;
@@ -24,13 +26,13 @@ const CustomButton: React.FC<CustomButtonProps> = ({
 }) => {
   let Comp: React.ElementType = "button";
 
-  const sizeClasses = {
+  const sizeClasses: Record<ButtonSize, string> = {
     small: "p-[9px] text-sm",
-    medium: "px-8 py-3 text-base", // Default size
+    medium: "px-8 py-3 text-base",
     large: "px-10 py-4 text-lg",
   };
 
-  const props = {
+  const props: Record<string, any> = {
     href,
     onClick,
     ...rest,
@@ -51,7 +53,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
 
   const classes = `bg-primary min-w-[140px] font-bold rounded w-fit 
     ${sizeClasses[size]}
-   ${className} ${disabled ? "opacity-50 cursor-not-allowed" : ""} `;
+    ${className} ${disabled ? "opacity-50 cursor-not-allowed" : ""}`;
 
   return (
     <Comp className={classes} disabled={disabled} {...props} style={style}>
