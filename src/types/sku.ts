@@ -1,3 +1,5 @@
+import { Product } from "./product";
+
 export interface SKU {
   id: number | string;
   sku: string;
@@ -5,4 +7,5 @@ export interface SKU {
   quantity: number;
   size: string;
   color: string;
+  product: Product;
 }

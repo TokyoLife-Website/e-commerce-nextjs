@@ -20,13 +20,14 @@ import { SKU } from "@/types/sku";
 import ProductImageGallery from "@/components/product/ProductImageGallery";
 import { useForm, Controller, Control } from "react-hook-form";
 import { Product } from "@/types/product";
-import Loading from '@/components/common/Loading';
-import { useLoading } from '@/hooks/useLoading';
+import Loading from "@/components/common/Loading";
+import { useLoading } from "@/hooks/useLoading";
 import { useAddToCartMutation } from "@/hooks/api/cart.api";
 import useToast from "@/hooks/useToastify";
 import { handleRequestError } from "@/utils/errorHandler";
 import { useDebounce } from "@/hooks/useDebounce";
 import { Icon } from "@/components/icons";
+import { calculateDiscountedPrice } from "@/utils/calculateDiscountedPrice";
 
 interface AddToCartForm {
   color: string;
@@ -36,8 +37,6 @@ interface AddToCartForm {
 
 interface ProductDetailProps {
   product: Product;
-  isLoading: boolean;
-  error: any;
 }
 
 // Product Color Selector Component
@@ -109,7 +108,10 @@ const QuantitySelector: React.FC<{
   control: Control<AddToCartForm>;
   onDecrease: () => void;
   onIncrease: () => void;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>, onChange: (val: number) => void) => void;
+  onChange: (
+    e: React.ChangeEvent<HTMLInputElement>,
+    onChange: (val: number) => void
+  ) => void;
 }> = ({ control, onDecrease, onIncrease, onChange }) => (
   <div className="flex justify-between">
     <span className="text-sm font-bold uppercase">CHỌN SỐ LƯỢNG</span>
@@ -150,13 +152,17 @@ const ActionButtons: React.FC<{
 }> = ({ onSubmit, isLoading }) => (
   <div className="flex flex-col gap-y-4 mb-5">
     <div className="flex items-center justify-between gap-x-3">
-      <button onClick={onSubmit} disabled={isLoading} className="transition-shadow duration-300 ease-in-out hover:shadow-xl flex justify-center items-center gap-x-2 w-1/2 p-3 min-w-16 border-2 border-primary rounded outline-none select-none">
+      <button
+        onClick={onSubmit}
+        disabled={isLoading}
+        className="transition-shadow duration-300 ease-in-out hover:shadow-xl flex justify-center items-center gap-x-2 w-1/2 p-3 min-w-16 border-2 border-primary rounded outline-none select-none"
+      >
         <Icon name="cart" size={24} />
         <p className="text-primary text-[14px] font-semibold leading-6 m-0">
           Thêm giỏ hàng
         </p>
       </button>
-      <button 
+      <button
         onClick={onSubmit}
         type="button"
         className="transition-shadow duration-300 ease-in-out hover:shadow-xl flex justify-center items-center gap-x-2 w-1/2 p-3 min-w-16 border-2 border-primary bg-primary rounded outline-none select-none"
@@ -176,17 +182,18 @@ const ActionButtons: React.FC<{
   </div>
 );
 
-const ProductDetail: React.FC<ProductDetailProps> = ({ product, isLoading, error }) => {
+const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
   const dispatch = useAppDispatch();
   const addToCartMutation = useAddToCartMutation();
   const { showError, showSuccess } = useToast();
-  const { handleSubmit, control, watch, setValue, getValues } = useForm<AddToCartForm>({
-    defaultValues: {
-      color: "",
-      size: "",
-      quantity: 1,
-    },
-  });
+  const { handleSubmit, control, watch, setValue, getValues } =
+    useForm<AddToCartForm>({
+      defaultValues: {
+        color: "",
+        size: "",
+        quantity: 1,
+      },
+    });
 
   const selectedColor = watch("color");
   const selectedSize = watch("size");
@@ -203,8 +210,16 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product, isLoading, error
   }, [product?.skus]);
 
   const skusForColor: SKU[] = React.useMemo(() => {
-    return product?.skus.filter((sku: SKU) => sku.color === selectedColor) || [];
+    return (
+      product?.skus.filter((sku: SKU) => sku.color === selectedColor) || []
+    );
   }, [product?.skus, selectedColor]);
+
+  const { discountedPrice } = calculateDiscountedPrice({
+    basePrice: product.price,
+    discountType: product.discountType,
+    discountValue: product.discountValue,
+  });
 
   useEffect(() => {
     if (product && product.skus.length > 0) {
@@ -237,7 +252,10 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product, isLoading, error
   }, [getValues, setValue]);
 
   const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>, onChange: (val: number) => void) => {
+    (
+      e: React.ChangeEvent<HTMLInputElement>,
+      onChange: (val: number) => void
+    ) => {
       const value = parseInt(e.target.value);
       if (!isNaN(value) && value >= 1) {
         onChange(value);
@@ -322,7 +340,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product, isLoading, error
           </div>
           <div className="flex justify-between items-center">
             <p className="text-primary text-[24px] font-semibold leading-[30px]">
-              {formatCurrency(product.price)}
+              {formatCurrency(discountedPrice)}
             </p>
             {product.stock > 0 && (
               <div className="flex gap-1 items-center">
@@ -397,7 +415,10 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product, isLoading, error
               <BsArrowRight size={20} />
             </span>
           </Link>
-          <ActionButtons onSubmit={debouncedSubmit} isLoading={addToCartMutation.isPending} />
+          <ActionButtons
+            onSubmit={debouncedSubmit}
+            isLoading={addToCartMutation.isPending}
+          />
           <PolicyList />
         </div>
       </div>
@@ -436,14 +457,15 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product, isLoading, error
 
 const ProductDetailPage = () => {
   const { slug } = useParams<{ slug: string }>();
-  const { data, isLoading, isFetching, error } = useProductBySlugQuery(slug || "");
-  const showLoading = useLoading({ isLoading, isFetching, delay: 0});
-  if(showLoading) return <Loading fullScreen size="large"/>
+  const { data, isLoading, isFetching, error } = useProductBySlugQuery(
+    slug || ""
+  );
+  const showLoading = useLoading({ isLoading, isFetching, delay: 0 });
+  if (showLoading) return <Loading fullScreen size="large" />;
   if (!data?.data || error) return <NotFound />;
 
   return (
-      <ProductDetail product={data.data} isLoading={isLoading} error={error} />
-    
+    <ProductDetail product={data.data} isLoading={isLoading} error={error} />
   );
 };
 

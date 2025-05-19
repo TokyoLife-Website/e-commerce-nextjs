@@ -218,8 +218,8 @@ const EditProductPage = () => {
           quantity: sku.quantity,
           sku: sku.sku,
           id: sku.id,
-          color: sku.color,
-          size: sku.size,
+          color: sku.color as Color,
+          size: sku.size as Size,
         })),
       });
       setPreviewImages(product.images);

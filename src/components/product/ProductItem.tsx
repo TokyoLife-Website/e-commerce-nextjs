@@ -1,5 +1,6 @@
 import { DiscountType } from "@/types/discountType";
 import { formatCurrency } from "@/utils/formatCurrency";
+import { calculateDiscountedPrice } from "@/utils/calculateDiscountedPrice";
 import { Rating } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
@@ -13,16 +14,11 @@ const ProductItem: FC<ProductItemProps> = ({ product }) => {
   const basePrice = product.price ?? 0;
   const { discountType, discountValue = 0 } = product;
 
-  let discountedPrice = basePrice;
-  let discountPercent = 0;
-
-  if (discountType === DiscountType.FIXED) {
-    discountedPrice = basePrice - discountValue;
-    discountPercent = Math.round((discountValue / basePrice) * 100);
-  } else if (discountType === DiscountType.PERCENTAGE) {
-    discountedPrice = basePrice - (basePrice * discountValue) / 100;
-    discountPercent = discountValue;
-  }
+  const { discountedPrice, discountPercent } = calculateDiscountedPrice({
+    basePrice,
+    discountType,
+    discountValue,
+  });
 
   return (
     <Link href={product.slug} className="px-[6px] py-3">

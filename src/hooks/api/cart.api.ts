@@ -1,8 +1,9 @@
-import axiosInstance from './axios';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { QUERY_KEYS } from './queryKeys';
-import { Product } from '@/types/product';
-import { ResponseData } from '@/types/response';
+import axiosInstance from "./axios";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { QUERY_KEYS } from "./queryKeys";
+import { Product } from "@/types/product";
+import { ResponseData } from "@/types/response";
+import { Cart } from "@/types/cartItem";
 
 export interface CreateCartItemDto {
   productSkuId: number;
@@ -15,51 +16,41 @@ export interface UpdateCartItemDto {
   quantity: number;
 }
 
-export interface CartItem {
-  id: number;
-  quantity: number;
-  total: number;
-  sku: {
-    id: number;
-    product: Product;
-  };
-}
-
-export interface Cart {
-  id: number;
-  total: number;
-  items: CartItem[];
-}
-
 // API functions
-const getCart = async (): Promise<Cart> => {
-  const { data } = await axiosInstance.get('/carts');
+const getCart = async (): Promise<ResponseData<Cart>> => {
+  const { data } = await axiosInstance.get("/carts");
   return data;
 };
 
-const addToCart = async (createCartItemDto: CreateCartItemDto): Promise<ResponseData<Cart>> => {
-  const { data } = await axiosInstance.post('/carts', createCartItemDto);
+const addToCart = async (
+  createCartItemDto: CreateCartItemDto
+): Promise<ResponseData<Cart>> => {
+  const { data } = await axiosInstance.post("/carts", createCartItemDto);
   return data;
 };
 
-const updateCartItem = async (updateCartItemDto: UpdateCartItemDto): Promise<Cart> => {
-  const { data } = await axiosInstance.put('/carts', updateCartItemDto);
+const updateCartItem = async (
+  updateCartItemDto: UpdateCartItemDto
+): Promise<ResponseData<Cart>> => {
+  const { data } = await axiosInstance.put("/carts", updateCartItemDto);
   return data;
 };
 
-const removeCartItem = async (cartItemId: number): Promise<Cart> => {
+const removeCartItem = async (
+  cartItemId: number
+): Promise<ResponseData<Cart>> => {
   const { data } = await axiosInstance.delete(`/carts/${cartItemId}`);
   return data;
 };
 
 const clearCart = async (): Promise<void> => {
-  await axiosInstance.delete('/carts');
+  await axiosInstance.delete("/carts");
 };
 
 // React Query Hooks
-export const useCart = () => {
+export const useCarts = () => {
   return useQuery({
-    queryKey: [QUERY_KEYS.CART],
+    queryKey: [QUERY_KEYS.CARTS],
     queryFn: getCart,
   });
 };
@@ -71,7 +62,7 @@ export const useAddToCartMutation = () => {
     mutationFn: addToCart,
     onSuccess: (data) => {
       // Invalidate and refetch cart data
-      queryClient.setQueryData([QUERY_KEYS.CART], data);
+      queryClient.setQueryData([QUERY_KEYS.CARTS], data);
     },
   });
 };
@@ -82,7 +73,7 @@ export const useUpdateCartItem = () => {
   return useMutation({
     mutationFn: updateCartItem,
     onSuccess: (data) => {
-      queryClient.setQueryData([QUERY_KEYS.CART], data);
+      queryClient.setQueryData([QUERY_KEYS.CARTS], data);
     },
   });
 };
@@ -93,7 +84,7 @@ export const useRemoveCartItem = () => {
   return useMutation({
     mutationFn: removeCartItem,
     onSuccess: (data) => {
-      queryClient.setQueryData([QUERY_KEYS.CART], data);
+      queryClient.setQueryData([QUERY_KEYS.CARTS], data);
     },
   });
 };
@@ -104,7 +95,7 @@ export const useClearCart = () => {
   return useMutation({
     mutationFn: clearCart,
     onSuccess: () => {
-      queryClient.setQueryData([QUERY_KEYS.CART], { items: [], total: 0 });
+      queryClient.setQueryData([QUERY_KEYS.CARTS], { items: [], total: 0 });
     },
   });
-}; 
+};
