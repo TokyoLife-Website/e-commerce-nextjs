@@ -1,22 +1,65 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FaTrash } from "react-icons/fa";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { CartItem as CartItemType } from "@/types/cartItem";
 import { calculateDiscountedPrice } from "@/utils/calculateDiscountedPrice";
+import { useDebounce } from "@/hooks/useDebounce";
+import { FaAngleDown } from "react-icons/fa6";
+import EditCartItemOptionsModal from "./EditCartItemOptionsModal";
 
 interface CartItemProps {
   item: CartItemType;
   onUpdateQuantity: (id: number, quantity: number) => void;
   onRemoveItem: (id: number) => void;
+  onUpdateSku?: (cartItemId: number, newSkuId: number) => void;
 }
 
-const CartItem = ({ item, onUpdateQuantity, onRemoveItem }: CartItemProps) => {
+const CartItem = ({
+  item,
+  onUpdateQuantity,
+  onRemoveItem,
+  onUpdateSku,
+}: CartItemProps) => {
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
   const { price, discountType, discountValue } = item.sku.product;
   const { discountedPrice, discountPercent } = calculateDiscountedPrice({
     basePrice: price,
     discountType,
     discountValue,
   });
+  const triggerRef = useRef(null);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        !dropdownRef.current ||
+        !triggerRef.current ||
+        dropdownRef.current.contains(e.target) ||
+        triggerRef.current.contains(e.target)
+      )
+        return;
+      setIsPopupOpen(false);
+    };
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, []);
+
+  const handleDecreaseQuantity = useDebounce(() => {
+    onUpdateQuantity(Number(item.id), Math.max(1, item.quantity - 1));
+  });
+
+  const handleIncreaseQuantity = useDebounce(() => {
+    onUpdateQuantity(Number(item.id), item.quantity + 1);
+  });
+
+  const handleSkuSelect = (newSkuId: number) => {
+    if (onUpdateSku) {
+      onUpdateSku(Number(item.id), newSkuId);
+    }
+    setIsPopupOpen(false);
+  };
+
   return (
     <tr key={item.id} className="border-b py-4 text-sm align-top">
       <td className="py-4 flex gap-4">
@@ -27,9 +70,24 @@ const CartItem = ({ item, onUpdateQuantity, onRemoveItem }: CartItemProps) => {
         />
         <div>
           <div className="font-semibold">{item.sku.product.name}</div>
-          <select className="mt-1 px-2 py-1 border rounded text-sm">
-            <option>Chọn phân loại</option>
-          </select>
+          <div ref={triggerRef} className="relative">
+            <div
+              onClick={() => setIsPopupOpen(!isPopupOpen)}
+              className="my-2 px-2 py-1 cursor-pointer border rounded flex items-center gap-3 bg-[#f5f5f5]"
+            >
+              Chọn phân loại <FaAngleDown />
+            </div>
+
+            {isPopupOpen && (
+              <div ref={dropdownRef}>
+                <EditCartItemOptionsModal
+                  isOpen={isPopupOpen}
+                  onClose={() => setIsPopupOpen(false)}
+                  onConfirm={() => {}}
+                />
+              </div>
+            )}
+          </div>
           <div className="mt-1 text-sm text-gray-600">
             Kích thước:{" "}
             <span className="font-semibold">Size {item.sku.size}</span>
@@ -49,9 +107,8 @@ const CartItem = ({ item, onUpdateQuantity, onRemoveItem }: CartItemProps) => {
       <td className="py-4">
         <div className="flex border border-[#c4c4c4] rounded overflow-hidden w-fit">
           <button
-            onClick={() =>
-              onUpdateQuantity(item.id, Math.max(1, item.quantity - 1))
-            }
+            disabled={item.quantity === 1}
+            onClick={handleDecreaseQuantity}
             className="w-6 h-6 flex items-center justify-center border-r border-[#c4c4c4] text-gray-500 hover:bg-primary/5"
           >
             -
@@ -65,7 +122,7 @@ const CartItem = ({ item, onUpdateQuantity, onRemoveItem }: CartItemProps) => {
           />
 
           <button
-            onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
+            onClick={handleIncreaseQuantity}
             className="w-6 h-6 flex items-center justify-center border-l border-[#c4c4c4] text-black hover:bg-primary/5"
           >
             +

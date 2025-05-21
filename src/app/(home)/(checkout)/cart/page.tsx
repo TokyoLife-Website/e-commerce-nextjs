@@ -6,7 +6,12 @@ import CartItem from "@/components/checkout/CartItem";
 import useToast from "@/hooks/useToastify";
 import { useLoading } from "@/hooks/useLoading";
 import Loading from "@/components/common/Loading";
-import { useCarts, useRemoveCartItem } from "@/hooks/api/cart.api";
+import {
+  useCarts,
+  useRemoveCartItem,
+  useUpdateCartItem,
+} from "@/hooks/api/cart.api";
+import { handleRequestError } from "@/utils/errorHandler";
 
 export default function CartPage() {
   const { data: carts, isLoading, isFetching } = useCarts();
@@ -15,12 +20,29 @@ export default function CartPage() {
     0
   );
   const { mutateAsync: removeCartItem } = useRemoveCartItem();
+  const { mutateAsync: updateCartItem } = useUpdateCartItem();
   const { showSuccess } = useToast();
   const showLoading = useLoading({ isLoading, isFetching, delay: 0 });
 
   const handleRemoveItem = async (id: string | number) => {
-    const { message } = await removeCartItem(Number(id));
-    showSuccess(message);
+    try {
+      const { message } = await removeCartItem(Number(id));
+      showSuccess(message);
+    } catch (error) {
+      handleRequestError(error);
+    }
+  };
+
+  const handleUpdateItem = async (id: string | number, quantity: number) => {
+    try {
+      const { message } = await updateCartItem({
+        cartItemId: Number(id),
+        quantity,
+      });
+      showSuccess(message);
+    } catch (error) {
+      handleRequestError(error);
+    }
   };
 
   if (showLoading) return <Loading fullScreen size="large" />;
@@ -35,13 +57,13 @@ export default function CartPage() {
               ({quantity} sản phẩm)
             </p>
           </h1>
-          <div className="space-y-4 overflow-x-auto">
+          <div className="space-y-4">
             <table className="w-full table-auto min-w-[600px]">
               <thead className="border-b">
                 <tr className="text-left text-sm text-gray-600">
                   <th className="py-2 w-1/2">Tên Hàng</th>
-                  <th className="py-2 w-1/4">Giá</th>
-                  <th className="py-2 w-1/4">Số Lượng</th>
+                  <th className="py-2 w-1/5">Giá</th>
+                  <th className="py-2 w-1/5">Số Lượng</th>
                   <th className="py-2 text-right w-1/4">Tổng Tiền</th>
                 </tr>
               </thead>
@@ -51,7 +73,7 @@ export default function CartPage() {
                     key={item.id}
                     item={item}
                     onRemoveItem={handleRemoveItem}
-                    onUpdateQuantity={(id, quantity) => {}}
+                    onUpdateQuantity={handleUpdateItem}
                   />
                 ))}
               </tbody>
@@ -66,7 +88,7 @@ export default function CartPage() {
           <div className="flex justify-between items-center text-gray-600 mb-2">
             <span>Tổng giá trị đơn hàng</span>
             <span className="text-primary text-xl font-bold">
-              {formatCurrency(549000)}
+              {formatCurrency(carts?.data.total || 0)}
             </span>
           </div>
 

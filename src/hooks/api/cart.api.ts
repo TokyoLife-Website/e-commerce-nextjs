@@ -1,7 +1,6 @@
 import axiosInstance from "./axios";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "./queryKeys";
-import { Product } from "@/types/product";
 import { ResponseData } from "@/types/response";
 import { Cart } from "@/types/cartItem";
 
@@ -12,7 +11,7 @@ export interface CreateCartItemDto {
 
 export interface UpdateCartItemDto {
   cartItemId: number;
-  productSkuId: number;
+  // productSkuId: number;
   quantity: number;
 }
 
@@ -32,7 +31,7 @@ const addToCart = async (
 const updateCartItem = async (
   updateCartItemDto: UpdateCartItemDto
 ): Promise<ResponseData<Cart>> => {
-  const { data } = await axiosInstance.put("/carts", updateCartItemDto);
+  const { data } = await axiosInstance.patch("/carts", updateCartItemDto);
   return data;
 };
 

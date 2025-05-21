@@ -1,9 +1,19 @@
 import { useMutation } from "@tanstack/react-query";
 import axiosInstance from "./axios";
+import axios from "axios";
 import { ResponseData } from "@/types/response";
 import { LoginFormData } from "@/components/layouts/modals/LoginForm";
 import { RegisterFormData } from "@/components/layouts/modals/RegisterForm";
 import { ForgotPasswordFormData } from "@/schemas/forgotPasswordSchema";
+
+// Create a separate axios instance for refresh token
+const refreshAxiosInstance = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  timeout: 10000,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
 
 export interface TokenResponse {
   access_token: string;
@@ -44,13 +54,13 @@ export const fetchRefreshToken = async (
   refreshToken: string
 ): Promise<ResponseData<TokenResponse>> => {
   try {
-    const response = await axiosInstance.post("/auth/refresh-token", {
+    const response = await refreshAxiosInstance.post("/auth/refresh-token", {
       refreshToken,
     });
     return response.data;
   } catch (error) {
-    // Optional: Log the error or process it as needed
-    throw error; // Re-throw the error to be handled by the caller
+    console.error("Refresh token error:", error);
+    throw error;
   }
 };
 

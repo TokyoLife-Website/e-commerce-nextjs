@@ -24,7 +24,7 @@ export const Footer = () => {
   return (
     <footer>
       <div className="container mx-auto px-4 lg:px-8 xl:px-36 flex flex-col lg:flex-row justify-between gap-8 pt-[60px]">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-8 lg:gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-8 lg:gap-4">
           <ul>
             <CustomTitle className="mb-6" content="VỀ TOKYOLIFE" />
             <ListItem content="Chúng tôi là ai" />
