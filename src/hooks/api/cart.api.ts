@@ -11,8 +11,8 @@ export interface CreateCartItemDto {
 
 export interface UpdateCartItemDto {
   cartItemId: number;
-  // productSkuId: number;
-  quantity: number;
+  productSkuId?: number | null;
+  quantity?: number | null;
 }
 
 // API functions

@@ -7,6 +7,7 @@ import useToast from "@/hooks/useToastify";
 import { useLoading } from "@/hooks/useLoading";
 import Loading from "@/components/common/Loading";
 import {
+  UpdateCartItemDto,
   useCarts,
   useRemoveCartItem,
   useUpdateCartItem,
@@ -33,11 +34,16 @@ export default function CartPage() {
     }
   };
 
-  const handleUpdateItem = async (id: string | number, quantity: number) => {
+  const handleUpdateItem = async ({
+    cartItemId,
+    quantity,
+    productSkuId,
+  }: UpdateCartItemDto) => {
     try {
       const { message } = await updateCartItem({
-        cartItemId: Number(id),
+        cartItemId: Number(cartItemId),
         quantity,
+        productSkuId,
       });
       showSuccess(message);
     } catch (error) {
@@ -73,7 +79,7 @@ export default function CartPage() {
                     key={item.id}
                     item={item}
                     onRemoveItem={handleRemoveItem}
-                    onUpdateQuantity={handleUpdateItem}
+                    onUpdateItem={handleUpdateItem}
                   />
                 ))}
               </tbody>

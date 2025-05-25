@@ -6,37 +6,36 @@ import { calculateDiscountedPrice } from "@/utils/calculateDiscountedPrice";
 import { useDebounce } from "@/hooks/useDebounce";
 import { FaAngleDown } from "react-icons/fa6";
 import EditCartItemOptionsModal from "./EditCartItemOptionsModal";
+import { UpdateCartItemDto } from "@/hooks/api/cart.api";
 
 interface CartItemProps {
   item: CartItemType;
-  onUpdateQuantity: (id: number, quantity: number) => void;
+  onUpdateItem: ({
+    cartItemId,
+    quantity,
+    productSkuId,
+  }: UpdateCartItemDto) => void;
   onRemoveItem: (id: number) => void;
-  onUpdateSku?: (cartItemId: number, newSkuId: number) => void;
 }
 
-const CartItem = ({
-  item,
-  onUpdateQuantity,
-  onRemoveItem,
-  onUpdateSku,
-}: CartItemProps) => {
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
+const CartItem = ({ item, onUpdateItem, onRemoveItem }: CartItemProps) => {
+  const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false);
   const { price, discountType, discountValue } = item.sku.product;
   const { discountedPrice, discountPercent } = calculateDiscountedPrice({
     basePrice: price,
     discountType,
     discountValue,
   });
-  const triggerRef = useRef(null);
-  const dropdownRef = useRef(null);
+  const triggerRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (
         !dropdownRef.current ||
         !triggerRef.current ||
-        dropdownRef.current.contains(e.target) ||
-        triggerRef.current.contains(e.target)
+        dropdownRef.current.contains(e.target as Node) ||
+        triggerRef.current.contains(e.target as Node)
       )
         return;
       setIsPopupOpen(false);
@@ -46,17 +45,21 @@ const CartItem = ({
   }, []);
 
   const handleDecreaseQuantity = useDebounce(() => {
-    onUpdateQuantity(Number(item.id), Math.max(1, item.quantity - 1));
+    onUpdateItem({
+      cartItemId: Number(item.id),
+      quantity: Math.max(1, item.quantity - 1),
+    });
   });
 
   const handleIncreaseQuantity = useDebounce(() => {
-    onUpdateQuantity(Number(item.id), item.quantity + 1);
+    onUpdateItem({
+      cartItemId: Number(item.id),
+      quantity: item.quantity + 1,
+    });
   });
 
   const handleSkuSelect = (newSkuId: number) => {
-    if (onUpdateSku) {
-      onUpdateSku(Number(item.id), newSkuId);
-    }
+    onUpdateItem({ cartItemId: Number(item.id), productSkuId: newSkuId });
     setIsPopupOpen(false);
   };
 
@@ -81,9 +84,10 @@ const CartItem = ({
             {isPopupOpen && (
               <div ref={dropdownRef}>
                 <EditCartItemOptionsModal
+                  item={item}
                   isOpen={isPopupOpen}
                   onClose={() => setIsPopupOpen(false)}
-                  onConfirm={() => {}}
+                  onConfirm={(skuId) => handleSkuSelect(skuId)}
                 />
               </div>
             )}
