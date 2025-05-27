@@ -51,7 +51,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
     props.href = href;
   }
 
-  const classes = `bg-primary min-w-[140px] font-bold rounded w-fit 
+  const classes = `bg-primary text-center min-w-[140px] font-bold rounded w-fit inline-block
     ${sizeClasses[size]}
     ${className} ${disabled ? "opacity-50 cursor-not-allowed" : ""}`;
 

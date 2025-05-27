@@ -13,9 +13,11 @@ import {
   useUpdateCartItem,
 } from "@/hooks/api/cart.api";
 import { handleRequestError } from "@/utils/errorHandler";
+import CartList from "@/components/checkout/CartList";
+import NotFound from "@/app/not-found";
 
 export default function CartPage() {
-  const { data: carts, isLoading, isFetching } = useCarts();
+  const { data: carts, isLoading, isFetching, error } = useCarts();
   const quantity = carts?.data?.items.reduce(
     (acc, item) => acc + item.quantity,
     0
@@ -52,39 +54,17 @@ export default function CartPage() {
   };
 
   if (showLoading) return <Loading fullScreen size="large" />;
+  if (!carts?.data || error) return <NotFound />;
   return (
     <div className="container mx-auto px-4">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-[20px] pb-20">
         {/* Cart Items List - 2/3 width on large screens, full width on small screens */}
-        <div className="lg:col-span-2 bg-white rounded-sm p-4 lg:p-6 h-fit">
-          <h1 className="flex items-center gap-2 text-xl font-extrabold text-gray-900 mb-6 uppercase">
-            Giỏ hàng
-            <p className="text-primary font-normal text-xs leading-[1.5] lowercase">
-              ({quantity} sản phẩm)
-            </p>
-          </h1>
-          <div className="space-y-4">
-            <table className="w-full table-auto min-w-[600px]">
-              <thead className="border-b">
-                <tr className="text-left text-sm text-gray-600">
-                  <th className="py-2 w-1/2">Tên Hàng</th>
-                  <th className="py-2 w-1/5">Giá</th>
-                  <th className="py-2 w-1/5">Số Lượng</th>
-                  <th className="py-2 text-right w-1/4">Tổng Tiền</th>
-                </tr>
-              </thead>
-              <tbody>
-                {carts?.data?.items.map((item) => (
-                  <CartItem
-                    key={item.id}
-                    item={item}
-                    onRemoveItem={handleRemoveItem}
-                    onUpdateItem={handleUpdateItem}
-                  />
-                ))}
-              </tbody>
-            </table>
-          </div>
+        <div className="lg:col-span-2">
+          <CartList
+            cartData={carts?.data}
+            onRemoveItem={handleRemoveItem}
+            onUpdateItem={handleUpdateItem}
+          />
         </div>
 
         {/* Payment Summary - 1/3 width on large screens, full width on small screens */}
@@ -100,7 +80,11 @@ export default function CartPage() {
 
           <hr className="border-dashed border-2 my-4" />
 
-          <CustomButton size="small" className="text-white w-full font-normal">
+          <CustomButton
+            href="/checkout"
+            size="small"
+            className="text-white w-full font-normal"
+          >
             TIẾP TỤC THANH TOÁN ➔
           </CustomButton>
           <p className="text-sm text-gray-600 mt-3">

@@ -71,7 +71,6 @@ export const useCurrentUserQuery = (isAuthenticated: boolean) => {
   return useQuery({
     queryKey: [QUERY_KEYS.USER],
     queryFn: () => fetchCurrentUser(),
-    staleTime: 5 * 60 * 1000,
     enabled: isAuthenticated,
   });
 };

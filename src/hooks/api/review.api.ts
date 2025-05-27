@@ -27,6 +27,5 @@ export const useReviewsQuery = (
     queryKey: [QUERY_KEYS.REVIEWS, page, size, rating, productId],
     queryFn: () => fetchReviews(productId, rating, page, size),
     enabled: !!productId,
-    staleTime: 5000,
   });
 };

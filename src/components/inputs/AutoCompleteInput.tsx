@@ -23,31 +23,39 @@ const AutoCompleteInput = <T extends FieldValues>({
     <Controller
       name={name}
       control={control}
-      render={({ field: { onChange, value } }) => (
-        <Stack spacing={0.5}>
-          {label && <CustomLabel label={label} isRequired={isRequired} />}
-          <Autocomplete
-            disableClearable={disableClearable}
-            options={options}
-            getOptionLabel={(option) => option.name || ""}
-            isOptionEqualToValue={(option, value) => option.id === value.id}
-            onChange={(_, newValue) => onChange(newValue?.id ?? defaultValue)}
-            value={
-              options.find((option) => option.id === value) || defaultValue
-            }
-            disabled={disabled}
-            size={size}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                placeholder={placeHolder || label}
-                error={isError}
-              />
+      defaultValue={defaultValue}
+      render={({ field: { onChange, value } }) => {
+        // Ensure value is always a valid option or null
+        const selectedOption =
+          options.find((option) => option.id === value) || null;
+
+        return (
+          <Stack spacing={0.5}>
+            {label && <CustomLabel label={label} isRequired={isRequired} />}
+            <Autocomplete
+              sx={{ borderColor: "#2e7d32" }}
+              disableClearable={disableClearable}
+              options={options}
+              getOptionLabel={(option) => option.name || ""}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+              onChange={(_, newValue) => onChange(newValue?.id ?? defaultValue)}
+              value={selectedOption}
+              disabled={disabled}
+              size={size}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  placeholder={placeHolder || label}
+                  error={isError}
+                />
+              )}
+            />
+            {isError && errMsg && (
+              <FormHelperText error>{errMsg}</FormHelperText>
             )}
-          />
-          {isError && errMsg && <FormHelperText error>{errMsg}</FormHelperText>}
-        </Stack>
-      )}
+          </Stack>
+        );
+      }}
     />
   );
 };

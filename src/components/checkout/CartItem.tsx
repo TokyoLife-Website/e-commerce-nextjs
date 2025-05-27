@@ -10,15 +10,16 @@ import { UpdateCartItemDto } from "@/hooks/api/cart.api";
 
 interface CartItemProps {
   item: CartItemType;
-  onUpdateItem: ({
+  onUpdateItem?: ({
     cartItemId,
     quantity,
     productSkuId,
   }: UpdateCartItemDto) => void;
-  onRemoveItem: (id: number) => void;
+  onRemoveItem?: (id: number) => void;
 }
 
 const CartItem = ({ item, onUpdateItem, onRemoveItem }: CartItemProps) => {
+  const isCheckout = !(onUpdateItem && onRemoveItem);
   const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false);
   const { price, discountType, discountValue } = item.sku.product;
   const { discountedPrice, discountPercent } = calculateDiscountedPrice({
@@ -45,21 +46,21 @@ const CartItem = ({ item, onUpdateItem, onRemoveItem }: CartItemProps) => {
   }, []);
 
   const handleDecreaseQuantity = useDebounce(() => {
-    onUpdateItem({
+    onUpdateItem?.({
       cartItemId: Number(item.id),
       quantity: Math.max(1, item.quantity - 1),
     });
   });
 
   const handleIncreaseQuantity = useDebounce(() => {
-    onUpdateItem({
+    onUpdateItem?.({
       cartItemId: Number(item.id),
       quantity: item.quantity + 1,
     });
   });
 
   const handleSkuSelect = (newSkuId: number) => {
-    onUpdateItem({ cartItemId: Number(item.id), productSkuId: newSkuId });
+    onUpdateItem?.({ cartItemId: Number(item.id), productSkuId: newSkuId });
     setIsPopupOpen(false);
   };
 
@@ -73,26 +74,30 @@ const CartItem = ({ item, onUpdateItem, onRemoveItem }: CartItemProps) => {
         />
         <div>
           <div className="font-semibold">{item.sku.product.name}</div>
-          <div ref={triggerRef} className="relative">
-            <div
-              onClick={() => setIsPopupOpen(!isPopupOpen)}
-              className="my-2 px-2 py-1 cursor-pointer border rounded flex items-center gap-3 bg-[#f5f5f5]"
-            >
-              Chọn phân loại <FaAngleDown />
-            </div>
-
-            {isPopupOpen && (
-              <div ref={dropdownRef}>
-                <EditCartItemOptionsModal
-                  item={item}
-                  isOpen={isPopupOpen}
-                  onClose={() => setIsPopupOpen(false)}
-                  onConfirm={(skuId) => handleSkuSelect(skuId)}
-                />
+          {!isCheckout && (
+            <div ref={triggerRef} className="relative">
+              <div
+                onClick={() => setIsPopupOpen(!isPopupOpen)}
+                className="my-2 px-2 py-1 cursor-pointer border rounded flex items-center gap-3 bg-[#f5f5f5]"
+              >
+                Chọn phân loại <FaAngleDown />
               </div>
-            )}
-          </div>
-          <div className="mt-1 text-sm text-gray-600">
+
+              {isPopupOpen && (
+                <div ref={dropdownRef}>
+                  <EditCartItemOptionsModal
+                    item={item}
+                    isOpen={isPopupOpen}
+                    onClose={() => setIsPopupOpen(false)}
+                    onConfirm={(skuId) => handleSkuSelect(skuId)}
+                  />
+                </div>
+              )}
+            </div>
+          )}
+          <div
+            className={`${isCheckout ? "mt-5" : "mt-1"} text-sm text-gray-600`}
+          >
             Kích thước:{" "}
             <span className="font-semibold">Size {item.sku.size}</span>
             <br />
@@ -109,38 +114,44 @@ const CartItem = ({ item, onUpdateItem, onRemoveItem }: CartItemProps) => {
         )}
       </td>
       <td className="py-4">
-        <div className="flex border border-[#c4c4c4] rounded overflow-hidden w-fit">
-          <button
-            disabled={item.quantity === 1}
-            onClick={handleDecreaseQuantity}
-            className="w-6 h-6 flex items-center justify-center border-r border-[#c4c4c4] text-gray-500 hover:bg-primary/5"
-          >
-            -
-          </button>
+        {isCheckout ? (
+          <p className="text-base">{item.quantity}</p>
+        ) : (
+          <div className="flex border border-[#c4c4c4] rounded overflow-hidden w-fit">
+            <button
+              disabled={item.quantity === 1}
+              onClick={handleDecreaseQuantity}
+              className="w-6 h-6 flex items-center justify-center border-r border-[#c4c4c4] text-gray-500 hover:bg-primary/5"
+            >
+              -
+            </button>
 
-          <input
-            disabled
-            min={1}
-            value={item.quantity}
-            className="focus:ring-2 focus:ring-red-500 focus:border-red-500 w-[30px] h-6 text-center outline-none"
-          />
+            <input
+              disabled
+              min={1}
+              value={item.quantity}
+              className="focus:ring-2 focus:ring-red-500 focus:border-red-500 w-[30px] h-6 text-center outline-none"
+            />
 
-          <button
-            onClick={handleIncreaseQuantity}
-            className="w-6 h-6 flex items-center justify-center border-l border-[#c4c4c4] text-black hover:bg-primary/5"
-          >
-            +
-          </button>
-        </div>
+            <button
+              onClick={handleIncreaseQuantity}
+              className="w-6 h-6 flex items-center justify-center border-l border-[#c4c4c4] text-black hover:bg-primary/5"
+            >
+              +
+            </button>
+          </div>
+        )}
       </td>
       <td className="py-4 font-bold text-right">
         <div>{formatCurrency(discountedPrice * item.quantity)}</div>
-        <button
-          onClick={() => onRemoveItem(Number(item.id))}
-          className="text-gray-500 hover:text-primary transition pt-4 lg:pt-16"
-        >
-          <FaTrash />
-        </button>
+        {!isCheckout && (
+          <button
+            onClick={() => onRemoveItem(Number(item.id))}
+            className="text-gray-500 hover:text-primary transition pt-4 lg:pt-16"
+          >
+            <FaTrash />
+          </button>
+        )}
       </td>
     </tr>
   );

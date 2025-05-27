@@ -60,7 +60,6 @@ export const useProductQuery = (id: string | number) => {
     queryKey: [QUERY_KEYS.PRODUCT(id)],
     queryFn: () => fetchProduct(id),
     enabled: !!id,
-    staleTime: 5000,
   });
 };
 
@@ -69,7 +68,6 @@ export const useProductBySlugQuery = (slug: string) => {
     queryKey: slug ? [QUERY_KEYS.PRODUCT(slug)] : [],
     queryFn: () => fetchProductBySlug(slug),
     enabled: !!slug,
-    staleTime: 5000,
   });
 };
 
@@ -81,7 +79,6 @@ export const useProductsQuery = (
     queryKey: [QUERY_KEYS.PRODUCTS, page, size],
     queryFn: () => fetchProducts(page, size),
     placeholderData: (prev) => prev,
-    staleTime: 5000,
   });
 };
 

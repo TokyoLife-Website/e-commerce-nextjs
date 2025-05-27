@@ -51,6 +51,9 @@ export const useCarts = () => {
   return useQuery({
     queryKey: [QUERY_KEYS.CARTS],
     queryFn: getCart,
+    refetchOnWindowFocus: false,
+    staleTime: 1000 * 60 * 5, // 5 phút
+    // cacheTime: 1000 * 60 * 10,
   });
 };
 

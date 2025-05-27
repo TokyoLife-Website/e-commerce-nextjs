@@ -464,9 +464,7 @@ const ProductDetailPage = () => {
   if (showLoading) return <Loading fullScreen size="large" />;
   if (!data?.data || error) return <NotFound />;
 
-  return (
-    <ProductDetail product={data.data} isLoading={isLoading} error={error} />
-  );
+  return <ProductDetail product={data.data} />;
 };
 
 export default ProductDetailPage;
