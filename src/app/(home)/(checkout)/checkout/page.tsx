@@ -30,24 +30,77 @@ export default function CheckoutPage() {
 
         <div className="lg:col-span-1 bg-white h-fit rounded-sm p-4 lg:p-6">
           <h2 className="text-xl font-bold mb-4">ĐƠN HÀNG</h2>
-
+          <div className="flex flex-col gap-2">
+            <h3 className="font-semibold text-[#222222] text-xs">
+              MÃ PHIẾU GIẢM GIÁ
+            </h3>
+            <div className="flex items-stretch">
+              <input
+                type="text"
+                className="flex-1 rounded-s px-4 py-[10px] text-sm outline-none border border-gray-500"
+                placeholder="Mã phiếu giảm giá"
+                required
+              />
+              <button className="text-white px-5 rounded-e font-normal bg-primary">
+                ÁP DỤNG
+              </button>
+            </div>
+            <p className="font-normal text-[#555555] cursor-pointer text-xs">
+              Kiểm tra{" "}
+              <span className="text-[#2e7d32] underline">
+                Phiếu giảm giá của tôi
+              </span>
+            </p>
+          </div>
+          <hr className="border-dashed border border-gray-500 my-4" />
           <div className="flex justify-between items-center text-gray-600 mb-2">
-            <span>Tổng giá trị đơn hàng</span>
+            <span>Tạm tính</span>
+            <span className="text-sm leading-[18px] text-[#222222] font-bold">
+              {formatCurrency(carts?.data.total || 0)}
+            </span>
+          </div>
+          <div className="flex justify-between items-center text-gray-600 mb-2">
+            <span>Phí vận chuyển</span>
+            <span className="text-sm leading-[18px] text-[#222222] font-bold">
+              {formatCurrency(0)}
+            </span>
+          </div>
+          <div className="flex justify-between items-center text-gray-600 mb-2">
+            <span>Mã giảm giá</span>
+            <span className="text-sm leading-[18px] text-[#222222] font-bold">
+              -{formatCurrency(0)}
+            </span>
+          </div>
+          <hr className="border-dashed border border-gray-500 my-4" />
+          <div className="flex justify-between items-center text-gray-600 mb-2">
+            <span>Tổng thanh toán</span>
             <span className="text-primary text-xl font-bold">
               {formatCurrency(carts?.data.total || 0)}
             </span>
           </div>
-
-          <hr className="border-dashed border-2 my-4" />
-
+          <hr className="border-dashed border border-gray-500 my-4" />
           <CustomButton size="small" className="text-white w-full font-normal">
-            TIẾP TỤC THANH TOÁN ➔
+            ĐẶT HÀNG
           </CustomButton>
-          <p className="text-sm text-gray-600 mt-3">
-            Dùng mã giảm giá của{" "}
-            <span className="text-primary font-semibold">TokyoLife</span> trong
-            bước tiếp theo
-          </p>
+          <div className="flex items-baseline gap-1 text-xs font-normal text-primary mt-3 leading-[1.5]">
+            <span>
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 12 12"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fillRule="evenodd"
+                  clipRule="evenodd"
+                  d="M6 11.375C3.035 11.375 0.625 8.965 0.625 6C0.625 3.035 3.035 0.625 6 0.625C8.965 0.625 11.375 3.035 11.375 6C11.375 8.965 8.965 11.375 6 11.375ZM6 1.375C3.45 1.375 1.375 3.45 1.375 6C1.375 8.55 3.45 10.625 6 10.625C8.55 10.625 10.625 8.55 10.625 6C10.625 3.45 8.55 1.375 6 1.375ZM6 6.875C5.795 6.875 5.625 6.705 5.625 6.5V4C5.625 3.795 5.795 3.625 6 3.625C6.205 3.625 6.375 3.795 6.375 4V6.5C6.375 6.705 6.205 6.875 6 6.875ZM5.81 8.45994C5.87 8.48494 5.935 8.49994 6 8.49994C6.065 8.49994 6.13 8.48494 6.19 8.45994C6.25 8.43494 6.305 8.39994 6.355 8.35494C6.4 8.30494 6.435 8.25494 6.46 8.18994C6.485 8.12994 6.5 8.06494 6.5 7.99994C6.5 7.93494 6.485 7.86994 6.46 7.80994C6.435 7.74994 6.4 7.69494 6.355 7.64494C6.305 7.59994 6.25 7.56494 6.19 7.53994C6.07 7.48994 5.93 7.48994 5.81 7.53994C5.75 7.56494 5.695 7.59994 5.645 7.64494C5.6 7.69494 5.565 7.74994 5.54 7.80994C5.515 7.86994 5.5 7.93494 5.5 7.99994C5.5 8.06494 5.515 8.12994 5.54 8.18994C5.565 8.25494 5.6 8.30494 5.645 8.35494C5.695 8.39994 5.75 8.43494 5.81 8.45994Z"
+                  fill="#C92127"
+                ></path>
+              </svg>
+            </span>
+            Nếu đơn hàng không có thay đổi, TokyoLife sẽ không gọi xác nhận!​
+          </div>
         </div>
       </div>
     </div>
