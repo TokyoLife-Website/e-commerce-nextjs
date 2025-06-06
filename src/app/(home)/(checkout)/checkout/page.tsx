@@ -1,30 +1,68 @@
 "use client";
 import CustomButton from "@/components/layouts/CustomBtn";
 import { formatCurrency } from "@/utils/formatCurrency";
-import React from "react";
+import React, { useState } from "react";
 import { useLoading } from "@/hooks/useLoading";
 import Loading from "@/components/common/Loading";
 import { useCarts } from "@/hooks/api/cart.api";
-import CheckoutInfo from "@/components/checkout/CheckoutInfor";
-import CartItem from "@/components/checkout/CartItem";
 import CartList from "@/components/checkout/CartList";
 import NotFound from "@/app/not-found";
+import { PaymentMethod } from "@/types/paymentMethod";
+import { Address } from "@/types/address";
+import { CheckoutInfo } from "@/components/checkout/CheckoutInfor";
+import { useCreateOrderMutation } from "@/hooks/api/order.api";
+import { handleRequestError } from "@/utils/errorHandler";
+import useToast from "@/hooks/useToastify";
+import { useRouter } from "next/navigation";
 
 export default function CheckoutPage() {
-  const { data: carts, isLoading, isFetching, error } = useCarts();
-  const quantity = carts?.data?.items.reduce(
-    (acc, item) => acc + item.quantity,
-    0
+  const { showSuccess, showError } = useToast();
+  const router = useRouter();
+  const [selectedPayment, setSelectedPayment] = useState<PaymentMethod>(
+    PaymentMethod.COD
   );
+  const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
+  const { data: carts, isLoading, isFetching, error } = useCarts();
+  const { mutateAsync, isPending } = useCreateOrderMutation();
+
   const showLoading = useLoading({ isLoading, isFetching, delay: 0 });
+
+  const handleSubmit = async () => {
+    try {
+      if (!selectedAddress) {
+        showError("Vui lòng chọn địa chỉ giao hàng");
+        return;
+      }
+
+      if (!carts?.data.items.length) {
+        showError("Giỏ hàng của bạn đang trống");
+        return;
+      }
+
+      const { message, data } = await mutateAsync({
+        addressId: +selectedAddress.id,
+        paymentMethod: selectedPayment,
+      });
+      router.push(`/order-complete?code=${data.code}`);
+      showSuccess(message);
+    } catch (error) {
+      handleRequestError(error);
+    }
+  };
 
   if (showLoading) return <Loading fullScreen size="large" />;
   if (!carts?.data || error) return <NotFound />;
+
   return (
     <div className="container mx-auto px-4">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-[20px] pb-20">
         <div className="lg:col-span-2 flex flex-col gap-y-[20px]">
-          <CheckoutInfo />
+          <CheckoutInfo
+            selectedAddress={selectedAddress}
+            selectedPayment={selectedPayment}
+            setSelectedAddress={setSelectedAddress}
+            setSelectedPayment={setSelectedPayment}
+          />
           <CartList cartData={carts?.data} />
         </div>
 
@@ -79,8 +117,13 @@ export default function CheckoutPage() {
             </span>
           </div>
           <hr className="border-dashed border border-gray-500 my-4" />
-          <CustomButton size="small" className="text-white w-full font-normal">
-            ĐẶT HÀNG
+          <CustomButton
+            onClick={handleSubmit}
+            size="small"
+            className="text-white w-full font-normal"
+            disabled={isPending}
+          >
+            {isPending ? "ĐANG XỬ LÝ..." : "ĐẶT HÀNG"}
           </CustomButton>
           <div className="flex items-baseline gap-1 text-xs font-normal text-primary mt-3 leading-[1.5]">
             <span>

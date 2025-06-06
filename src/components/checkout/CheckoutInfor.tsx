@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, FC } from "react";
 import { FaMapMarkerAlt, FaMoneyBillWave, FaCreditCard } from "react-icons/fa";
 import { useAppDispatch } from "@/redux/store";
 import { openModal } from "@/redux/modalSlice";
@@ -7,12 +7,20 @@ import { Address } from "@/types/address";
 import { useUserAddressesQuery } from "@/hooks/api/address.api";
 import { PaymentMethod } from "@/types/paymentMethod";
 
-export default function CheckoutInfo() {
-  const { data: addresses, isLoading } = useUserAddressesQuery();
-  const [selectedPayment, setSelectedPayment] = useState<PaymentMethod>(
-    PaymentMethod.COD
-  );
-  const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
+interface CheckoutInfoProps {
+  selectedAddress: Address | null;
+  selectedPayment: PaymentMethod;
+  setSelectedAddress: (address: Address) => void;
+  setSelectedPayment: (payment: PaymentMethod) => void;
+}
+
+export const CheckoutInfo: FC<CheckoutInfoProps> = ({
+  selectedAddress,
+  selectedPayment,
+  setSelectedAddress,
+  setSelectedPayment,
+}) => {
+  const { data: addresses } = useUserAddressesQuery();
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -55,7 +63,7 @@ export default function CheckoutInfo() {
           <FaMapMarkerAlt className="text-red-500" /> ĐỊA CHỈ GIAO HÀNG
         </h2>
         {selectedAddress && (
-          <div className="border-l-4 border-double border-primary bg-[#f5f5f5] flex items-center gap-2 flex-wrap rounded-r p-3 space-y-1 relative">
+          <div className="border-l-4 border-double border-primary bg-[#f5f5f5] flex items-center gap-2 flex-wrap rounded-r p-3  relative">
             <p>
               <span className="font-semibold">Họ và tên:</span>{" "}
               {selectedAddress.fullName}
@@ -130,4 +138,4 @@ export default function CheckoutInfo() {
       </div>
     </div>
   );
-}
+};

@@ -1,6 +1,6 @@
 "use client";
 import { useProductBySlugQuery } from "@/hooks/api/product.api";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useCallback } from "react";
 
 import { BsArrowRight } from "react-icons/bs";
@@ -149,38 +149,44 @@ const QuantitySelector: React.FC<{
 const ActionButtons: React.FC<{
   onSubmit: () => void;
   isLoading: boolean;
-}> = ({ onSubmit, isLoading }) => (
-  <div className="flex flex-col gap-y-4 mb-5">
-    <div className="flex items-center justify-between gap-x-3">
-      <button
-        onClick={onSubmit}
-        disabled={isLoading}
-        className="transition-shadow duration-300 ease-in-out hover:shadow-xl flex justify-center items-center gap-x-2 w-1/2 p-3 min-w-16 border-2 border-primary rounded outline-none select-none"
-      >
-        <Icon name="cart" size={24} />
-        <p className="text-primary text-[14px] font-semibold leading-6 m-0">
-          Thêm giỏ hàng
-        </p>
-      </button>
-      <button
-        onClick={onSubmit}
-        type="button"
-        className="transition-shadow duration-300 ease-in-out hover:shadow-xl flex justify-center items-center gap-x-2 w-1/2 p-3 min-w-16 border-2 border-primary bg-primary rounded outline-none select-none"
-      >
-        <Icon name="bag" size={24} />
-        <p className="text-white text-[14px] font-semibold leading-6 m-0">
-          Mua ngay
+}> = ({ onSubmit, isLoading }) => {
+  const router = useRouter();
+  return (
+    <div className="flex flex-col gap-y-4 mb-5">
+      <div className="flex items-center justify-between gap-x-3">
+        <button
+          onClick={onSubmit}
+          disabled={isLoading}
+          className="flex justify-center items-center gap-x-2 w-1/2 p-3 min-w-16 border-2 border-primary rounded outline-none select-none"
+        >
+          <Icon name="cart" size={24} />
+          <p className="text-primary text-[14px] font-semibold leading-6 m-0">
+            Thêm giỏ hàng
+          </p>
+        </button>
+        <button
+          onClick={() => {
+            onSubmit();
+            router.push("/cart");
+          }}
+          type="button"
+          className="transition-shadow duration-300 ease-in-out hover:shadow-xl flex justify-center items-center gap-x-2 w-1/2 p-3 min-w-16 border-2 border-primary bg-primary rounded outline-none select-none"
+        >
+          <Icon name="bag" size={24} />
+          <p className="text-white text-[14px] font-semibold leading-6 m-0">
+            Mua ngay
+          </p>
+        </button>
+      </div>
+      <button className="transition-shadow duration-300 ease-in-out hover:shadow-xl flex justify-center items-center gap-x-2 w-full p-3 min-w-16 border border-[#555555] rounded outline-none select-none">
+        <Icon name="map" size={24} />
+        <p className="text-black text-[14px] font-semibold leading-6 m-0">
+          Cửa hàng có sẵn sản phẩm
         </p>
       </button>
     </div>
-    <button className="transition-shadow duration-300 ease-in-out hover:shadow-xl flex justify-center items-center gap-x-2 w-full p-3 min-w-16 border border-[#555555] rounded outline-none select-none">
-      <Icon name="map" size={24} />
-      <p className="text-black text-[14px] font-semibold leading-6 m-0">
-        Cửa hàng có sẵn sản phẩm
-      </p>
-    </button>
-  </div>
-);
+  );
+};
 
 const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
   const dispatch = useAppDispatch();

@@ -10,9 +10,9 @@ export default function CheckoutLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-
+  const isOrderCompletePage = pathname === "/order-complete";
   return (
-    <div className="bg-[#f5f5f5]">
+    <div className={isOrderCompletePage ? "bg-white" : "bg-[#f5f5f5]"}>
       {/* Stepper */}
       <CheckoutStepper pathname={pathname} />
 

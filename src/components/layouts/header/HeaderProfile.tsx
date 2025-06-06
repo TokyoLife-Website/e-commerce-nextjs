@@ -1,10 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Avatar } from "@mui/material";
-import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
-import LibraryBooksOutlinedIcon from "@mui/icons-material/LibraryBooksOutlined";
-import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
-import YoutubeSearchedForOutlinedIcon from "@mui/icons-material/YoutubeSearchedForOutlined";
+import { HiOutlineUserCircle } from "react-icons/hi2";
 import { CustomTitle } from "@/components/layouts/CustomTitle";
 import CustomButton from "@/components/layouts/CustomBtn";
 import { RootState, useAppDispatch, useAppSelector } from "@/redux/store";
@@ -15,6 +12,9 @@ import Link from "next/link";
 import { useCurrentUserQuery } from "@/hooks/api/user.api";
 import { setUser } from "@/redux/userSlice";
 import { redirect } from "next/navigation";
+import { NoteIcon } from "@/components/icons/NoteIcon";
+import ViewedIcon from "@/components/icons/ViewedIcon";
+import { LogoutIcon } from "@/components/icons/LogoutIcon";
 
 export const HeaderProfile = () => {
   const { isAuthenticated } = useAppSelector((state: RootState) => state.auth);
@@ -51,7 +51,7 @@ export const HeaderProfile = () => {
           <Avatar src={avatar?.url} alt={firstName} />
         </Link>
       ) : (
-        <AccountCircleOutlinedIcon />
+        <HiOutlineUserCircle size={30} />
       )}
       <div className="absolute top-full left-0 w-full h-3 bg-transparent"></div>
       <div
@@ -70,18 +70,18 @@ export const HeaderProfile = () => {
             </div>
             <div className="mt-4 mb-9">
               <div className="flex gap-[10px] py-2 pl-6 text-sm font-medium leading-[18px] hover:bg-secondary">
-                <LibraryBooksOutlinedIcon fontSize="small" />
+                <NoteIcon />
                 <span>Đơn hàng</span>
               </div>
               <div className="flex gap-[10px] py-2 pl-6 text-sm font-medium leading-[18px] hover:bg-secondary">
-                <YoutubeSearchedForOutlinedIcon fontSize="small" />
+                <ViewedIcon />
                 <span>Sản phẩm đã xem</span>
               </div>
               <div
                 onClick={handleLogout}
                 className="flex text-primary gap-[10px] py-2 pl-6 text-sm font-medium leading-[18px] hover:bg-secondary"
               >
-                <LogoutOutlinedIcon fontSize="small" />
+                <LogoutIcon />
                 <span>Đăng xuất</span>
               </div>
             </div>

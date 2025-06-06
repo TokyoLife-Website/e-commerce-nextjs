@@ -16,6 +16,7 @@ const CheckoutStepper = ({ pathname }: { pathname: string }) => {
   const currentStepIndex = steps.findIndex((step) =>
     pathname.startsWith(step.path)
   );
+  const isOrderCompletePage = pathname === "/order-complete";
   return (
     <div className="flex items-center justify-center bg-inherit py-8">
       {steps.map((step, index) => {
@@ -27,6 +28,8 @@ const CheckoutStepper = ({ pathname }: { pathname: string }) => {
               className={`flex flex-col md:flex-row items-center text-sm md:text-xl space-y-1 md:space-y-0 md:space-x-2 ${
                 isActive
                   ? "text-primary font-bold"
+                  : isOrderCompletePage
+                  ? "text-black font-normal"
                   : "text-gray-400 font-normal"
               }`}
             >

@@ -21,7 +21,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
   style,
   size = "medium",
   disabled = false,
-  onClick = () => {},
+  onClick,
   ...rest
 }) => {
   let Comp: React.ElementType = "button";
@@ -51,7 +51,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
     props.href = href;
   }
 
-  const classes = `bg-primary text-center min-w-[140px] font-bold rounded w-fit inline-block
+  const classes = `bg-primary text-center min-w-[140px] font-bold rounded w-fit inline-block transition-shadow duration-300 ease-in-out hover:shadow-xl
     ${sizeClasses[size]}
     ${className} ${disabled ? "opacity-50 cursor-not-allowed" : ""}`;
 

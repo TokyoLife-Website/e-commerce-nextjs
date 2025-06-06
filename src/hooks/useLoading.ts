@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 interface UseLoadingProps {
   isLoading?: boolean;
@@ -6,7 +6,11 @@ interface UseLoadingProps {
   delay?: number;
 }
 
-export const useLoading = ({ isLoading, isFetching, delay = 300 }: UseLoadingProps) => {
+export const useLoading = ({
+  isLoading,
+  isFetching,
+  delay = 300,
+}: UseLoadingProps) => {
   const [showLoading, setShowLoading] = useState(false);
 
   useEffect(() => {
