@@ -2,7 +2,6 @@
 import CustomButton from "@/components/layouts/CustomBtn";
 import { formatCurrency } from "@/utils/formatCurrency";
 import React from "react";
-import CartItem from "@/components/checkout/CartItem";
 import useToast from "@/hooks/useToastify";
 import { useLoading } from "@/hooks/useLoading";
 import Loading from "@/components/common/Loading";
@@ -18,10 +17,8 @@ import NotFound from "@/app/not-found";
 
 export default function CartPage() {
   const { data: carts, isLoading, isFetching, error } = useCarts();
-  const quantity = carts?.data?.items.reduce(
-    (acc, item) => acc + item.quantity,
-    0
-  );
+  const quantity =
+    carts?.data?.items.reduce((acc, item) => acc + item.quantity, 0) || 0;
   const { mutateAsync: removeCartItem } = useRemoveCartItem();
   const { mutateAsync: updateCartItem } = useUpdateCartItem();
   const { showSuccess } = useToast();

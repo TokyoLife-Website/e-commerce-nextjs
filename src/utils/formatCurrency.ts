@@ -1,10 +1,19 @@
-export const formatCurrency = (amount: number | string): string => {
-  const number = typeof amount === "string" ? parseFloat(amount) : amount;
-  if (isNaN(number)) return "0đ";
+export function formatCurrency(
+  amount: number,
+  currency: string = "VND",
+  locale: string = "vi-VN"
+): string {
+  const formatted = new Intl.NumberFormat(locale, {
+    style: "currency",
+    currency,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  }).format(amount);
 
-  return (
-    number
-      .toFixed(0) // không lấy phần thập phân
-      .replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "đ"
-  );
-};
+  // Nếu là VND thì thay ký hiệu ₫ bằng chữ "đ"
+  if (currency === "VND") {
+    return formatted.replace("₫", "đ");
+  }
+
+  return formatted;
+}
