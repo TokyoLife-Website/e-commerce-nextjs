@@ -17,6 +17,7 @@ export interface Order {
   note?: string;
   items: OrderItem[];
   isReviewed: boolean;
+  createdAt: Date;
 }
 
 export interface OrderItem {

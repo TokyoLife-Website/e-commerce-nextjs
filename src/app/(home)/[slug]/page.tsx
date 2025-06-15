@@ -28,6 +28,7 @@ import { handleRequestError } from "@/utils/errorHandler";
 import { useDebounce } from "@/hooks/useDebounce";
 import { Icon } from "@/components/icons";
 import { calculateDiscountedPrice } from "@/utils/calculateDiscountedPrice";
+import CustomButton from "@/components/layouts/CustomBtn";
 
 interface AddToCartForm {
   color: string;
@@ -154,36 +155,37 @@ const ActionButtons: React.FC<{
   return (
     <div className="flex flex-col gap-y-4 mb-5">
       <div className="flex items-center justify-between gap-x-3">
-        <button
+        <CustomButton
           onClick={onSubmit}
           disabled={isLoading}
-          className="flex justify-center items-center gap-x-2 w-1/2 p-3 min-w-16 border-2 border-primary rounded outline-none select-none"
+          variant="outline"
+          className="flex justify-center items-center gap-x-2 w-1/2"
         >
           <Icon name="cart" size={24} />
-          <p className="text-primary text-[14px] font-semibold leading-6 m-0">
-            Thêm giỏ hàng
-          </p>
-        </button>
-        <button
+          <p className="text-[14px] leading-6 m-0">Thêm giỏ hàng</p>
+        </CustomButton>
+        <CustomButton
           onClick={() => {
             onSubmit();
             router.push("/cart");
           }}
-          type="button"
-          className="transition-shadow duration-300 ease-in-out hover:shadow-xl flex justify-center items-center gap-x-2 w-1/2 p-3 min-w-16 border-2 border-primary bg-primary rounded outline-none select-none"
+          className="flex justify-center items-center gap-x-2 w-1/2 border-2 border-primary"
         >
           <Icon name="bag" size={24} />
           <p className="text-white text-[14px] font-semibold leading-6 m-0">
             Mua ngay
           </p>
-        </button>
+        </CustomButton>
       </div>
-      <button className="transition-shadow duration-300 ease-in-out hover:shadow-xl flex justify-center items-center gap-x-2 w-full p-3 min-w-16 border border-[#555555] rounded outline-none select-none">
+      <CustomButton
+        variant="outline"
+        className="border-[#555555] border flex justify-center items-center gap-x-2 w-full hover:bg-inherit"
+      >
         <Icon name="map" size={24} />
-        <p className="text-black text-[14px] font-semibold leading-6 m-0">
+        <p className="text-black text-[14px] font-semibold leading-6 m-0 ">
           Cửa hàng có sẵn sản phẩm
         </p>
-      </button>
+      </CustomButton>
     </div>
   );
 };
