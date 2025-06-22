@@ -1,5 +1,6 @@
 "use client";
 import NotFound from "@/app/not-found";
+import Loading from "@/components/common/Loading";
 import OrdersList from "@/components/order/OrdersList";
 import ReviewPagination from "@/components/product/ReviewPagination";
 import { useOrdersQuery } from "@/hooks/api/order.api";
@@ -57,9 +58,7 @@ export default function OrderManagement() {
       </div>
 
       {isLoading ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-        </div>
+        <Loading size="small" />
       ) : (
         <>
           <OrdersList orders={orders} />

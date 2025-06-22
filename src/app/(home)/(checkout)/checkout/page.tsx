@@ -63,7 +63,9 @@ export default function CheckoutPage() {
             setSelectedAddress={setSelectedAddress}
             setSelectedPayment={setSelectedPayment}
           />
-          <CartList cartData={carts?.data} />
+          <div className="p-4 lg:p-6 bg-white">
+            <CartList cartItemsData={carts?.data.items} />
+          </div>
         </div>
 
         <div className="lg:col-span-1 bg-white h-fit rounded-sm p-4 lg:p-6">

@@ -56,9 +56,9 @@ export default function CartPage() {
     <div className="container mx-auto px-4">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-[20px] pb-20">
         {/* Cart Items List - 2/3 width on large screens, full width on small screens */}
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-2 p-4 lg:p-6 bg-white">
           <CartList
-            cartData={carts?.data}
+            cartItemsData={carts?.data?.items}
             onRemoveItem={handleRemoveItem}
             onUpdateItem={handleUpdateItem}
           />

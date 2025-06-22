@@ -24,6 +24,11 @@ const fetchOrders = async (
   return response.data;
 };
 
+const fetchOrder = async (orderCode: string): Promise<ResponseData<Order>> => {
+  const response = await axiosInstance.get(`/orders/${orderCode}`);
+  return response.data;
+};
+
 export const useCreateOrderMutation = () => {
   const queryClient = useQueryClient();
 
@@ -43,5 +48,13 @@ export const useOrdersQuery = (
   return useQuery({
     queryKey: [QUERY_KEYS.ORDERS, status, page, size],
     queryFn: () => fetchOrders(page, size, status),
+  });
+};
+
+export const useOrderQuery = (orderCode: string) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.ORDER(orderCode), orderCode],
+    queryFn: () => fetchOrder(orderCode),
+    enabled: !!orderCode,
   });
 };

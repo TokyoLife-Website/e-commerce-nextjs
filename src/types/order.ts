@@ -1,8 +1,8 @@
-import { Address } from "cluster";
 import { User } from "./user";
 import { OrderStatus } from "./orderStatus";
 import { PaymentMethod } from "./paymentMethod";
 import { SKU } from "./sku";
+import { Address } from "./address";
 
 export interface Order {
   id: number;

@@ -6,5 +6,6 @@ export const QUERY_KEYS = {
   USER_ADDRESSES: "user-addresses",
   CARTS: "carts",
   ORDERS: "orders",
+  ORDER: (orderCode: string) => `order-${orderCode}`,
   PRODUCT: (id: string | number) => `product-${id}`,
 };

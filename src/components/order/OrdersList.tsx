@@ -4,21 +4,13 @@ import { OrderStatus } from "@/types/orderStatus";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { formatDate } from "@/utils/formatDate";
 
-const STATUS_STYLES = {
-  [OrderStatus.PENDING]: "bg-yellow-100 text-yellow-600",
-  [OrderStatus.PROCESSING]: "bg-blue-100 text-blue-600",
-  [OrderStatus.DELIVERING]: "bg-purple-100 text-purple-600",
-  [OrderStatus.DELIVERED]: "bg-green-100 text-green-600",
-  [OrderStatus.CANCELLED]: "bg-gray-100 text-gray-600",
-  [OrderStatus.RETURNED]: "bg-red-100 text-red-600",
-} as const;
-
 interface OrderTableProps {
   orders: Order[];
 }
 
 import React, { FC } from "react";
 import EmptyOrder from "../icons/EmptyOrder";
+import OrderStatusTag from "./OrderStatusTag";
 
 const OrdersList: FC<OrderTableProps> = ({ orders }) => {
   if (!orders.length)
@@ -58,16 +50,11 @@ const OrdersList: FC<OrderTableProps> = ({ orders }) => {
                 {formatCurrency(order.total)}
               </td>
               <td className="p-4">
-                <span
-                  className={`px-2 py-1 rounded text-xs font-medium ${
-                    STATUS_STYLES[order.status] || ""
-                  }`}
-                >
-                  {order.status}
-                </span>
+                <OrderStatusTag orderStatus={order.status} />
               </td>
               <td className="p-4">
                 <CustomButton
+                  href={`/profile/orders/${order.code}`}
                   variant="outline"
                   size="small"
                   className="border-gray-200 px-3 py-2 text-black hover:bg-primary hover:text-white"
