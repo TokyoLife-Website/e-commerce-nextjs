@@ -1,3 +1,4 @@
+import { Coupon } from "./coupon";
 import { SKU } from "./sku";
 
 export interface CartItem {
@@ -9,6 +10,9 @@ export interface CartItem {
 
 export interface Cart {
   id: number;
+  discountAmount: number;
   total: number;
+  coupon: Coupon;
+  finalAmount: number;
   items: CartItem[];
 }

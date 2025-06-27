@@ -1,19 +1,24 @@
 "use client";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import CustomButton from "@/components/layouts/CustomBtn";
-import { formatCurrency } from "@/utils/formatCurrency";
-import React, { useState } from "react";
-import { useLoading } from "@/hooks/useLoading";
 import Loading from "@/components/common/Loading";
-import { useCarts } from "@/hooks/api/cart.api";
 import CartList from "@/components/checkout/CartList";
 import NotFound from "@/app/not-found";
-import { PaymentMethod } from "@/types/paymentMethod";
-import { Address } from "@/types/address";
+import CloseIcon from "@/components/icons/CloseIcon";
 import { CheckoutInfo } from "@/components/checkout/CheckoutInfor";
-import { useCreateOrderMutation } from "@/hooks/api/order.api";
+import { formatCurrency } from "@/utils/formatCurrency";
 import { handleRequestError } from "@/utils/errorHandler";
 import useToast from "@/hooks/useToastify";
-import { useRouter } from "next/navigation";
+import { useLoading } from "@/hooks/useLoading";
+import {
+  useCarts,
+  useApplyCouponMutation,
+  useRemoveCouponMutation,
+} from "@/hooks/api/cart.api";
+import { useCreateOrderMutation } from "@/hooks/api/order.api";
+import { PaymentMethod } from "@/types/paymentMethod";
+import { Address } from "@/types/address";
 
 export default function CheckoutPage() {
   const { showSuccess, showError } = useToast();
@@ -22,10 +27,28 @@ export default function CheckoutPage() {
     PaymentMethod.COD
   );
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
-  const { data: carts, isLoading, isFetching, error } = useCarts();
+  const [couponCode, setCouponCode] = useState("");
+
+  const {
+    data: carts,
+    isLoading,
+    isFetching,
+    error,
+    refetch: refetchCart,
+  } = useCarts();
   const { mutateAsync, isPending } = useCreateOrderMutation();
+  const { mutateAsync: applyCoupon, isPending: isApplyingCoupon } =
+    useApplyCouponMutation();
+  const { mutateAsync: removeCoupon, isPending: isRemovingCoupon } =
+    useRemoveCouponMutation();
 
   const showLoading = useLoading({ isLoading, isFetching, delay: 0 });
+
+  useEffect(() => {
+    if (carts?.data?.coupon?.code) {
+      setCouponCode(carts.data.coupon.code);
+    }
+  }, [carts?.data?.coupon?.code]);
 
   const handleSubmit = async () => {
     try {
@@ -33,18 +56,38 @@ export default function CheckoutPage() {
         showError("Vui lòng chọn địa chỉ giao hàng");
         return;
       }
-
       if (!carts?.data.items.length) {
         showError("Giỏ hàng của bạn đang trống");
         return;
       }
-
       const { message, data } = await mutateAsync({
         addressId: +selectedAddress.id,
         paymentMethod: selectedPayment,
       });
       router.push(`/order-complete?code=${data.code}`);
       showSuccess(message);
+    } catch (error) {
+      handleRequestError(error);
+    }
+  };
+
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim()) return showError("Vui lòng nhập mã giảm giá");
+    try {
+      const { message } = await applyCoupon(couponCode.trim());
+      showSuccess(message || "Áp dụng mã giảm giá thành công");
+      refetchCart();
+    } catch (error) {
+      handleRequestError(error);
+    }
+  };
+
+  const handleRemoveCoupon = async () => {
+    try {
+      await removeCoupon();
+      setCouponCode("");
+      refetchCart();
+      showSuccess("Đã xóa mã giảm giá");
     } catch (error) {
       handleRequestError(error);
     }
@@ -67,22 +110,44 @@ export default function CheckoutPage() {
             <CartList cartItemsData={carts?.data.items} />
           </div>
         </div>
-
         <div className="lg:col-span-1 bg-white h-fit rounded-sm p-4 lg:p-6">
           <h2 className="text-xl font-bold mb-4">ĐƠN HÀNG</h2>
           <div className="flex flex-col gap-2">
             <h3 className="font-semibold text-[#222222] text-xs">
               MÃ PHIẾU GIẢM GIÁ
             </h3>
-            <div className="flex items-stretch">
-              <input
-                type="text"
-                className="flex-1 rounded-s px-4 py-[10px] text-sm outline-none border border-gray-500"
-                placeholder="Mã phiếu giảm giá"
-                required
-              />
-              <button className="text-white px-5 rounded-e font-normal bg-primary">
-                ÁP DỤNG
+            <div className="flex items-stretch h-[40px]">
+              <div
+                className={`flex items-center border border-gray-500 rounded-s text-sm flex-1 overflow-hidden ${
+                  carts.data.coupon ? "bg-gray-100 text-gray-400" : ""
+                }`}
+              >
+                <input
+                  value={couponCode}
+                  onChange={(e) => setCouponCode(e.target.value)}
+                  type="text"
+                  className="flex-1 pl-4 py-2 outline-none bg-inherit h-full"
+                  placeholder="Mã phiếu giảm giá"
+                  disabled={!!carts?.data?.coupon?.code}
+                />
+                {carts.data.coupon && (
+                  <button
+                    onClick={handleRemoveCoupon}
+                    className="px-2 h-full flex items-center justify-center text-gray-500 hover:text-black"
+                  >
+                    <CloseIcon />
+                  </button>
+                )}
+              </div>
+              <button
+                className="bg-primary text-white px-5 rounded-e font-normal disabled:opacity-70 h-full"
+                onClick={handleApplyCoupon}
+                disabled={
+                  isApplyingCoupon || !!carts.data.coupon || !couponCode
+                }
+                type="button"
+              >
+                {isApplyingCoupon ? "ĐANG ÁP DỤNG..." : "ÁP DỤNG"}
               </button>
             </div>
             <p className="font-normal text-[#555555] cursor-pointer text-xs">
@@ -108,14 +173,14 @@ export default function CheckoutPage() {
           <div className="flex justify-between items-center text-gray-600 mb-2">
             <span>Mã giảm giá</span>
             <span className="text-sm leading-[18px] text-[#222222] font-bold">
-              -{formatCurrency(0)}
+              -{formatCurrency(carts?.data.discountAmount)}
             </span>
           </div>
           <hr className="border-dashed border border-gray-500 my-4" />
           <div className="flex justify-between items-center text-gray-600 mb-2">
             <span>Tổng thanh toán</span>
             <span className="text-primary text-xl font-bold">
-              {formatCurrency(carts?.data.total || 0)}
+              {formatCurrency(carts?.data.finalAmount || 0)}
             </span>
           </div>
           <hr className="border-dashed border border-gray-500 my-4" />

@@ -28,6 +28,16 @@ const addToCart = async (
   return data;
 };
 
+const applyCoupon = async (code: string): Promise<ResponseData<Cart>> => {
+  const { data } = await axiosInstance.post("/carts/apply-coupon", { code });
+  return data;
+};
+
+const removeCoupon = async (): Promise<ResponseData<Cart>> => {
+  const { data } = await axiosInstance.delete("/carts/remove-coupon");
+  return data;
+};
+
 const updateCartItem = async (
   updateCartItemDto: UpdateCartItemDto
 ): Promise<ResponseData<Cart>> => {
@@ -59,6 +69,30 @@ export const useAddToCartMutation = () => {
 
   return useMutation({
     mutationFn: addToCart,
+    onSuccess: (data) => {
+      // Invalidate and refetch cart data
+      queryClient.setQueryData([QUERY_KEYS.CARTS], data);
+    },
+  });
+};
+
+export const useApplyCouponMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: applyCoupon,
+    onSuccess: (data) => {
+      // Invalidate and refetch cart data
+      queryClient.setQueryData([QUERY_KEYS.CARTS], data);
+    },
+  });
+};
+
+export const useRemoveCouponMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: removeCoupon,
     onSuccess: (data) => {
       // Invalidate and refetch cart data
       queryClient.setQueryData([QUERY_KEYS.CARTS], data);

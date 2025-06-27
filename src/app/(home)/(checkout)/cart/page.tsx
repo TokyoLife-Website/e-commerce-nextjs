@@ -71,7 +71,7 @@ export default function CartPage() {
           <div className="flex justify-between items-center text-gray-600 mb-2">
             <span>Tổng giá trị đơn hàng</span>
             <span className="text-primary text-xl font-bold">
-              {formatCurrency(carts?.data.total || 0)}
+              {formatCurrency(carts?.data.finalAmount || 0)}
             </span>
           </div>
 
