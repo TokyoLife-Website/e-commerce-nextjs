@@ -19,6 +19,10 @@ import {
 import { useCreateOrderMutation } from "@/hooks/api/order.api";
 import { PaymentMethod } from "@/types/paymentMethod";
 import { Address } from "@/types/address";
+import { useShippingFeeQuery } from "@/hooks/api/shipping.api";
+
+// Default weight per item in grams
+const DEFAULT_WEIGHT_PER_ITEM = 300;
 
 export default function CheckoutPage() {
   const { showSuccess, showError } = useToast();
@@ -42,7 +46,33 @@ export default function CheckoutPage() {
   const { mutateAsync: removeCoupon, isPending: isRemovingCoupon } =
     useRemoveCouponMutation();
 
-  const showLoading = useLoading({ isLoading, isFetching, delay: 0 });
+  // Calculate shipping fee based on selected address and cart weight
+  const shippingData =
+    selectedAddress && carts?.data?.items && carts.data.items.length > 0
+      ? {
+          pick_province: "Hà Nội", // Default pickup location - you can make this configurable
+          pick_district: "Cầu Giấy",
+          province: selectedAddress.province.name,
+          district: selectedAddress.district.name,
+          ward: selectedAddress.ward.name,
+          address: selectedAddress.detail,
+          weight: Number(
+            carts.data.items.reduce(
+              (total, item) => total + DEFAULT_WEIGHT_PER_ITEM * item.quantity,
+              0
+            )
+          ),
+        }
+      : null;
+
+  const { data: shippingFeeData, isLoading: isShippingLoading } =
+    useShippingFeeQuery(shippingData!);
+
+  const showLoading = useLoading({
+    isLoading: isLoading,
+    isFetching,
+    delay: 0,
+  });
 
   useEffect(() => {
     if (carts?.data?.coupon?.code) {
@@ -58,6 +88,10 @@ export default function CheckoutPage() {
       }
       if (!carts?.data.items.length) {
         showError("Giỏ hàng của bạn đang trống");
+        return;
+      }
+      if (isShippingLoading) {
+        showError("Đang tính phí vận chuyển, vui lòng đợi");
         return;
       }
       const { message, data } = await mutateAsync({
@@ -167,7 +201,11 @@ export default function CheckoutPage() {
           <div className="flex justify-between items-center text-gray-600 mb-2">
             <span>Phí vận chuyển</span>
             <span className="text-sm leading-[18px] text-[#222222] font-bold">
-              {formatCurrency(0)}
+              {isShippingLoading ? (
+                <span className="text-gray-400">Đang tính...</span>
+              ) : (
+                formatCurrency(shippingFeeData?.data?.shippingFee || 0)
+              )}
             </span>
           </div>
           <div className="flex justify-between items-center text-gray-600 mb-2">
@@ -180,7 +218,10 @@ export default function CheckoutPage() {
           <div className="flex justify-between items-center text-gray-600 mb-2">
             <span>Tổng thanh toán</span>
             <span className="text-primary text-xl font-bold">
-              {formatCurrency(carts?.data.finalAmount || 0)}
+              {formatCurrency(
+                (carts?.data.finalAmount || 0) +
+                  (shippingFeeData?.data?.shippingFee || 0)
+              )}
             </span>
           </div>
           <hr className="border-dashed border border-gray-500 my-4" />
