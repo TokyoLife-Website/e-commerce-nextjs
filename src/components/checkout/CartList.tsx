@@ -20,7 +20,7 @@ const CartList: FC<CartListProps> = ({
 }) => {
   const quantity = cartItemsData.reduce((acc, item) => acc + item.quantity, 0);
   return (
-    <div className="bg-white rounded-sm h-fit overflow-x-auto">
+    <div className="bg-white rounded-sm h-fit">
       <h1 className="flex items-center gap-2 text-xl font-extrabold text-gray-900 mb-6 uppercase">
         Giỏ hàng
         <p className="text-primary font-normal text-xs leading-[1.5] lowercase">

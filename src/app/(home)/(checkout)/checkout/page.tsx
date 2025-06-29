@@ -20,9 +20,10 @@ import { useCreateOrderMutation } from "@/hooks/api/order.api";
 import { PaymentMethod } from "@/types/paymentMethod";
 import { Address } from "@/types/address";
 import { useShippingFeeQuery } from "@/hooks/api/shipping.api";
-
-// Default weight per item in grams
-const DEFAULT_WEIGHT_PER_ITEM = 300;
+import {
+  DEFAULT_WEIGHT_PER_ITEM,
+  FREE_SHIPPING_THRESHOLD,
+} from "@/constants/shipping";
 
 export default function CheckoutPage() {
   const { showSuccess, showError } = useToast();
@@ -46,9 +47,12 @@ export default function CheckoutPage() {
   const { mutateAsync: removeCoupon, isPending: isRemovingCoupon } =
     useRemoveCouponMutation();
 
+  // Extract cart data for cleaner code
+  const cartData = carts?.data;
+
   // Calculate shipping fee based on selected address and cart weight
   const shippingData =
-    selectedAddress && carts?.data?.items && carts.data.items.length > 0
+    selectedAddress && cartData?.items && cartData.items.length > 0
       ? {
           pick_province: "Hà Nội", // Default pickup location - you can make this configurable
           pick_district: "Cầu Giấy",
@@ -57,7 +61,7 @@ export default function CheckoutPage() {
           ward: selectedAddress.ward.name,
           address: selectedAddress.detail,
           weight: Number(
-            carts.data.items.reduce(
+            cartData.items.reduce(
               (total, item) => total + DEFAULT_WEIGHT_PER_ITEM * item.quantity,
               0
             )
@@ -68,6 +72,12 @@ export default function CheckoutPage() {
   const { data: shippingFeeData, isLoading: isShippingLoading } =
     useShippingFeeQuery(shippingData!);
 
+  // Calculate shipping fee with free ship condition
+  const originalShippingFee = shippingFeeData?.data?.shippingFee || 0;
+  const totalAmount = cartData?.total || 0;
+  const finalShippingFee =
+    totalAmount >= FREE_SHIPPING_THRESHOLD ? 0 : originalShippingFee;
+
   const showLoading = useLoading({
     isLoading: isLoading,
     isFetching,
@@ -75,10 +85,10 @@ export default function CheckoutPage() {
   });
 
   useEffect(() => {
-    if (carts?.data?.coupon?.code) {
-      setCouponCode(carts.data.coupon.code);
+    if (cartData?.coupon?.code) {
+      setCouponCode(cartData.coupon.code);
     }
-  }, [carts?.data?.coupon?.code]);
+  }, [cartData?.coupon?.code]);
 
   const handleSubmit = async () => {
     try {
@@ -86,7 +96,7 @@ export default function CheckoutPage() {
         showError("Vui lòng chọn địa chỉ giao hàng");
         return;
       }
-      if (!carts?.data.items.length) {
+      if (!cartData?.items.length) {
         showError("Giỏ hàng của bạn đang trống");
         return;
       }
@@ -128,7 +138,7 @@ export default function CheckoutPage() {
   };
 
   if (showLoading) return <Loading fullScreen size="large" />;
-  if (!carts?.data || error) return <NotFound />;
+  if (!cartData || error) return <NotFound />;
 
   return (
     <div className="container mx-auto px-4">
@@ -141,7 +151,7 @@ export default function CheckoutPage() {
             setSelectedPayment={setSelectedPayment}
           />
           <div className="p-4 lg:p-6 bg-white">
-            <CartList cartItemsData={carts?.data.items} />
+            <CartList cartItemsData={cartData?.items} />
           </div>
         </div>
         <div className="lg:col-span-1 bg-white h-fit rounded-sm p-4 lg:p-6">
@@ -153,7 +163,7 @@ export default function CheckoutPage() {
             <div className="flex items-stretch h-[40px]">
               <div
                 className={`flex items-center border border-gray-500 rounded-s text-sm flex-1 overflow-hidden ${
-                  carts.data.coupon ? "bg-gray-100 text-gray-400" : ""
+                  cartData.coupon ? "bg-gray-100 text-gray-400" : ""
                 }`}
               >
                 <input
@@ -162,9 +172,9 @@ export default function CheckoutPage() {
                   type="text"
                   className="flex-1 pl-4 py-2 outline-none bg-inherit h-full"
                   placeholder="Mã phiếu giảm giá"
-                  disabled={!!carts?.data?.coupon?.code}
+                  disabled={!!cartData?.coupon?.code}
                 />
-                {carts.data.coupon && (
+                {cartData.coupon && (
                   <button
                     onClick={handleRemoveCoupon}
                     className="px-2 h-full flex items-center justify-center text-gray-500 hover:text-black"
@@ -176,9 +186,7 @@ export default function CheckoutPage() {
               <button
                 className="bg-primary text-white px-5 rounded-e font-normal disabled:opacity-70 h-full"
                 onClick={handleApplyCoupon}
-                disabled={
-                  isApplyingCoupon || !!carts.data.coupon || !couponCode
-                }
+                disabled={isApplyingCoupon || !!cartData.coupon || !couponCode}
                 type="button"
               >
                 {isApplyingCoupon ? "ĐANG ÁP DỤNG..." : "ÁP DỤNG"}
@@ -195,7 +203,7 @@ export default function CheckoutPage() {
           <div className="flex justify-between items-center text-gray-600 mb-2">
             <span>Tạm tính</span>
             <span className="text-sm leading-[18px] text-[#222222] font-bold">
-              {formatCurrency(carts?.data.total || 0)}
+              {formatCurrency(cartData?.total || 0)}
             </span>
           </div>
           <div className="flex justify-between items-center text-gray-600 mb-2">
@@ -204,24 +212,21 @@ export default function CheckoutPage() {
               {isShippingLoading ? (
                 <span className="text-gray-400">Đang tính...</span>
               ) : (
-                formatCurrency(shippingFeeData?.data?.shippingFee || 0)
+                formatCurrency(finalShippingFee)
               )}
             </span>
           </div>
           <div className="flex justify-between items-center text-gray-600 mb-2">
             <span>Mã giảm giá</span>
             <span className="text-sm leading-[18px] text-[#222222] font-bold">
-              -{formatCurrency(carts?.data.discountAmount)}
+              -{formatCurrency(cartData.discountAmount)}
             </span>
           </div>
           <hr className="border-dashed border border-gray-500 my-4" />
           <div className="flex justify-between items-center text-gray-600 mb-2">
             <span>Tổng thanh toán</span>
             <span className="text-primary text-xl font-bold">
-              {formatCurrency(
-                (carts?.data.finalAmount || 0) +
-                  (shippingFeeData?.data?.shippingFee || 0)
-              )}
+              {formatCurrency((cartData?.finalAmount || 0) + finalShippingFee)}
             </span>
           </div>
           <hr className="border-dashed border border-gray-500 my-4" />

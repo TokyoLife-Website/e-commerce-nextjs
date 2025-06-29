@@ -1,0 +1,2 @@
+export const FREE_SHIPPING_THRESHOLD = 300000;
+export const DEFAULT_WEIGHT_PER_ITEM = 300;
