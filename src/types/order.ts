@@ -3,6 +3,7 @@ import { OrderStatus } from "./orderStatus";
 import { PaymentMethod } from "./paymentMethod";
 import { SKU } from "./sku";
 import { Address } from "./address";
+import { Coupon } from "./coupon";
 
 export interface Order {
   id: number;
@@ -14,6 +15,8 @@ export interface Order {
   discount: number;
   shippingFee: number;
   total: number;
+  finalAmount: number;
+  coupon?: Coupon;
   note?: string;
   items: OrderItem[];
   isReviewed: boolean;

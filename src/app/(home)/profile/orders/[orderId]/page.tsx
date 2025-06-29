@@ -6,7 +6,6 @@ import { ShippingIcon } from "@/components/icons/ShippingIcon";
 import OrderInfo from "@/components/order/OrderInfo";
 import OrderStatusTag from "@/components/order/OrderStatusTag";
 import { useOrderQuery } from "@/hooks/api/order.api";
-import { OrderStatus } from "@/types/orderStatus";
 import { PaymentMethod } from "@/types/paymentMethod";
 import { formatCurrency } from "@/utils/formatCurrency";
 import Link from "next/link";
@@ -80,13 +79,13 @@ const OrderDetailPage = ({ params }: Props) => {
       </div>
       <div className="flex justify-between items-center">
         <span>Mã giảm giá</span>
-        <span className="font-black">-{formatCurrency(0)}</span>
+        <span className="font-black">-{formatCurrency(order.discount)}</span>
       </div>
       <hr className="m-0 bg-[#0000001f] border-solid" />
       <div className="flex justify-between items-center">
         <span>Tổng cộng</span>
         <span className="font-black text-2xl text-primary">
-          {formatCurrency(order.total + order.shippingFee + 0)}
+          {formatCurrency(order.finalAmount)}
         </span>
       </div>
     </div>

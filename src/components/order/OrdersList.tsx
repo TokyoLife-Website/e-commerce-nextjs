@@ -47,7 +47,7 @@ const OrdersList: FC<OrderTableProps> = ({ orders }) => {
                 {formatDate(order.createdAt, "DD/MM/YYYY")}
               </td>
               <td className="p-4 text-primary font-semibold">
-                {formatCurrency(order.total)}
+                {formatCurrency(order.finalAmount)}
               </td>
               <td className="p-4">
                 <OrderStatusTag orderStatus={order.status} />
