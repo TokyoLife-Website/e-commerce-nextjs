@@ -69,10 +69,13 @@ export const HeaderProfile = () => {
               </div>
             </div>
             <div className="mt-4 mb-9">
-              <div className="flex gap-[10px] py-2 pl-6 text-sm font-medium leading-[18px] hover:bg-secondary">
+              <Link
+                href={"/profile/orders"}
+                className="flex gap-[10px] py-2 pl-6 text-sm font-medium leading-[18px] hover:bg-secondary"
+              >
                 <NoteIcon />
                 <span>Đơn hàng</span>
-              </div>
+              </Link>
               <div className="flex gap-[10px] py-2 pl-6 text-sm font-medium leading-[18px] hover:bg-secondary">
                 <ViewedIcon />
                 <span>Sản phẩm đã xem</span>

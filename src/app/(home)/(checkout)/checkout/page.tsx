@@ -24,6 +24,7 @@ import {
   DEFAULT_WEIGHT_PER_ITEM,
   FREE_SHIPPING_THRESHOLD,
 } from "@/constants/shipping";
+import { useVNPayURLMutation } from "@/hooks/api/payment.api";
 
 export default function CheckoutPage() {
   const { showSuccess, showError } = useToast();
@@ -46,6 +47,7 @@ export default function CheckoutPage() {
     useApplyCouponMutation();
   const { mutateAsync: removeCoupon, isPending: isRemovingCoupon } =
     useRemoveCouponMutation();
+  const { mutateAsync: createVNPayURL } = useVNPayURLMutation();
 
   // Extract cart data for cleaner code
   const cartData = carts?.data;
@@ -108,6 +110,22 @@ export default function CheckoutPage() {
         addressId: +selectedAddress.id,
         paymentMethod: selectedPayment,
       });
+      if (selectedPayment === PaymentMethod.VN_PAY) {
+        // Gọi API tạo link thanh toán VNPay
+        const paymentRes = await createVNPayURL({
+          orderId: data.code,
+          amount: data.finalAmount,
+          orderInfo: `Thanh toán đơn hàng #${data.code}`,
+          ipAddr: "127.0.0.1",
+        });
+        if (paymentRes?.data?.paymentUrl) {
+          window.location.href = paymentRes.data.paymentUrl;
+          return;
+        } else {
+          showError("Không lấy được link thanh toán VNPay");
+          return;
+        }
+      }
       router.push(`/order-complete?code=${data.code}`);
       showSuccess(message);
     } catch (error) {

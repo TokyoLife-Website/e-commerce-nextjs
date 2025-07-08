@@ -9,4 +9,5 @@ export const QUERY_KEYS = {
   ORDER: (orderCode: string) => `order-${orderCode}`,
   PRODUCT: (id: string | number) => `product-${id}`,
   SHIPPING: "shipping",
+  PAYMENT: "payment",
 };

@@ -15,6 +15,7 @@ import NotFound from "@/app/not-found";
 import CouponBanner from "@/components/checkout/CouponBanner";
 import ShippingBanner from "@/components/checkout/ShippingBanner";
 import PaymentSummary from "@/components/checkout/PaymentSummary";
+import PaymentFailed from "@/components/checkout/PaymentFailed";
 
 export default function CartPage() {
   const { data: carts, isLoading, isFetching, error } = useCarts();
@@ -55,6 +56,7 @@ export default function CartPage() {
   if (showLoading) return <Loading fullScreen size="large" />;
   if (!cartData || error) return <NotFound />;
 
+  if (cartData.items.length === 0) return <PaymentFailed isCartEmpty />;
   return (
     <div className="container mx-auto px-4">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-[20px] pb-20">
