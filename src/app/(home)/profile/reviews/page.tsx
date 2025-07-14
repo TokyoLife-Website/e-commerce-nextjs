@@ -6,25 +6,31 @@ import ReviewPagination from "@/components/product/ReviewPagination";
 import PendingReviewList from "@/components/review/PendingReviewList";
 import ReviewedList from "@/components/review/ReviewedList";
 import { useOrdersQuery } from "@/hooks/api/order.api";
+import { useReviewItemsQuery } from "@/hooks/api/review.api";
 import { OrderStatus } from "@/types/orderStatus";
+import { ReviewItem, ReviewStatus } from "@/types/review";
 import { useMemo, useState } from "react";
 
 const TABS = [
-  { id: 1, status: false, label: "Chưa đánh giá" },
-  { id: 2, status: true, label: "Đã đánh giá" },
+  { id: 1, status: ReviewStatus.NOT_REVIEWED, label: "Chưa đánh giá" },
+  { id: 2, status: ReviewStatus.REVIEWED, label: "Đã đánh giá" },
 ] as const;
 
 export default function Home() {
-  const [isReviewed, setIsReviewed] = useState<boolean>(false);
+  const [isReviewed, setIsReviewed] = useState<ReviewStatus>(
+    ReviewStatus.NOT_REVIEWED
+  );
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const { data, isLoading, error } = useOrdersQuery(undefined, currentPage);
+  const { data, isLoading, error } = useReviewItemsQuery(
+    isReviewed,
+    currentPage
+  );
 
-  const orders = useMemo(() => {
+  const reviewItems = useMemo(() => {
     const res = data?.data?.items || [];
     return res;
   }, [data]);
-
-  if (!orders || error) return <NotFound />;
+  if (!reviewItems || error) return <NotFound />;
   return (
     <div className="w-full max-w-6xl mx-auto bg-white">
       <div className="uppercase font-extrabold leading-6 text-xl mb-6 pb-6 border-b">
@@ -38,7 +44,10 @@ export default function Home() {
               role="tab"
               aria-selected={isReviewed === tab.status}
               aria-label={tab.label}
-              onClick={() => setIsReviewed(tab.status)}
+              onClick={() => {
+                setIsReviewed(tab.status);
+                setCurrentPage(1);
+              }}
               className={`p-4 text-sm font-bold leading-[18px] border-b-2 transition-colors ${
                 isReviewed === tab.status
                   ? "border-primary text-primary"
@@ -51,24 +60,16 @@ export default function Home() {
         </div>
       </div>
       {isLoading && <Loading size="small" />}
-      {!isLoading &&
-        (isReviewed ? (
-          <ReviewedList />
-        ) : (
-          <PendingReviewList orderItems={[]} />
-          // <>
-          //   <OrdersList orders={orders} />
-          //   {!!orders.length && (
-          //     <div className="flex justify-center py-4">
-          //       <ReviewPagination
-          //         currentPage={currentPage}
-          //         onPageChange={(page) => setCurrentPage(page)}
-          //         totalPages={data?.data.totalPages || 0}
-          //       />
-          //     </div>
-          //   )}
-          // </>
-        ))}
+      {isReviewed === ReviewStatus.REVIEWED ? (
+        <ReviewedList reviewedListData={reviewItems as ReviewItem[]} />
+      ) : (
+        <PendingReviewList orderItems={reviewItems as ReviewItem[]} />
+      )}
+      <ReviewPagination
+        currentPage={currentPage}
+        totalPages={data?.data.totalPages || 0}
+        onPageChange={(page) => setCurrentPage(page)}
+      />
     </div>
   );
 }

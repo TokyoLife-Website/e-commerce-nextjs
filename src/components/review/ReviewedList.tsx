@@ -1,10 +1,16 @@
-import React from "react";
+import React, { FC } from "react";
 import CustomButton from "../layouts/CustomBtn";
 import { formatDate } from "@/utils/formatDate";
 import dayjs from "dayjs";
 import { Rating } from "@mui/material";
+import { ReviewItem } from "@/types/review";
+import Link from "next/link";
 
-const ReviewedList = () => {
+interface ReviewedListProps {
+  reviewedListData: ReviewItem[];
+}
+
+const ReviewedList: FC<ReviewedListProps> = ({ reviewedListData }) => {
   return (
     <div className="overflow-x-auto mt-6">
       <table className="min-w-full rounded-lg text-sm">
@@ -13,50 +19,48 @@ const ReviewedList = () => {
             <th className="p-4 w-1/6 font-semibold">Hình ảnh</th>
             <th className="p-4 w-1/6 font-semibold">Tên sản phẩm</th>
             <th className="p-4 w-1/6 font-semibold">Phiên bản</th>
-            <th className="p-4 w-1/6 font-semibold">Ngày mua</th>
+            <th className="p-4 w-1/6 font-semibold">Ngày đánh giá</th>
             <th className="p-4 w-2/6 font-semibold">Đánh giá</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td className="p-4">Áo Thun Nam</td>
-            <td className="p-4">Áo Thun Nam</td>
-            <td className="p-4 text-primary font-semibold">Size L - Màu Đen</td>
-            <td className="p-4">
-              {formatDate(dayjs().toDate(), "DD/MM/YYYY")}
-            </td>
-            <td className="p-4 flex flex-col">
-              <Rating name="half-rating" size="small" readOnly value={1} />
-              <span>
-                Hàng không như mô tả, chất lượng kém, đề nghị hoàn tiền nếu
-                không sẽ đốt quán
-              </span>
-            </td>
-          </tr>
-          <tr>
-            <td className="p-4">Áo Thun Nam</td>
-            <td className="p-4">Áo Thun Nam</td>
-            <td className="p-4 text-primary font-semibold">Size L - Màu Đen</td>
-            <td className="p-4">
-              {formatDate(dayjs().toDate(), "DD/MM/YYYY")}
-            </td>
-            <td className="p-4 flex flex-col">
-              <Rating name="half-rating" size="small" readOnly value={1} />
-              <span>Hàng như shit, đây là lần cuối tôi mua</span>
-            </td>
-          </tr>
-          <tr>
-            <td className="p-4">Áo Thun Nam</td>
-            <td className="p-4">Áo Thun Nam</td>
-            <td className="p-4 text-primary font-semibold">Size L - Màu Đen</td>
-            <td className="p-4">
-              {formatDate(dayjs().toDate(), "DD/MM/YYYY")}
-            </td>
-            <td className="p-4 flex flex-col">
-              <Rating name="half-rating" size="small" readOnly value={5} />
-              <span>Hàng tốt đấy hẹ hẹ hẹ</span>
-            </td>
-          </tr>
+          {reviewedListData &&
+            reviewedListData.map((reviewItem) => (
+              <tr key={reviewItem.orderItemId}>
+                <td className="p-4">
+                  <img
+                    src={reviewItem?.productImage || ""}
+                    alt={reviewItem.productName}
+                    className="w-16 h-16 lg:w-20 lg:h-20 object-cover rounded"
+                  />
+                </td>
+                <td className="p-4">
+                  <Link className="text-lg" href={`/${reviewItem.productSlug}`}>
+                    {reviewItem.productName}
+                  </Link>
+                </td>
+                <td className="p-4 text-primary font-semibold">
+                  Size {reviewItem.size} - {reviewItem.color}
+                </td>
+                <td className="p-4">
+                  {formatDate(
+                    reviewItem?.reviewDate || dayjs().toDate(),
+                    "DD/MM/YYYY"
+                  )}
+                </td>
+                <td className="p-4 ">
+                  <div className="flex flex-col justify-center">
+                    <Rating
+                      name="half-rating"
+                      size="small"
+                      readOnly
+                      value={reviewItem.rating}
+                    />
+                    <span>{reviewItem.comment}</span>
+                  </div>
+                </td>
+              </tr>
+            ))}
         </tbody>
       </table>
     </div>

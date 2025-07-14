@@ -11,3 +11,22 @@ export interface Review {
   skuId: string | number;
   createdAt: string;
 }
+
+export interface ReviewItem {
+  productId: number;
+  productName: string;
+  productSlug: string;
+  productImage: string | null;
+  size: string;
+  color: string;
+  comment?: string;
+  rating?: number;
+  reviewDate?: Date;
+  orderDate?: Date;
+  orderItemId: number;
+}
+
+export enum ReviewStatus {
+  REVIEWED = "REVIEWED",
+  NOT_REVIEWED = "NOT_REVIEWED",
+}
