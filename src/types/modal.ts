@@ -9,4 +9,5 @@ export enum ModalType {
   VERIFY_CODE = "verify-code",
   SIZE_GUIDE = "size-guide",
   NONE = "none",
+  REVIEW_PRODUCT = "review-product",
 }

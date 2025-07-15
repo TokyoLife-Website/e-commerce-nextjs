@@ -333,6 +333,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
           </div>
           <div className="flex gap-1 items-center mb-6">
             <Rating
+              precision={0.5}
               name="half-rating"
               size="medium"
               readOnly

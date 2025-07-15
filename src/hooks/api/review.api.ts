@@ -1,5 +1,5 @@
 import axiosInstance from "./axios";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "./queryKeys";
 import { ResponseData } from "@/types/response";
 import { Pagination } from "@/types/paginate";
@@ -50,5 +50,27 @@ export const useReviewItemsQuery = (
     queryKey: [QUERY_KEYS.REVIEWS, page, size, status],
     queryFn: () => fetchReviewItemByStatus(status, page, size),
     enabled: !!status,
+  });
+};
+
+interface CreateReviewDto {
+  orderItemId: number;
+  rating: number;
+  comment: string;
+}
+
+const createReview = async (data: CreateReviewDto) => {
+  const response = await axiosInstance.post("/reviews", data);
+  return response.data;
+};
+
+export const useCreateReviewMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: createReview,
+    onSuccess: () => {
+      // Invalidate review queries if needed
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.REVIEWS] });
+    },
   });
 };

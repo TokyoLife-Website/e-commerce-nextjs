@@ -36,6 +36,7 @@ const ProductItem: FC<ProductItemProps> = ({ product }) => {
         {!!product.rating && (
           <div className="flex items-center gap-1 mb-2 text-xs text-[#555555] font-normal leading-4">
             <Rating
+              precision={0.5}
               name="half-rating"
               size="small"
               readOnly

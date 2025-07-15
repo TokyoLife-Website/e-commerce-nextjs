@@ -5,12 +5,16 @@ import { OrderItem } from "@/types/order";
 import { formatDate } from "@/utils/formatDate";
 import dayjs from "dayjs";
 import { ReviewItem } from "@/types/review";
+import { useAppDispatch } from "@/redux/store";
+import { openModal } from "@/redux/modalSlice";
+import { ModalType } from "@/types/modal";
 
 interface Props {
   orderItems: ReviewItem[];
 }
 
 const PendingReviewList: FC<Props> = ({ orderItems }) => {
+  const dispatch = useAppDispatch();
   if (!orderItems.length)
     return (
       <div className="flex flex-col gap-3 my-[100px] items-center">
@@ -32,7 +36,7 @@ const PendingReviewList: FC<Props> = ({ orderItems }) => {
         </thead>
         <tbody>
           {orderItems.map((orderItem) => (
-            <tr>
+            <tr key={orderItem.orderItemId}>
               <td className="p-4">
                 {" "}
                 <img
@@ -53,7 +57,14 @@ const PendingReviewList: FC<Props> = ({ orderItems }) => {
               </td>
               <td className="p-4">
                 <CustomButton
-                  href={`/profile/orders/`}
+                  onClick={() =>
+                    dispatch(
+                      openModal({
+                        type: ModalType.REVIEW_PRODUCT,
+                        data: { orderItemId: orderItem.orderItemId },
+                      })
+                    )
+                  }
                   variant="outline"
                   size="small"
                   className="border-gray-200 px-3 py-2 text-black hover:bg-primary hover:text-white"

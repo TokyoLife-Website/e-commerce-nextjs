@@ -51,12 +51,13 @@ const ReviewedList: FC<ReviewedListProps> = ({ reviewedListData }) => {
                 <td className="p-4 ">
                   <div className="flex flex-col justify-center">
                     <Rating
+                      precision={0.5}
                       name="half-rating"
                       size="small"
                       readOnly
                       value={reviewItem.rating}
                     />
-                    <span>{reviewItem.comment}</span>
+                    <span className="line-clamp-3">{reviewItem.comment}</span>
                   </div>
                 </td>
               </tr>
