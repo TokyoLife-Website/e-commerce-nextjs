@@ -30,7 +30,9 @@ const fetchProduct = async (
 
 const fetchProductBySlug = async (
   slug: string
-): Promise<ResponseData<Product>> => {
+): Promise<
+  ResponseData<Product & { starCounts: { [star: number]: number } }>
+> => {
   const response = await axiosInstance.get(`/products/slug/${slug}`);
   return response.data;
 };

@@ -4,7 +4,7 @@ import { Rating } from "@mui/material";
 interface RatingSummaryProps {
   average: number;
   totalReviews: number;
-  breakdown: { [star: number]: number }; // ví dụ: { 5: 13, 4: 0, 3: 0, ... }
+  breakdown: { [star: number]: number };
 }
 
 export const RatingSummary = ({

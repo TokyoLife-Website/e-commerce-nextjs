@@ -37,7 +37,7 @@ interface AddToCartForm {
 }
 
 interface ProductDetailProps {
-  product: Product;
+  product: Product & { starCounts: { [star: number]: number } };
 }
 
 // Product Color Selector Component
@@ -312,6 +312,10 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
     }
   };
 
+  const breakdown = Object.fromEntries(
+    [5, 4, 3, 2, 1].map((star) => [star, product.starCounts[star]])
+  );
+
   const debouncedSubmit = useDebounce(() => handleSubmit(onSubmit)(), 1000);
 
   return (
@@ -455,7 +459,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
           <RatingSummary
             average={product.rating}
             totalReviews={product.reviewCount}
-            breakdown={{ 5: 13, 4: 0, 3: 0, 2: 3, 1: 5 }}
+            breakdown={breakdown}
           />
         </div>
         <CommentList productId={+product.id} />
