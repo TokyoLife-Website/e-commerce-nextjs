@@ -32,7 +32,7 @@ const columns: Column[] = [
         <div className="flex flex-col gap-2 items-start justify-start">
           <span className="font-medium text-sm">{row.name}</span>
           <span className="font-normal text-sm text-[#919eab]">
-            {row.category.name}
+            {row.category?.name}
           </span>
         </div>
       </div>

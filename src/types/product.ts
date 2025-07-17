@@ -5,6 +5,7 @@ export interface Product {
   id: string | number;
   name: string;
   price: number;
+  finalPrice: number;
   discountType: DiscountType;
   discountValue: number;
   isActive: boolean;

@@ -27,7 +27,6 @@ import useToast from "@/hooks/useToastify";
 import { handleRequestError } from "@/utils/errorHandler";
 import { useDebounce } from "@/hooks/useDebounce";
 import { Icon } from "@/components/icons";
-import { calculateDiscountedPrice } from "@/utils/calculateDiscountedPrice";
 import CustomButton from "@/components/layouts/CustomBtn";
 
 interface AddToCartForm {
@@ -223,12 +222,6 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
     );
   }, [product?.skus, selectedColor]);
 
-  const { discountedPrice } = calculateDiscountedPrice({
-    basePrice: product.price,
-    discountType: product.discountType,
-    discountValue: product.discountValue,
-  });
-
   useEffect(() => {
     if (product && product.skus.length > 0) {
       const skus = product.skus;
@@ -353,7 +346,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
           </div>
           <div className="flex justify-between items-center">
             <p className="text-primary text-[24px] font-semibold leading-[30px]">
-              {formatCurrency(discountedPrice)}
+              {formatCurrency(product.finalPrice)}
             </p>
             {product.stock > 0 && (
               <div className="flex gap-1 items-center">

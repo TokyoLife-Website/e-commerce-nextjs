@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { FaTrash } from "react-icons/fa";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { CartItem as CartItemType } from "@/types/cartItem";
-import { calculateDiscountedPrice } from "@/utils/calculateDiscountedPrice";
+import { calculateDiscountPercent } from "@/utils/calculateDiscountedPrice";
 import { useDebounce } from "@/hooks/useDebounce";
 import { FaAngleDown } from "react-icons/fa6";
 import EditCartItemOptionsModal from "./EditCartItemOptionsModal";
@@ -21,8 +21,8 @@ interface CartItemProps {
 const CartItem = ({ item, onUpdateItem, onRemoveItem }: CartItemProps) => {
   const isCheckout = !(onUpdateItem && onRemoveItem);
   const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false);
-  const { price, discountType, discountValue } = item.sku.product;
-  const { discountedPrice, discountPercent } = calculateDiscountedPrice({
+  const { price, finalPrice, discountType, discountValue } = item.sku.product;
+  const discountPercent = calculateDiscountPercent({
     basePrice: price,
     discountType,
     discountValue,
@@ -106,7 +106,7 @@ const CartItem = ({ item, onUpdateItem, onRemoveItem }: CartItemProps) => {
         </div>
       </td>
       <td className="py-4 text-primary font-semibold">
-        {formatCurrency(discountedPrice)}
+        {formatCurrency(finalPrice)}
         {discountPercent > 0 && (
           <div className="text-gray-400 line-through text-sm">
             {formatCurrency(price)}
@@ -143,7 +143,7 @@ const CartItem = ({ item, onUpdateItem, onRemoveItem }: CartItemProps) => {
         )}
       </td>
       <td className="py-4 font-bold text-right">
-        <div>{formatCurrency(discountedPrice * item.quantity)}</div>
+        <div>{formatCurrency(finalPrice * item.quantity)}</div>
         {!isCheckout && (
           <button
             onClick={() => onRemoveItem(Number(item.id))}

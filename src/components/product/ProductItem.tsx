@@ -1,20 +1,21 @@
 import { DiscountType } from "@/types/discountType";
 import { formatCurrency } from "@/utils/formatCurrency";
-import { calculateDiscountedPrice } from "@/utils/calculateDiscountedPrice";
+import { calculateDiscountPercent } from "@/utils/calculateDiscountedPrice";
 import { Rating } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
 import React, { FC } from "react";
+import { Product } from "@/types/product";
 
 interface ProductItemProps {
-  product: any;
+  product: Product;
 }
 
 const ProductItem: FC<ProductItemProps> = ({ product }) => {
   const basePrice = product.price ?? 0;
   const { discountType, discountValue = 0 } = product;
 
-  const { discountedPrice, discountPercent } = calculateDiscountedPrice({
+  const discountPercent = calculateDiscountPercent({
     basePrice,
     discountType,
     discountValue,
@@ -46,7 +47,7 @@ const ProductItem: FC<ProductItemProps> = ({ product }) => {
           </div>
         )}
         <span className="flex flex-col gap-2 text-primary font-bold">
-          <div className="">{formatCurrency(discountedPrice)}</div>
+          <div className="">{formatCurrency(product.finalPrice)}</div>
           {discountType !== DiscountType.NONE && (
             <div className="flex items-center">
               <span className="text-[#737373] font-normal line-through mr-2">
