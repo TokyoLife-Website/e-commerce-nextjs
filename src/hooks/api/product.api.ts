@@ -13,10 +13,14 @@ const createProduct = async (data: CreateProductFormValues) => {
 
 const fetchProducts = async (
   page?: number | string,
-  size?: number | string
+  size?: number | string,
+  keyword?: string,
+  color?: string,
+  price?: string, // dạng 'min_max', ví dụ: '100_500'
+  sort?: string
 ): Promise<ResponseData<Pagination<Product>>> => {
   const response = await axiosInstance.get("/products", {
-    params: { page, size },
+    params: { page, size, keyword, color, price, sort },
   });
   return response.data;
 };
@@ -75,11 +79,15 @@ export const useProductBySlugQuery = (slug: string) => {
 
 export const useProductsQuery = (
   page?: number | string,
-  size?: number | string
+  size?: number | string,
+  keyword?: string,
+  color?: string,
+  price?: string, // dạng 'min_max', ví dụ: '100_500'
+  sort?: string
 ) => {
   return useQuery({
-    queryKey: [QUERY_KEYS.PRODUCTS, page, size],
-    queryFn: () => fetchProducts(page, size),
+    queryKey: [QUERY_KEYS.PRODUCTS, page, size, keyword, color, price, sort],
+    queryFn: () => fetchProducts(page, size, keyword, color, price, sort),
     placeholderData: (prev) => prev,
   });
 };

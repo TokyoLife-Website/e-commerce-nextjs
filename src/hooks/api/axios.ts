@@ -29,12 +29,11 @@ class Http {
     this.axiosInstance = axios.create(axiosConfig);
 
     // Khởi tạo BroadcastChannel
-    this.tokenChannel = new BroadcastChannel('auth-token-channel');
-    
+    this.tokenChannel = new BroadcastChannel("auth-token-channel");
+
     // Lắng nghe sự kiện token được refresh từ tab khác
     this.tokenChannel.onmessage = (event) => {
-      if (event.data.type === 'TOKEN_REFRESHED') {
-        console.log('TOKEN_REFRESHED', event.data);
+      if (event.data.type === "TOKEN_REFRESHED") {
         const { accessToken, refreshToken } = event.data;
         store.dispatch(
           setToken({
@@ -60,8 +59,10 @@ class Http {
     this.axiosInstance.interceptors.response.use(
       (response) => response,
       async (error: AxiosError) => {
-        const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean };
-        
+        const originalRequest = error.config as AxiosRequestConfig & {
+          _retry?: boolean;
+        };
+
         // Handle network errors
         if (!error.response) {
           return this.handleNetworkError(originalRequest);
@@ -87,8 +88,9 @@ class Http {
               throw new Error("No refresh token found!");
             }
             const response = await fetchRefreshToken(refreshToken);
-            const { access_token, refresh_token } = response.data as RefreshTokenResponse;
-            
+            const { access_token, refresh_token } =
+              response.data as RefreshTokenResponse;
+
             // Cập nhật token trong store
             store.dispatch(
               setToken({
@@ -96,21 +98,25 @@ class Http {
                 refreshToken: refresh_token,
               })
             );
-            
+
             // Broadcast token mới đến các tab khác
             this.tokenChannel.postMessage({
-              type: 'TOKEN_REFRESHED',
+              type: "TOKEN_REFRESHED",
               accessToken: access_token,
               refreshToken: refresh_token,
             });
-            
-            this.axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${access_token}`;
+
+            this.axiosInstance.defaults.headers.common[
+              "Authorization"
+            ] = `Bearer ${access_token}`;
             originalRequest.headers = originalRequest.headers || {};
             originalRequest.headers["Authorization"] = `Bearer ${access_token}`;
-            
-            this.refreshSubscribers.forEach((callback) => callback(access_token));
+
+            this.refreshSubscribers.forEach((callback) =>
+              callback(access_token)
+            );
             this.refreshSubscribers = [];
-            
+
             return this.axiosInstance(originalRequest);
           } catch (refreshError) {
             store.dispatch(logout());
@@ -131,7 +137,9 @@ class Http {
     let retries = 0;
     while (retries < this.MAX_RETRIES) {
       try {
-        await new Promise(resolve => setTimeout(resolve, this.RETRY_DELAY * (retries + 1)));
+        await new Promise((resolve) =>
+          setTimeout(resolve, this.RETRY_DELAY * (retries + 1))
+        );
         return await this.axiosInstance(request);
       } catch (error) {
         retries++;

@@ -189,7 +189,6 @@ const EditProductPage = () => {
         id: Number(id),
         data: { ...data, images },
       });
-      console.log(product);
       showSuccess(message);
       setOption({ color: Color.BLACK, size: Size.S, quantity: 0 });
     } catch (error) {

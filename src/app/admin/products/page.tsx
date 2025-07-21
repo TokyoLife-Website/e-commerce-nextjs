@@ -90,7 +90,6 @@ const columns: Column[] = [
 const ProductList = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const { data } = useProductsQuery(currentPage, PAGE_SIZE);
-  console.log(data);
   const handleChangePage = (page: number) => {
     setCurrentPage(page);
   };

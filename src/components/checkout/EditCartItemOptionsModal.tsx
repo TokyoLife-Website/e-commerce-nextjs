@@ -17,7 +17,6 @@ const EditCartItemOptionsModal = ({
 }: ProductOptionsModalProps) => {
   const [selectedColor, setSelectedColor] = useState(item.sku.color);
   const [selectedSize, setSelectedSize] = useState(item.sku.size);
-  console.log(item);
   // Get unique colors and sizes from available SKUs
   const { colors, sizes, availableCombinations } = useMemo(() => {
     const skus = item.sku.product.skus;

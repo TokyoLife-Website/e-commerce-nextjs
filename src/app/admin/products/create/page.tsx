@@ -163,7 +163,6 @@ export default function ProductCreate() {
       }
       const newProductData = { ...data, images };
       const { message, data: product } = await mutateAsync(newProductData);
-      console.log(product.images);
       showSuccess(message);
       reset(defaultValues);
       setOption({ color: Color.BLACK, size: Size.S, quantity: 0 });
