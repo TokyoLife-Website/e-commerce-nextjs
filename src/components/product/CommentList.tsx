@@ -4,7 +4,7 @@ import CommentItem from "./CommentItem";
 import { useReviewsQuery } from "@/hooks/api/review.api";
 import { formatDate } from "@/utils/formatDate";
 import EmptyComment from "./EmptyComment";
-import ReviewPagination from "./ReviewPagination";
+import Pagination from "../common/Pagination";
 
 interface CommentListProps {
   productId: number;
@@ -68,7 +68,7 @@ const CommentList: FC<CommentListProps> = ({ productId }) => {
       {data?.data?.items && data?.data?.items.length === 0 && (
         <EmptyComment content="Không có đánh giá phù hợp" />
       )}
-      <ReviewPagination
+      <Pagination
         currentPage={currentPage}
         totalPages={data?.data.totalPages || 0}
         onPageChange={(page) => setCurrentPage(page)}

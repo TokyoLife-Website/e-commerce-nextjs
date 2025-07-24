@@ -2,10 +2,10 @@
 import NotFound from "@/app/not-found";
 import Loading from "@/components/common/Loading";
 import OrdersList from "@/components/order/OrdersList";
-import ReviewPagination from "@/components/product/ReviewPagination";
 import { useOrdersQuery } from "@/hooks/api/order.api";
 import { OrderStatus } from "@/types/orderStatus";
 import { useMemo, useState } from "react";
+import Pagination from "@/components/common/Pagination";
 
 const TABS = [
   { id: "all", status: undefined, label: "Tất cả đơn hàng", active: true },
@@ -64,7 +64,7 @@ export default function OrderManagement() {
           <OrdersList orders={orders} />
           {!!orders.length && (
             <div className="flex justify-center py-4">
-              <ReviewPagination
+              <Pagination
                 currentPage={currentPage}
                 onPageChange={(page) => setCurrentPage(page)}
                 totalPages={data?.data.totalPages || 0}

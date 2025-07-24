@@ -8,27 +8,41 @@ import { HeaderProfile } from "./HeaderProfile";
 import { CartBlackIcon } from "@/components/icons/CartBlackIcon";
 import { useProductsQuery } from "@/hooks/api/product.api";
 import { useDebounce } from "@/hooks/useDebounce";
-import ProductItem from "@/components/product/ProductItem";
 import { Product } from "@/types/product";
 import { useCarts } from "@/hooks/api/cart.api";
 import NoSearchResult from "./NoSearchResult";
 import SearchItem from "./SearchItem";
 import { FireIcon } from "../icons/FireIcon";
 import RightIcon from "../icons/RightIcon";
+import { useRouter } from "next/navigation";
+import { DEBOUNCE_DELAY } from "@/constants";
+import { useSearchParams } from "next/navigation";
 
 export const Header = () => {
   const [isSearchActive, setIsSearchActive] = useState(false);
-  const [searchValue, setSearchValue] = useState("");
   const [keyword, setKeyword] = useState("");
+  const [searchValue, setSearchValue] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
   const debouncedSetKeyword = useDebounce((value: string) => {
     setKeyword(value);
-  }, 500);
+  }, DEBOUNCE_DELAY);
 
-  const { data: searchResult } = useProductsQuery(1, 5, keyword);
+  const { data: searchResult } = useProductsQuery({
+    page: 1,
+    size: 5,
+    keyword,
+    enabled: Boolean(keyword),
+  });
   const { data: carts } = useCarts();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const urlKeyword = searchParams.get("keyword") || "";
+
+  useEffect(() => {
+    setSearchValue(urlKeyword);
+  }, [urlKeyword]);
 
   // Handler: click outside search panel
   useEffect(() => {
@@ -66,13 +80,23 @@ export const Header = () => {
     setIsSearchActive(true);
   }, []);
 
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchValue.trim()) {
+      router.replace(
+        `/search?keyword=${encodeURIComponent(searchValue.trim())}`
+      );
+      setIsSearchActive(false);
+    }
+  };
+  console.log(searchResult);
   const cartCount = carts?.data?.items?.length ?? 0;
   const searchItems = searchResult?.data?.items ?? [];
   const totalRemaining = (searchResult?.data?.totalItems ?? 0) - 5;
 
   return (
     <div className="top-0 sticky w-full z-40">
-      <div className="flex relative flex-col md:flex-row bg-secondary items-center justify-between py-3 px-4 md:px-8 lg:px-20 xl:px-40 gap-3 md:gap-0 z-50">
+      <div className="flex relative flex-col md:flex-row bg-secondary items-center justify-between py-3 px-4 md:px-8 lg:px-20 xl:px-36 gap-3 md:gap-0 z-50">
         <Link href="/" className="flex-shrink-0">
           <Image
             src="/logo.svg"
@@ -83,14 +107,16 @@ export const Header = () => {
             className="w-32 md:w-52 h-auto"
           />
         </Link>
-        <div className="relative w-full md:w-1/2 order-2 md:order-none mt-2 md:mt-0">
+        <form
+          className="relative w-full md:w-1/2 order-2 md:order-none mt-2 md:mt-0"
+          onSubmit={handleSearchSubmit}
+        >
           <input
             ref={inputRef}
             type="search"
             id="location-search"
             className="focus:border-gray-500 border border-gray-300 block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-md outline-none"
             placeholder="Tìm kiếm..."
-            required
             value={searchValue}
             onChange={handleSearchChange}
             onFocus={handleSearchFocus}
@@ -98,11 +124,11 @@ export const Header = () => {
           />
           <button
             type="submit"
-            className="absolute top-0 end-0 h-full px-4 text-sm font-medium text-white bg-primary rounded-e-md"
+            className="flex items-center justify-center absolute top-0 end-0 h-full px-4 text-sm font-medium text-white bg-primary rounded-e-md"
           >
             <CiSearch size={20} />
           </button>
-        </div>
+        </form>
         <div className="flex gap-3 items-center order-3 md:order-none w-full md:w-auto justify-end">
           <Link href="/cart" className="relative">
             <CartBlackIcon />
@@ -142,6 +168,7 @@ export const Header = () => {
                     </div>
                     {totalRemaining > 0 && (
                       <Link
+                        onClick={() => setIsSearchActive(false)}
                         href={`/search?keyword=${keyword}`}
                         className="flex items-center text-primary justify-end gap-x-1 cursor-pointer text-sm leading-[18px] font-semibold mb-4"
                       >

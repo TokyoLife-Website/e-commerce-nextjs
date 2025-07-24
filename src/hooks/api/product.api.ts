@@ -77,18 +77,30 @@ export const useProductBySlugQuery = (slug: string) => {
   });
 };
 
-export const useProductsQuery = (
-  page?: number | string,
-  size?: number | string,
-  keyword?: string,
-  color?: string,
-  price?: string, // dạng 'min_max', ví dụ: '100_500'
-  sort?: string
-) => {
+type UseProductsQueryOptions = {
+  page?: number | string;
+  size?: number | string;
+  keyword?: string;
+  color?: string;
+  price?: string;
+  sort?: string;
+  enabled?: boolean;
+};
+
+export const useProductsQuery = ({
+  page,
+  size,
+  keyword,
+  color,
+  price,
+  sort,
+  enabled = true,
+}: UseProductsQueryOptions) => {
   return useQuery({
     queryKey: [QUERY_KEYS.PRODUCTS, page, size, keyword, color, price, sort],
     queryFn: () => fetchProducts(page, size, keyword, color, price, sort),
-    placeholderData: (prev) => prev,
+    placeholderData: enabled ? (prev) => prev : undefined,
+    enabled: enabled,
   });
 };
 

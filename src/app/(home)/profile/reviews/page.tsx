@@ -1,13 +1,10 @@
 "use client";
 import NotFound from "@/app/not-found";
 import Loading from "@/components/common/Loading";
-import OrdersList from "@/components/order/OrdersList";
-import ReviewPagination from "@/components/product/ReviewPagination";
+import Pagination from "@/components/common/Pagination";
 import PendingReviewList from "@/components/review/PendingReviewList";
 import ReviewedList from "@/components/review/ReviewedList";
-import { useOrdersQuery } from "@/hooks/api/order.api";
 import { useReviewItemsQuery } from "@/hooks/api/review.api";
-import { OrderStatus } from "@/types/orderStatus";
 import { ReviewItem, ReviewStatus } from "@/types/review";
 import { useMemo, useState } from "react";
 
@@ -65,7 +62,7 @@ export default function Home() {
       ) : (
         <PendingReviewList orderItems={reviewItems as ReviewItem[]} />
       )}
-      <ReviewPagination
+      <Pagination
         currentPage={currentPage}
         totalPages={data?.data.totalPages || 0}
         onPageChange={(page) => setCurrentPage(page)}

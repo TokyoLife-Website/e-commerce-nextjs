@@ -4,7 +4,7 @@ import ProductItem from "@/components/product/ProductItem";
 import { useProductsQuery } from "@/hooks/api/product.api";
 
 export default function Home() {
-  const { data } = useProductsQuery(1, 50);
+  const { data } = useProductsQuery({ page: 1, size: 50 });
   const productList = data?.data.items || [];
   return (
     <div className="mx-5 mt-10 sm:mx-10 md:mx-20 lg:mx-40 font-font-poppins">

@@ -1,13 +1,13 @@
 import React, { FC } from "react";
 import { FaCaretRight, FaCaretLeft } from "react-icons/fa6";
 
-interface ReviewPaginationProps {
+interface PaginationProps {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
 }
 
-const ReviewPagination: FC<ReviewPaginationProps> = ({
+const Pagination: FC<PaginationProps> = ({
   currentPage,
   totalPages,
   onPageChange,
@@ -93,4 +93,4 @@ const ReviewPagination: FC<ReviewPaginationProps> = ({
   );
 };
 
-export default ReviewPagination;
+export default Pagination;
