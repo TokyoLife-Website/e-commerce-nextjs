@@ -3,31 +3,28 @@ import React, { useRef, useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { CiSearch } from "react-icons/ci";
-import { CategoryList } from "../layouts/category/CategoryList";
+import { useRouter, useSearchParams } from "next/navigation";
+
+import { CategoryList } from "@/components/layouts/category/CategoryList";
 import { HeaderProfile } from "./HeaderProfile";
 import { CartBlackIcon } from "@/components/icons/CartBlackIcon";
 import { useProductsQuery } from "@/hooks/api/product.api";
 import { useDebounce } from "@/hooks/useDebounce";
-import { Product } from "@/types/product";
 import { useCarts } from "@/hooks/api/cart.api";
-import NoSearchResult from "./NoSearchResult";
-import SearchItem from "./SearchItem";
-import { FireIcon } from "../icons/FireIcon";
-import RightIcon from "../icons/RightIcon";
-import { useRouter } from "next/navigation";
-import { DEBOUNCE_DELAY } from "@/constants";
-import { useSearchParams } from "next/navigation";
+import SearchPanel from "./SearchPanel";
 
 export const Header = () => {
-  const [isSearchActive, setIsSearchActive] = useState(false);
-  const [keyword, setKeyword] = useState("");
-  const [searchValue, setSearchValue] = useState("");
+  const [isSearchActive, setIsSearchActive] = useState<boolean>(false);
+  const [keyword, setKeyword] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [searchValue, setSearchValue] = useState<string>("");
   const inputRef = useRef<HTMLInputElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
   const debouncedSetKeyword = useDebounce((value: string) => {
     setKeyword(value);
-  }, DEBOUNCE_DELAY);
+    setIsLoading(false);
+  }, 500);
 
   const { data: searchResult } = useProductsQuery({
     page: 1,
@@ -69,6 +66,7 @@ export const Header = () => {
   // Handler: search input change
   const handleSearchChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
+      setIsLoading(true);
       setSearchValue(e.target.value);
       debouncedSetKeyword(e.target.value);
     },
@@ -89,7 +87,6 @@ export const Header = () => {
       setIsSearchActive(false);
     }
   };
-  console.log(searchResult);
   const cartCount = carts?.data?.items?.length ?? 0;
   const searchItems = searchResult?.data?.items ?? [];
   const totalRemaining = (searchResult?.data?.totalItems ?? 0) - 5;
@@ -140,49 +137,14 @@ export const Header = () => {
         </div>
       </div>
       {isSearchActive && (
-        <>
-          <div
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-30"
-            onClick={() => setIsSearchActive(false)}
-          />
-          <div
-            ref={panelRef}
-            className="absolute left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg"
-          >
-            <div className="max-w-[1200px] mx-auto py-6 px-4">
-              <div>
-                {searchItems.length > 0 ? (
-                  <>
-                    <h3 className="flex items-center gap-x-1.5 text-sm leading-[18px] font-semibold mb-4">
-                      <FireIcon /> Sản phẩm gợi ý
-                    </h3>
-                    <div className="flex flex-col md:grid grid-cols-5 gap-2 md:gap-4 p-2 md:p-4">
-                      {searchItems.map((product: Product) => (
-                        <div
-                          key={product.id}
-                          onClick={() => setIsSearchActive(false)}
-                        >
-                          <SearchItem product={product} />
-                        </div>
-                      ))}
-                    </div>
-                    {totalRemaining > 0 && (
-                      <Link
-                        onClick={() => setIsSearchActive(false)}
-                        href={`/search?keyword=${keyword}`}
-                        className="flex items-center text-primary justify-end gap-x-1 cursor-pointer text-sm leading-[18px] font-semibold mb-4"
-                      >
-                        Xem tất cả ({totalRemaining}) <RightIcon />
-                      </Link>
-                    )}
-                  </>
-                ) : (
-                  <NoSearchResult keyword={keyword} />
-                )}
-              </div>
-            </div>
-          </div>
-        </>
+        <SearchPanel
+          isLoading={isLoading}
+          searchItems={searchItems}
+          totalRemaining={totalRemaining}
+          keyword={keyword}
+          onClose={() => setIsSearchActive(false)}
+          panelRef={panelRef}
+        />
       )}
       {!isSearchActive && (
         <div className="hidden md:block">

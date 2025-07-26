@@ -11,8 +11,9 @@ import { useSearchParams, useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import NoSearchResult from "@/components/header/NoSearchResult";
 import { useDebounce } from "@/hooks/useDebounce";
-import { DEBOUNCE_DELAY, ITEMS_PER_PAGE } from "@/constants";
+import { ITEMS_PER_PAGE } from "@/constants";
 import { useUrlSync } from "@/hooks/useUrlSync";
+import CustomButton from "@/components/layouts/CustomBtn";
 
 const SearchPage = () => {
   const router = useRouter();
@@ -45,7 +46,7 @@ const SearchPage = () => {
 
   const debouncedSetPriceRange = useDebounce((range: [number, number]) => {
     setPriceRange(range);
-  }, DEBOUNCE_DELAY);
+  });
 
   const handleSliderChange = (range: [number, number]) => {
     setPendingPriceRange(range);
@@ -59,6 +60,14 @@ const SearchPage = () => {
     },
     [setSortType, setCurrentPage]
   );
+
+  const handleResetFilters = useCallback(() => {
+    setSelectedColor(null);
+    setPriceRange(null);
+    setSortType(SortType.DEFAULT);
+    setCurrentPage(1);
+    setPendingPriceRange(null);
+  }, [setSelectedColor, setPriceRange, setSortType, setCurrentPage]);
 
   useEffect(() => {
     setPendingPriceRange(priceRange);
@@ -123,6 +132,18 @@ const SearchPage = () => {
             selectedColor={selectedColor}
             onChange={(color) => setSelectedColor(color)}
           />
+          <div className="border-t-[0.5px] border-[#e9e9e9]">
+            <div className="flex justify-between items-center">
+              <h2 className="font-semibold py-4 text-base">Cài lại</h2>
+            </div>
+            <CustomButton
+              className="w-full"
+              size="small"
+              onClick={handleResetFilters}
+            >
+              Xóa bộ lọc
+            </CustomButton>
+          </div>
         </aside>
         <main className="flex-1">
           <div className="flex flex-col sm:flex-row items-center sm:items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
