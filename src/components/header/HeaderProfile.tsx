@@ -76,10 +76,13 @@ export const HeaderProfile = () => {
                 <NoteIcon />
                 <span>Đơn hàng</span>
               </Link>
-              <div className="flex gap-[10px] py-2 pl-6 text-sm font-medium leading-[18px] hover:bg-secondary">
+              <Link
+                href={"/profile/viewed-products"}
+                className="flex gap-[10px] py-2 pl-6 text-sm font-medium leading-[18px] hover:bg-secondary"
+              >
                 <ViewedIcon />
                 <span>Sản phẩm đã xem</span>
-              </div>
+              </Link>
               <div
                 onClick={handleLogout}
                 className="flex text-primary gap-[10px] py-2 pl-6 text-sm font-medium leading-[18px] hover:bg-secondary"

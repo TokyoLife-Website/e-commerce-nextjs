@@ -21,7 +21,7 @@ const SearchItem: FC<ProductItemProps> = ({ product }) => {
   });
   return (
     <Link
-      href={product.slug}
+      href={`/${product.slug}`}
       className="flex items-center gap-3 px-2 py-2 md:block md:px-[6px] transition hover:bg-gray-100 rounded"
     >
       <Image

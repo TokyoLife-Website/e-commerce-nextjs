@@ -6,7 +6,7 @@ import React, { useEffect, useCallback } from "react";
 import { BsArrowRight } from "react-icons/bs";
 import Image from "next/image";
 import { Rating } from "@mui/material";
-import { useAppDispatch } from "@/redux/store";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { openModal } from "@/redux/modalSlice";
 import { ModalType } from "@/types/modal";
 import Link from "next/link";
@@ -28,6 +28,11 @@ import { handleRequestError } from "@/utils/errorHandler";
 import { useDebounce } from "@/hooks/useDebounce";
 import { Icon } from "@/components/icons";
 import CustomButton from "@/components/layouts/CustomBtn";
+import { addViewedProduct } from "@/redux/viewedProductSlice";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation } from "swiper/modules";
+import SearchItem from "@/components/header/SearchItem";
+import { GrNext, GrPrevious } from "react-icons/gr";
 
 interface AddToCartForm {
   color: string;
@@ -191,6 +196,7 @@ const ActionButtons: React.FC<{
 
 const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
   const dispatch = useAppDispatch();
+  const { viewedProducts } = useAppSelector((state) => state.viewedProduct);
   const addToCartMutation = useAddToCartMutation();
   const { showError, showSuccess } = useToast();
   const { handleSubmit, control, watch, setValue, getValues } =
@@ -221,24 +227,6 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
       product?.skus.filter((sku: SKU) => sku.color === selectedColor) || []
     );
   }, [product?.skus, selectedColor]);
-
-  useEffect(() => {
-    if (product && product.skus.length > 0) {
-      const skus = product.skus;
-      const firstColor = availableColors[0];
-      setValue("color", firstColor);
-
-      const sizesWithStock = skus.filter(
-        (sku) => sku.color === firstColor && sku.quantity > 0
-      );
-
-      if (sizesWithStock.length > 0) {
-        setValue("size", sizesWithStock[0].size);
-      } else {
-        setValue("size", "");
-      }
-    }
-  }, [availableColors, product, setValue]);
 
   const handleDecrease = useCallback(() => {
     const current = getValues("quantity");
@@ -310,6 +298,51 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
   );
 
   const debouncedSubmit = useDebounce(() => handleSubmit(onSubmit)(), 1000);
+
+  useEffect(() => {
+    if (product && product.skus.length > 0) {
+      const skus = product.skus;
+      const firstColor = availableColors[0];
+      setValue("color", firstColor);
+
+      const sizesWithStock = skus.filter(
+        (sku) => sku.color === firstColor && sku.quantity > 0
+      );
+
+      if (sizesWithStock.length > 0) {
+        setValue("size", sizesWithStock[0].size);
+      } else {
+        setValue("size", "");
+      }
+    }
+  }, [availableColors, product, setValue]);
+
+  useEffect(() => {
+    if (product) {
+      const {
+        id,
+        name,
+        images,
+        slug,
+        price,
+        discountType,
+        discountValue,
+        finalPrice,
+      } = product;
+      dispatch(
+        addViewedProduct({
+          id,
+          name,
+          image: images[0],
+          slug,
+          price,
+          discountType,
+          discountValue,
+          finalPrice,
+        })
+      );
+    }
+  }, [product, dispatch]);
 
   return (
     <div className="lg:px-[117px] md:px-20 sm:px-10 px-5 font-font-poppins mt-6">
@@ -456,6 +489,53 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
           />
         </div>
         <CommentList productId={+product.id} />
+      </div>
+      <div>
+        <h6 className="text-lg font-semibold leading-6 uppercase my-6">
+          SẢN PHẨM BẠN ĐÃ XEM
+        </h6>
+        <Swiper
+          slidesPerView={5}
+          spaceBetween={30}
+          loop={true}
+          breakpoints={{
+            320: { slidesPerView: 2 },
+            640: { slidesPerView: 3 },
+            1024: { slidesPerView: 5 },
+          }}
+          navigation={{
+            nextEl: ".swiper-button-next-custom",
+            prevEl: ".swiper-button-prev-custom",
+          }}
+          modules={[Navigation]}
+          className="mySwiper"
+        >
+          {viewedProducts.map((product) => (
+            <SwiperSlide key={product.id}>
+              <SearchItem
+                key={product.id}
+                product={
+                  {
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    finalPrice: product.finalPrice,
+                    discountType: product.discountType,
+                    discountValue: product.discountValue,
+                    slug: product.slug,
+                    images: [product.image],
+                  } as unknown as Product
+                }
+              />
+            </SwiperSlide>
+          ))}
+          <div className="w-7 h-11 flex items-center justify-center swiper-button-prev-custom absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-black/50 text-white p-2 rounded-md cursor-pointer hover:bg-black">
+            <GrPrevious size={32} />
+          </div>
+          <div className="w-7 h-11 flex items-center justify-center swiper-button-next-custom absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-black/50 text-white p-2 rounded-md cursor-pointer hover:bg-black">
+            <GrNext size={32} />
+          </div>
+        </Swiper>
       </div>
     </div>
   );

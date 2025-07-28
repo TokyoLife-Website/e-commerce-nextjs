@@ -26,7 +26,7 @@ const ProductImageGallery = ({ images }: ProductImageGalleryProps) => {
   const [thumbsSwiper, setThumbsSwiper] = useState<any>(null);
   return (
     <div className="flex gap-8 h-fit">
-      <div className="w-20 h-[400px]">
+      <div className="w-20 h-[400px] hidden sm:block">
         <Swiper
           direction="vertical"
           spaceBetween={0}
