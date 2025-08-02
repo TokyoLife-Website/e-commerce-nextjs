@@ -10,4 +10,7 @@ export const QUERY_KEYS = {
   PRODUCT: (id: string | number) => `product-${id}`,
   SHIPPING: "shipping",
   PAYMENT: "payment",
+  NOTIFICATIONS: "notifications",
+  CHAT_MESSAGES: "chat-messages",
+  AI_CONVERSATIONS: "ai-conversations",
 };

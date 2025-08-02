@@ -1,0 +1,71 @@
+.chatWidget {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.chatOption {
+  animation: slideIn 0.3s ease-out;
+}
+
+.chatOption:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.chatOption:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.chatOption:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.pulse {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+  }
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .chatWidget {
+    bottom: 0.5rem !important;
+    right: 0.5rem !important;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .chatLabel {
+    background-color: #374151 !important;
+    color: #f9fafb !important;
+  }
+}
