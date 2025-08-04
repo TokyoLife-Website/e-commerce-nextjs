@@ -6,19 +6,18 @@ import { usePathname } from "next/navigation";
 
 import { useSidebar } from "@/contexts/SidebarContext";
 
-import {
-  BoxCubeIcon,
-  CalenderIcon,
-  ChevronDownIcon,
-  GridIcon,
-  HorizontaLDots,
-  ListIcon,
-  PageIcon,
-  PieChartIcon,
-  PlugInIcon,
-  TableIcon,
-  UserCircleIcon,
-} from "../../../public/admin/index";
+import GridIcon from "@/components/icons/GridIcon";
+import CalenderIcon from "@/components/icons/CalenderIcon";
+import UserCircleIcon from "@/components/icons/UserCircleIcon";
+import ListIcon from "@/components/icons/ListIcon";
+import TableIcon from "@/components/icons/TableIcon";
+import PageIcon from "@/components/icons/PageIcon";
+import PieChartIcon from "@/components/icons/PieChartIcon";
+import BoxCubeIcon from "@/components/icons/BoxCubeIcon";
+import PlugInIcon from "@/components/icons/PlugInIcon";
+import ChevronDownIcon from "@/components/icons/ChevronDownIcon";
+import HorizontaLDots from "@/components/icons/HorizontaLDots";
+import { ChatIcon } from "@/components/icons/ChatIcon";
 
 type NavItem = {
   name: string;
@@ -40,6 +39,11 @@ const navItems: NavItem[] = [
       { name: "List", path: "/admin/products", pro: false },
       { name: "Create", path: "/admin/products/create", pro: false },
     ],
+  },
+  {
+    icon: <ChatIcon />,
+    name: "Chat",
+    path: "/admin/chat",
   },
   {
     icon: <UserCircleIcon />,

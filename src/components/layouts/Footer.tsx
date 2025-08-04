@@ -2,7 +2,14 @@ import Image from "next/image";
 import React, { FC } from "react";
 import { CustomTitle } from "./CustomTitle";
 import Link from "next/link";
-import { Icon } from "../icons";
+import TikTokIcon from "../icons/TikTokIcon";
+import FacebookIcon from "../icons/FacebookIcon";
+import ZaloIcon from "../icons/ZaloIcon";
+import YoutubeIcon from "../icons/YoutubeIcon";
+import { CODIcon } from "../icons/CODIcon";
+import { VnpayIcon } from "../icons/VnpayIcon";
+import { GooglePlayIcon } from "../icons/GooglePlayIcon";
+import { AppStoreIcon } from "../icons/AppStoreIcon";
 
 interface ListItemProps {
   content: string;
@@ -65,10 +72,10 @@ export const Footer = () => {
           <ul className="sm:col-span-2 lg:col-span-1">
             <CustomTitle className="mb-6" content="Kết nối với TOKYOLIFE" />
             <div className="flex flex-wrap gap-2">
-              <Icon className="aspect-square" name="tiktok" size={24} />
-              <Icon className="aspect-square" name="facebook" size={24} />
-              <Icon className="aspect-square" name="zalo" size={24} />
-              <Icon className="aspect-square" name="youtube" size={24} />
+              <TikTokIcon width={24} height={24} />
+              <FacebookIcon width={24} height={24} />
+              <ZaloIcon width={24} height={24} />
+              <YoutubeIcon width={24} height={24} />
               <span className="flex gap-x-2 items-center">
                 <Image
                   className="rounded-full"
@@ -124,16 +131,16 @@ export const Footer = () => {
                 priority
               />
               <div className="flex flex-col gap-2">
-                <Icon name="appStore" width={125} height={41} />
-                <Icon name="googlePlay" width={125} height={41} />
+                <AppStoreIcon />
+                <GooglePlayIcon />
               </div>
             </div>
             <p className="text-[14px] leading-[18px] text-black">
               Chúng tôi kết nối thanh toán qua
             </p>
             <div className="flex flex-wrap gap-2">
-              <Icon name="cod" width={100} height={40} />
-              <Icon name="vnpay" width={130} height={40} />
+              <CODIcon />
+              <VnpayIcon />
             </div>
           </div>
         </div>

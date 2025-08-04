@@ -26,13 +26,15 @@ import { useAddToCartMutation } from "@/hooks/api/cart.api";
 import useToast from "@/hooks/useToastify";
 import { handleRequestError } from "@/utils/errorHandler";
 import { useDebounce } from "@/hooks/useDebounce";
-import { Icon } from "@/components/icons";
+import CartIcon from "@/components/icons/CartIcon";
+import BagIcon from "@/components/icons/BagIcon";
 import CustomButton from "@/components/layouts/CustomBtn";
 import { addViewedProduct } from "@/redux/viewedProductSlice";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import SearchItem from "@/components/header/SearchItem";
 import { GrNext, GrPrevious } from "react-icons/gr";
+import { MapIcon } from "@/components/icons/MapIcon";
 
 interface AddToCartForm {
   color: string;
@@ -165,7 +167,7 @@ const ActionButtons: React.FC<{
           variant="outline"
           className="flex justify-center items-center gap-x-2 w-1/2"
         >
-          <Icon name="cart" size={24} />
+          <CartIcon width={24} height={24} />
           <p className="text-[14px] leading-6 m-0">Thêm giỏ hàng</p>
         </CustomButton>
         <CustomButton
@@ -175,7 +177,7 @@ const ActionButtons: React.FC<{
           }}
           className="flex justify-center items-center gap-x-2 w-1/2 border-2 border-primary"
         >
-          <Icon name="bag" size={24} />
+          <BagIcon width={24} height={24} />
           <p className="text-white text-[14px] font-semibold leading-6 m-0">
             Mua ngay
           </p>
@@ -185,7 +187,7 @@ const ActionButtons: React.FC<{
         variant="outline"
         className="border-[#555555] border flex justify-center items-center gap-x-2 w-full hover:bg-inherit"
       >
-        <Icon name="map" size={24} />
+        <MapIcon />
         <p className="text-black text-[14px] font-semibold leading-6 m-0 ">
           Cửa hàng có sẵn sản phẩm
         </p>
