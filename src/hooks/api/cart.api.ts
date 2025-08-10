@@ -57,10 +57,11 @@ const clearCart = async (): Promise<void> => {
 };
 
 // React Query Hooks
-export const useCarts = () => {
+export const useCarts = (options?: { enabled?: boolean }) => {
   return useQuery({
     queryKey: [QUERY_KEYS.CARTS],
     queryFn: getCart,
+    enabled: options?.enabled,
   });
 };
 

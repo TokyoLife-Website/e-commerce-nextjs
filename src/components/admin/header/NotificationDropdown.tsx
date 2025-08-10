@@ -10,7 +10,7 @@ import {
   useMarkAllNotificationsAsRead,
   Notification,
 } from "@/hooks/api/notification.api";
-import { useWebSocket } from "@/hooks/useWebSocket";
+import { useSocket } from "@/hooks/useSocket";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import utc from "dayjs/plugin/utc";
@@ -28,7 +28,7 @@ export default function NotificationDropdown() {
   const [notifying, setNotifying] = useState(false);
 
   // WebSocket connection
-  useWebSocket();
+  useSocket();
 
   // Get notifications
   const { data: notifications = [], isLoading } = useGetNotifications(20);

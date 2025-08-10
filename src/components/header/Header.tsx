@@ -12,6 +12,7 @@ import { useProductsQuery } from "@/hooks/api/product.api";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useCarts } from "@/hooks/api/cart.api";
 import SearchPanel from "./SearchPanel";
+import { RootState, useAppSelector } from "@/redux/store";
 
 export const Header = () => {
   const [isSearchActive, setIsSearchActive] = useState<boolean>(false);
@@ -26,13 +27,17 @@ export const Header = () => {
     setIsLoading(false);
   }, 500);
 
+  const { isAuthenticated } = useAppSelector((state: RootState) => state.auth);
+
   const { data: searchResult } = useProductsQuery({
     page: 1,
     size: 5,
     keyword,
     enabled: Boolean(keyword),
   });
-  const { data: carts } = useCarts();
+  const { data: carts } = useCarts({
+    enabled: isAuthenticated,
+  });
   const router = useRouter();
   const searchParams = useSearchParams();
   const urlKeyword = searchParams.get("keyword") || "";

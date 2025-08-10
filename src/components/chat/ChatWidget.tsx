@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { FaFacebookMessenger, FaTimes } from "react-icons/fa";
 import { SiZalo } from "react-icons/si";
-import { IoChatbubbleEllipses, IoSend } from "react-icons/io5";
-import { IoPerson } from "react-icons/io5";
+import { IoChatbubbleEllipses } from "react-icons/io5";
+import { useSelector } from "react-redux";
 import styles from "./ChatWidget.module.css";
-import { chatService, Message, ChatSession } from "./chatService";
+import AdminChatInterface from "./AdminChatInterface";
 
 export interface ChatWidgetProps {
   zaloUrl?: string;
@@ -22,12 +22,11 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
   const [isExpanded, setIsExpanded] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const [session, setSession] = useState<ChatSession | null>(null);
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [inputText, setInputText] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+
+  // Get authentication status from Redux store
+  const isAuthenticated = useSelector(
+    (state: any) => state.auth.isAuthenticated
+  );
 
   useEffect(() => {
     const checkMobile = () => {
@@ -40,29 +39,25 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  const handleChatClick = (type: string, url: string) => {
-    if (type === "admin") {
-      // Mở chat inline
-      setIsChatOpen(true);
-      setIsExpanded(false);
-
-      // Tạo session mới
-      const newSession = chatService.createSession();
-      setSession(newSession);
-      setMessages(newSession.messages);
-
-      // Focus vào input sau khi render
-      setTimeout(() => {
-        if (inputRef.current) {
-          inputRef.current.focus();
+  const handleChatClick = useCallback(
+    (type: string, url: string) => {
+      if (type === "admin") {
+        if (!isAuthenticated) {
+          alert("Vui lòng đăng nhập để chat với admin");
+          return;
         }
-      }, 100);
-    } else {
-      // Mở Zalo hoặc Messenger trong tab mới
-      window.open(url, "_blank");
-      setIsExpanded(false);
-    }
-  };
+
+        // Mở chat inline
+        setIsChatOpen(true);
+        setIsExpanded(false);
+      } else {
+        // Mở Zalo hoặc Messenger trong tab mới
+        window.open(url, "_blank");
+        setIsExpanded(false);
+      }
+    },
+    [isAuthenticated]
+  );
 
   const chatOptions = [
     {
@@ -90,64 +85,6 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
       url: messengerUrl,
     },
   ];
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  const handleSendMessage = async () => {
-    if (!inputText.trim() || !session) return;
-
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      text: inputText.trim(),
-      sender: "user",
-      timestamp: new Date(),
-    };
-
-    setMessages((prev) => [...prev, userMessage]);
-    setInputText("");
-    setIsTyping(true);
-
-    try {
-      // Xử lý tin nhắn thông qua service
-      const response = await chatService.processUserMessage(
-        session.id,
-        userMessage.text
-      );
-      setMessages((prev) => [...prev, response]);
-    } catch (error) {
-      console.error("Error processing message:", error);
-      // Fallback response
-      const fallbackMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        text: "Xin lỗi, có lỗi xảy ra. Vui lòng thử lại sau.",
-        sender: "admin",
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, fallbackMessage]);
-    } finally {
-      setIsTyping(false);
-    }
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage();
-    }
-  };
-
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString("vi-VN", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
 
   return (
     <div
@@ -219,105 +156,11 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
           </button>
         </div>
       ) : (
-        /* Chat Interface */
-        <div className="bg-white rounded-lg shadow-xl w-80 h-96 flex flex-col border">
-          {/* Header */}
-          <div className="flex items-center justify-between p-3 border-b bg-blue-500 text-white rounded-t-lg">
-            <div className="flex items-center space-x-2">
-              <div className="w-6 h-6 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                <IoPerson size={12} />
-              </div>
-              <div>
-                <h3 className="font-semibold text-sm">Chat với Admin</h3>
-                <p className="text-xs opacity-90">Phản hồi trong vài phút</p>
-              </div>
-            </div>
-            <button
-              onClick={() => {
-                setIsChatOpen(false);
-                if (session) {
-                  chatService.closeSession(session.id);
-                }
-              }}
-              className="p-1 hover:bg-white hover:bg-opacity-20 rounded-full transition-colors"
-            >
-              <FaTimes size={16} />
-            </button>
-          </div>
-
-          {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-3 space-y-2">
-            {messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex ${
-                  message.sender === "user" ? "justify-end" : "justify-start"
-                }`}
-              >
-                <div
-                  className={`max-w-[80%] rounded-lg px-2 py-1 text-sm ${
-                    message.sender === "user"
-                      ? "bg-blue-500 text-white"
-                      : "bg-gray-100 text-gray-800"
-                  }`}
-                >
-                  <p className="text-xs">{message.text}</p>
-                  <p
-                    className={`text-xs mt-1 ${
-                      message.sender === "user"
-                        ? "text-blue-100"
-                        : "text-gray-500"
-                    }`}
-                  >
-                    {formatTime(message.timestamp)}
-                  </p>
-                </div>
-              </div>
-            ))}
-
-            {isTyping && (
-              <div className="flex justify-start">
-                <div className="bg-gray-100 text-gray-800 rounded-lg px-2 py-1">
-                  <div className="flex space-x-1">
-                    <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></div>
-                    <div
-                      className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"
-                      style={{ animationDelay: "0.1s" }}
-                    ></div>
-                    <div
-                      className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"
-                      style={{ animationDelay: "0.2s" }}
-                    ></div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            <div ref={messagesEndRef} />
-          </div>
-
-          {/* Input */}
-          <div className="p-3 border-t">
-            <div className="flex space-x-2">
-              <input
-                ref={inputRef}
-                type="text"
-                value={inputText}
-                onChange={(e) => setInputText(e.target.value)}
-                onKeyPress={handleKeyPress}
-                placeholder="Nhập tin nhắn..."
-                className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent"
-              />
-              <button
-                onClick={handleSendMessage}
-                disabled={!inputText.trim()}
-                className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
-              >
-                <IoSend size={12} />
-              </button>
-            </div>
-          </div>
-        </div>
+        /* Admin Chat Interface */
+        <AdminChatInterface
+          isOpen={isChatOpen}
+          onClose={() => setIsChatOpen(false)}
+        />
       )}
     </div>
   );

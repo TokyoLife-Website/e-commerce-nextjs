@@ -11,6 +11,7 @@ export const QUERY_KEYS = {
   SHIPPING: "shipping",
   PAYMENT: "payment",
   NOTIFICATIONS: "notifications",
+  CONVERSATIONS: "conversations",
   CHAT_MESSAGES: "chat-messages",
   AI_CONVERSATIONS: "ai-conversations",
 };
