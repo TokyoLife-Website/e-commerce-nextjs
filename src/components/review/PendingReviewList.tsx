@@ -2,7 +2,7 @@ import React, { FC } from "react";
 import CustomButton from "../layouts/CustomBtn";
 import EmptyOrder from "../icons/EmptyOrder";
 import { OrderItem } from "@/types/order";
-import { formatDate } from "@/utils/formatDate";
+import { formatDate } from "@/utils/timeFormat";
 import dayjs from "dayjs";
 import { ReviewItem } from "@/types/review";
 import { useAppDispatch } from "@/redux/store";

@@ -2,7 +2,7 @@ import CustomButton from "@/components/layouts/CustomBtn";
 import { Order, OrderItem } from "@/types/order";
 import { OrderStatus } from "@/types/orderStatus";
 import { formatCurrency } from "@/utils/formatCurrency";
-import { formatDate } from "@/utils/formatDate";
+import { formatDate } from "@/utils/timeFormat";
 
 interface OrderTableProps {
   orders: Order[];

@@ -1,11 +1,8 @@
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/vi";
-import utc from "dayjs/plugin/utc";
 
 // Extend dayjs with plugins
-
-dayjs.extend(utc);
 dayjs.extend(relativeTime);
 dayjs.locale("vi");
 
@@ -14,7 +11,7 @@ dayjs.locale("vi");
  */
 export const formatTimeAgo = (timestamp: string | Date): string => {
   try {
-    return dayjs.utc(timestamp).local().fromNow();
+    return dayjs(timestamp).fromNow();
   } catch (error) {
     return "";
   }
@@ -49,6 +46,23 @@ export const formatTimeShort = (timestamp: string | Date): string => {
 };
 
 /**
+ * Format thời gian theo định dạng tùy chỉnh
+ * @param isoString - Timestamp hoặc Date object
+ * @param format - Định dạng mong muốn (mặc định: "DD/MM/YYYY HH:mm:ss")
+ * @returns Chuỗi thời gian đã format
+ */
+export const formatDate = (
+  isoString: string | Date,
+  format = "DD/MM/YYYY HH:mm:ss"
+): string => {
+  try {
+    return dayjs(isoString).format(format);
+  } catch (error) {
+    return "";
+  }
+};
+
+/**
  * Kiểm tra người dùng có online không (dựa trên lastMessage time)
  * Coi là online nếu tin nhắn cuối trong vòng 5 phút
  */
@@ -59,7 +73,7 @@ export const isUserOnline = (lastMessageTime?: string): boolean => {
     const lastTime = dayjs(lastMessageTime);
     const now = dayjs();
     const diffInMinutes = now.diff(lastTime, "minute");
-    return diffInMinutes <= 1000;
+    return diffInMinutes <= 5; // Sửa từ 1000 về 5 phút
   } catch (error) {
     return false;
   }

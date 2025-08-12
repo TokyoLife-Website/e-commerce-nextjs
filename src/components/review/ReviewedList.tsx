@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import CustomButton from "../layouts/CustomBtn";
-import { formatDate } from "@/utils/formatDate";
+import { formatDate } from "@/utils/timeFormat";
 import dayjs from "dayjs";
 import { Rating } from "@mui/material";
 import { ReviewItem } from "@/types/review";

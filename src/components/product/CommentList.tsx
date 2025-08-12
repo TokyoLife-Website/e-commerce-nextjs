@@ -2,7 +2,7 @@
 import React, { FC, useState } from "react";
 import CommentItem from "./CommentItem";
 import { useReviewsQuery } from "@/hooks/api/review.api";
-import { formatDate } from "@/utils/formatDate";
+import { formatDate } from "@/utils/timeFormat";
 import EmptyComment from "./EmptyComment";
 import Pagination from "../common/Pagination";
 

@@ -4,7 +4,7 @@ import CustomTable from "@/components/admin/CustomTable";
 import { useProductsQuery } from "@/hooks/api/product.api";
 import { Column } from "@/types/table";
 import { formatCurrency } from "@/utils/formatCurrency";
-import { formatDate } from "@/utils/formatDate";
+import { formatDate } from "@/utils/timeFormat";
 import { Chip, Rating } from "@mui/material";
 import { LuEye } from "react-icons/lu";
 import Image from "next/image";

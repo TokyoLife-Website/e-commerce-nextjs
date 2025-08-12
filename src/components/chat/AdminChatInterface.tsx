@@ -12,6 +12,7 @@ import {
   MessageResponse,
 } from "@/hooks/api/chat.api";
 import { useSocket } from "@/hooks/useSocket";
+import { formatDate } from "@/utils/timeFormat";
 
 // Types
 interface AdminChatInterfaceProps {
@@ -53,13 +54,6 @@ const Message: React.FC<{
   message: MessageResponse;
   isCurrentUser: boolean;
 }> = ({ message, isCurrentUser }) => {
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString("vi-VN", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
   return (
     <div className={`flex ${isCurrentUser ? "justify-end" : "justify-start"}`}>
       <div
@@ -73,7 +67,7 @@ const Message: React.FC<{
             isCurrentUser ? "text-blue-100" : "text-gray-500"
           }`}
         >
-          {formatTime(new Date(message.createdAt))}
+          {formatDate(message.createdAt, "HH:mm")}
         </p>
       </div>
     </div>

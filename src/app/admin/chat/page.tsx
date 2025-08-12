@@ -11,12 +11,13 @@ import {
   useMarkAsReadMutation,
   MessageResponse,
 } from "@/hooks/api/chat.api";
+
+import { useSocket } from "@/hooks/useSocket";
 import {
+  formatTimeAgo,
   formatTimeShort,
   isUserOnline,
-  formatTimeAgo,
 } from "@/utils/timeFormat";
-import { useSocket } from "@/hooks/useSocket";
 
 // Types
 interface TransformedConversation {

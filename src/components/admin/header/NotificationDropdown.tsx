@@ -11,17 +11,7 @@ import {
   Notification,
 } from "@/hooks/api/notification.api";
 import { useSocket } from "@/hooks/useSocket";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-import utc from "dayjs/plugin/utc";
-import timezone from "dayjs/plugin/timezone";
-import "dayjs/locale/vi";
-
-// Cấu hình dayjs
-dayjs.extend(relativeTime);
-dayjs.extend(utc);
-dayjs.extend(timezone);
-dayjs.locale("vi");
+import { formatTimeAgo } from "@/utils/timeFormat";
 
 export default function NotificationDropdown() {
   const [isOpen, setIsOpen] = useState(false);
@@ -240,7 +230,7 @@ export default function NotificationDropdown() {
                     <span className="flex items-center gap-2 text-gray-500 text-theme-xs dark:text-gray-400">
                       <span className="capitalize">{notification.type}</span>
                       <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
-                      <span>{dayjs(notification.createdAt).fromNow()}</span>
+                      <span>{formatTimeAgo(notification.createdAt)}</span>
                     </span>
                   </span>
                 </DropdownItem>
