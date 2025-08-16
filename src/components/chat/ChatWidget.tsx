@@ -4,9 +4,11 @@ import React, { useState, useEffect, useCallback } from "react";
 import { FaFacebookMessenger, FaTimes } from "react-icons/fa";
 import { SiZalo } from "react-icons/si";
 import { IoChatbubbleEllipses } from "react-icons/io5";
+import { FaRobot } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import styles from "./ChatWidget.module.css";
 import AdminChatInterface from "./AdminChatInterface";
+import AIChatInterface from "./AIChatInterface";
 
 export interface ChatWidgetProps {
   zaloUrl?: string;
@@ -22,6 +24,7 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
   const [isExpanded, setIsExpanded] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isAIChatOpen, setIsAIChatOpen] = useState(false);
 
   // Get authentication status from Redux store
   const isAuthenticated = useSelector(
@@ -50,6 +53,10 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
         // Mở chat inline
         setIsChatOpen(true);
         setIsExpanded(false);
+      } else if (type === "ai") {
+        // Mở chat AI inline
+        setIsAIChatOpen(true);
+        setIsExpanded(false);
       } else {
         // Mở Zalo hoặc Messenger trong tab mới
         window.open(url, "_blank");
@@ -67,6 +74,14 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
       bgColor: "bg-red-500",
       hoverColor: "hover:bg-red-600",
       url: adminChatUrl,
+    },
+    {
+      id: "ai",
+      label: "Trợ lý ảo AI",
+      icon: FaRobot,
+      bgColor: "bg-purple-500",
+      hoverColor: "hover:bg-purple-600",
+      url: "#",
     },
     {
       id: "zalo",
@@ -92,7 +107,7 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
         isMobile ? "bottom-2 right-2" : "bottom-10 right-4"
       } ${styles.chatWidget}`}
     >
-      {!isChatOpen ? (
+      {!isChatOpen && !isAIChatOpen ? (
         <div className="relative">
           {/* Expanded chat options */}
           <div
@@ -155,11 +170,17 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
             )}
           </button>
         </div>
-      ) : (
+      ) : isChatOpen ? (
         /* Admin Chat Interface */
         <AdminChatInterface
           isOpen={isChatOpen}
           onClose={() => setIsChatOpen(false)}
+        />
+      ) : (
+        /* AI Chat Interface */
+        <AIChatInterface
+          isOpen={isAIChatOpen}
+          onClose={() => setIsAIChatOpen(false)}
         />
       )}
     </div>

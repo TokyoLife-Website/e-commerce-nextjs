@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useAppSelector, useAppDispatch } from "@/redux/store";
 import { useCreateReviewMutation } from "@/hooks/api/review.api";
 import { closeModal } from "@/redux/modalSlice";
+import useToast from "@/hooks/useToastify";
 
 const ReviewProductForm = () => {
   const [rating, setRating] = useState(5);
@@ -11,7 +12,7 @@ const ReviewProductForm = () => {
   } | null;
   const dispatch = useAppDispatch();
   const mutation = useCreateReviewMutation();
-
+  const { showSuccess } = useToast();
   const orderItemId = modalData?.orderItemId;
 
   const handleStarClick = (star: number) => {
@@ -25,6 +26,7 @@ const ReviewProductForm = () => {
       { orderItemId, rating, comment },
       {
         onSuccess: () => {
+          showSuccess("Đánh giá thành công!");
           dispatch(closeModal());
         },
       }
