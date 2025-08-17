@@ -10,7 +10,7 @@ import { useForgotPasswordMutation } from "@/hooks/api/auth.api";
 import { handleRequestError } from "@/utils/errorHandler";
 import useToast from "@/hooks/useToastify";
 import { useAppDispatch } from "@/redux/store";
-import { setEmail } from "@/redux/authSlice";
+import { setEmail } from "@/redux/userSlice";
 import { openModal } from "@/redux/modalSlice";
 import { ModalType } from "@/types/modal";
 import TextInput from "../../inputs/TextInput";

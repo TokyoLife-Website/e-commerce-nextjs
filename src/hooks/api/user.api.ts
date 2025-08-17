@@ -25,11 +25,6 @@ const fetchUpdateUser = async (
   return response.data;
 };
 
-const fetchCurrentUser = async (): Promise<ResponseData<User>> => {
-  const response = await axiosInstance.get("/users/me");
-  return response.data;
-};
-
 const uploadAvatar = async (file: File) => {
   const formData = new FormData();
   formData.append("avatar", file);
@@ -64,13 +59,5 @@ export const useUploadAvatarMutation = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.USER] });
     },
-  });
-};
-
-export const useCurrentUserQuery = (isAuthenticated: boolean) => {
-  return useQuery({
-    queryKey: [QUERY_KEYS.USER],
-    queryFn: () => fetchCurrentUser(),
-    enabled: isAuthenticated,
   });
 };

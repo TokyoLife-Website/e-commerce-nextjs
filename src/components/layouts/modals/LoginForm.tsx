@@ -1,5 +1,4 @@
 import React from "react";
-import { jwtDecode } from "jwt-decode";
 import CustomButton from "../CustomBtn";
 import { z } from "zod";
 import { loginSchema } from "@/schemas";
@@ -9,10 +8,10 @@ import useToast from "@/hooks/useToastify";
 import { useLoginMutation } from "@/hooks/api/auth.api";
 import { handleRequestError } from "@/utils/errorHandler";
 import { useAppDispatch } from "@/redux/store";
-import { login } from "@/redux/authSlice";
 import { closeModal, openModal } from "@/redux/modalSlice";
 import { ModalType } from "@/types/modal";
 import TextInput from "../../inputs/TextInput";
+import { setUser } from "@/redux/userSlice";
 
 export type LoginFormData = z.infer<typeof loginSchema>;
 
@@ -38,18 +37,8 @@ export const LoginForm = () => {
 
   const onSubmit: SubmitHandler<LoginFormData> = async (payload) => {
     try {
-      const {
-        data: { access_token, refresh_token },
-        message,
-      } = await mutateAsync(payload);
-      const decoded = jwtDecode<{ id: string | number }>(access_token);
-      dispatch(
-        login({
-          accessToken: access_token,
-          refreshToken: refresh_token,
-          userId: decoded.id,
-        })
-      );
+      const { data, message } = await mutateAsync(payload);
+      dispatch(setUser(data));
       showSuccess(message);
       dispatch(closeModal());
     } catch (error) {

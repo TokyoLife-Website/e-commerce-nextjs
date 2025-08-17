@@ -47,16 +47,11 @@ export const useSocket = (): UseSocketReturn => {
   const socketRef = useRef<Socket | null>(null);
   const [connected, setConnected] = useState<boolean>(false);
   const queryClient = useQueryClient();
-  const { accessToken } = useAppSelector((state) => state.auth);
   useEffect(() => {
-    if (!accessToken) return;
-
     const socket = io(
       process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000",
       {
-        auth: {
-          token: accessToken,
-        },
+        withCredentials: true,
         transports: ["websocket"],
       }
     );
@@ -95,7 +90,7 @@ export const useSocket = (): UseSocketReturn => {
       socket.disconnect();
       socketRef.current = null;
     };
-  }, [accessToken, queryClient]);
+  }, [queryClient]);
 
   const joinConversation = useCallback((conversationId: string) => {
     socketRef.current?.emit(SOCKET_EVENTS.JOIN_CONVERSATION, conversationId);

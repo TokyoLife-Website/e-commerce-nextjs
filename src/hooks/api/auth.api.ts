@@ -5,11 +5,13 @@ import { ResponseData } from "@/types/response";
 import { LoginFormData } from "@/components/layouts/modals/LoginForm";
 import { RegisterFormData } from "@/components/layouts/modals/RegisterForm";
 import { ForgotPasswordFormData } from "@/schemas/forgotPasswordSchema";
+import { User } from "@/types/user";
 
-// Create a separate axios instance for refresh token
+// Create a separate axios instance for refresh token with credentials
 const refreshAxiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
   timeout: 10000,
+  withCredentials: true, // Enable credentials for cookies
   headers: {
     "Content-Type": "application/json",
   },
@@ -30,9 +32,7 @@ export interface ResetPasswordPayload {
   email: string;
 }
 
-const fetchLogin = async (
-  data: LoginFormData
-): Promise<ResponseData<TokenResponse>> => {
+const fetchLogin = async (data: LoginFormData): Promise<ResponseData<User>> => {
   const response = await axiosInstance.post("/auth/login", data);
   return response.data;
 };
@@ -44,19 +44,17 @@ const fetchRegister = async (
   return response.data;
 };
 
-const fetchLogout = async (
-  refreshToken: string
-): Promise<ResponseData<null>> => {
-  return await axiosInstance.post("/auth/logout", { refreshToken });
+const fetchLogout = async (): Promise<ResponseData<null>> => {
+  // Không cần gửi refreshToken trong body nữa vì nó sẽ được gửi tự động qua cookie
+  return await axiosInstance.post("/auth/logout");
 };
 
-export const fetchRefreshToken = async (
-  refreshToken: string
-): Promise<ResponseData<TokenResponse>> => {
+export const fetchRefreshToken = async (): Promise<
+  ResponseData<TokenResponse>
+> => {
   try {
-    const response = await refreshAxiosInstance.post("/auth/refresh-token", {
-      refreshToken,
-    });
+    // Không cần gửi refreshToken trong body nữa vì nó sẽ được gửi tự động qua cookie
+    const response = await refreshAxiosInstance.post("/auth/refresh-token");
     return response.data;
   } catch (error) {
     console.error("Refresh token error:", error);
@@ -105,7 +103,7 @@ export const useForgotPasswordMutation = () => {
 
 export const useLogoutMutation = () => {
   return useMutation({
-    mutationFn: (refreshToken: string) => fetchLogout(refreshToken),
+    mutationFn: () => fetchLogout(), // Không cần tham số nữa
   });
 };
 

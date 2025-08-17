@@ -1,6 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useDispatch } from "react-redux";
-import authReducer from "./authSlice";
 import userReducer from "./userSlice";
 import modalReducer from "./modalSlice";
 import { useSelector } from "react-redux";
@@ -9,7 +8,6 @@ import viewedProductReducer from "./viewedProductSlice";
 
 export const store = configureStore({
   reducer: {
-    auth: authReducer,
     user: userReducer,
     modal: modalReducer,
     viewedProduct: viewedProductReducer,

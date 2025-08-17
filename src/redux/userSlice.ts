@@ -2,6 +2,8 @@ import { Gender } from "@/types/gender";
 import { Role } from "@/types/role";
 import { User } from "@/types/user";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { persistReducer } from "redux-persist";
+import storage from "redux-persist/lib/storage";
 
 const initialState: User = {
   id: "",
@@ -49,9 +51,34 @@ const userSlice = createSlice({
       state.role = role;
       state.phone = phone;
     },
+    setEmail(
+      state,
+      action: PayloadAction<{
+        email: string;
+      }>
+    ) {
+      state.email = action.payload.email;
+    },
     clearUser: () => initialState,
   },
 });
 
-export const { setUser, clearUser } = userSlice.actions;
-export default userSlice.reducer;
+const persistConfig = {
+  key: "user",
+  storage,
+  whitelist: [
+    "id",
+    "email",
+    "firstName",
+    "lastName",
+    "avatar",
+    "dob",
+    "gender",
+    "phone",
+    "role",
+  ],
+};
+
+export const { setUser, setEmail, clearUser } = userSlice.actions;
+
+export default persistReducer(persistConfig, userSlice.reducer);

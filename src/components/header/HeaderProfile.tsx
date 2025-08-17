@@ -5,40 +5,33 @@ import { HiOutlineUserCircle } from "react-icons/hi2";
 import { CustomTitle } from "@/components/layouts/CustomTitle";
 import CustomButton from "@/components/layouts/CustomBtn";
 import { RootState, useAppDispatch, useAppSelector } from "@/redux/store";
-import { logout } from "@/redux/authSlice";
 import { openModal } from "@/redux/modalSlice";
 import { ModalType } from "@/types/modal";
 import Link from "next/link";
-import { useCurrentUserQuery } from "@/hooks/api/user.api";
-import { setUser } from "@/redux/userSlice";
+import { clearUser } from "@/redux/userSlice";
 import { redirect } from "next/navigation";
 import { NoteIcon } from "@/components/icons/NoteIcon";
 import ViewedIcon from "@/components/icons/ViewedIcon";
 import { LogoutIcon } from "@/components/icons/LogoutIcon";
 
 export const HeaderProfile = () => {
-  const { isAuthenticated } = useAppSelector((state: RootState) => state.auth);
-  const { firstName, lastName, avatar } = useAppSelector(
+  const { firstName, lastName, avatar, id } = useAppSelector(
     (state: RootState) => state.user
   );
-  const { data } = useCurrentUserQuery(isAuthenticated);
   const dispatch = useAppDispatch();
   const handleLogout = () => {
-    dispatch(logout());
+    dispatch(clearUser());
     redirect("/");
   };
 
   const [authModal, setAuthModal] = useState<boolean>(false);
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
   useEffect(() => {
-    if (isAuthenticated) {
+    if (id) {
       setAuthModal(false);
       setShowDropdown(false);
-      if (data?.data) {
-        dispatch(setUser(data?.data));
-      }
     }
-  }, [data?.data, dispatch, isAuthenticated]);
+  }, [id]);
 
   return (
     <div
@@ -46,7 +39,7 @@ export const HeaderProfile = () => {
       onMouseEnter={() => setShowDropdown(true)}
       onMouseLeave={() => setShowDropdown(false)}
     >
-      {isAuthenticated ? (
+      {avatar?.url ? (
         <Link href={"/profile"}>
           <Avatar src={avatar?.url} alt={firstName} />
         </Link>
@@ -59,7 +52,7 @@ export const HeaderProfile = () => {
           showDropdown && !authModal ? "block" : "hidden"
         }`}
       >
-        {isAuthenticated ? (
+        {avatar?.url ? (
           <>
             <div className="mx-4 p-5 pb-2 flex border-b border-[#e9e9e9] gap-2">
               <Avatar src={avatar?.url} alt={firstName} />

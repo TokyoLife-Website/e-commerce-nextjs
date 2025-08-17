@@ -27,7 +27,7 @@ export const Header = () => {
     setIsLoading(false);
   }, 500);
 
-  const { isAuthenticated } = useAppSelector((state: RootState) => state.auth);
+  const userId = useAppSelector((state: RootState) => state.user.id);
 
   const { data: searchResult } = useProductsQuery({
     page: 1,
@@ -36,7 +36,7 @@ export const Header = () => {
     enabled: Boolean(keyword),
   });
   const { data: carts } = useCarts({
-    enabled: isAuthenticated,
+    enabled: !!userId,
   });
   const router = useRouter();
   const searchParams = useSearchParams();

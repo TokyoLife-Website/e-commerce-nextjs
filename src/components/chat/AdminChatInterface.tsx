@@ -244,10 +244,7 @@ const AdminChatInterface: React.FC<AdminChatInterfaceProps> = ({
   const lastMarkedConversationId = useRef<string | null>(null);
 
   // Redux selectors
-  const currentUserId = useSelector((state: any) => state.auth.userId);
-  const isAuthenticated = useSelector(
-    (state: any) => state.auth.isAuthenticated
-  );
+  const currentUserId = useSelector((state: any) => state.user.id);
   const CURRENT_USER_ID = currentUserId || "";
 
   // API Hooks
@@ -286,7 +283,7 @@ const AdminChatInterface: React.FC<AdminChatInterfaceProps> = ({
 
   // Create conversation when chat opens
   useEffect(() => {
-    if (isOpen && !conversationId && isAuthenticated && CURRENT_USER_ID) {
+    if (isOpen && !conversationId && CURRENT_USER_ID) {
       createConversationMutation.mutate(ADMIN_ID, {
         onSuccess: (response) => {
           setConversationId(response.data.conversationId);
@@ -296,7 +293,7 @@ const AdminChatInterface: React.FC<AdminChatInterfaceProps> = ({
         },
       });
     }
-  }, [isOpen, conversationId, isAuthenticated, CURRENT_USER_ID]);
+  }, [isOpen, conversationId, CURRENT_USER_ID]);
 
   // Mark messages as read
   useEffect(() => {

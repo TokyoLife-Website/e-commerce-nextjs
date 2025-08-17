@@ -5,17 +5,15 @@ import { RootState, useAppSelector } from "@/redux/store";
 
 export default function isAuth(Component: any) {
   return function IsAuth(props: any) {
-    const { isAuthenticated } = useAppSelector(
-      (state: RootState) => state.auth
-    );
+    const user = useAppSelector((state: RootState) => state.user);
 
     useEffect(() => {
-      if (!isAuthenticated) {
+      if (!user.id) {
         return redirect("/");
       }
     }, []);
 
-    if (!isAuthenticated) {
+    if (!user.id) {
       return null;
     }
 

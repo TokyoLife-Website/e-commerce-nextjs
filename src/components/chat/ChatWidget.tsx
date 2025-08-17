@@ -27,9 +27,7 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
   const [isAIChatOpen, setIsAIChatOpen] = useState(false);
 
   // Get authentication status from Redux store
-  const isAuthenticated = useSelector(
-    (state: any) => state.auth.isAuthenticated
-  );
+  const isAuthenticated = !!useSelector((state: any) => state.user.id);
 
   useEffect(() => {
     const checkMobile = () => {
