@@ -1,5 +1,4 @@
 "use client";
-import isAuth from "@/components/layouts/isAuth";
 import SideBar from "@/components/layouts/SideBar";
 import { RootState, useAppSelector } from "@/redux/store";
 import { Avatar } from "@mui/material";
@@ -39,4 +38,4 @@ const ProfileLayout = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export default isAuth(ProfileLayout);
+export default ProfileLayout;

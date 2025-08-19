@@ -65,7 +65,11 @@ class Http {
 
             // Clear any local auth state
             store.dispatch(clearUser());
-            window.location.href = "/";
+            if (window.location.pathname.startsWith("/admin")) {
+              window.location.href = "/admin/login";
+            } else {
+              window.location.href = "/";
+            }
             return Promise.reject(refreshError);
           }
         }

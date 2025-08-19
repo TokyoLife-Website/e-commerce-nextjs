@@ -7,21 +7,21 @@ import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import TextInput from "@/components/inputs/TextInput";
-import CheckboxInput from "@/components/inputs/CheckboxInput";
+import { useLoginMutation } from "@/hooks/api/auth.api";
+import { useDispatch } from "react-redux";
+import { setUser } from "@/redux/userSlice";
+import useToast from "@/hooks/useToastify";
+import { Role } from "@/types/role";
+import { loginSchema } from "@/schemas";
 
-const loginSchema = z.object({
-  email: z.string().min(1, "Email là bắt buộc").email("Email không hợp lệ"),
-  password: z
-    .string()
-    .min(1, "Mật khẩu là bắt buộc")
-    .min(6, "Mật khẩu phải có ít nhất 6 ký tự"),
-});
-
-type LoginFormData = z.infer<typeof loginSchema>;
+export type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function AdminLoginPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { mutateAsync } = useLoginMutation();
+  const dispatch = useDispatch();
+  const { showSuccess } = useToast();
 
   const {
     control,
@@ -38,29 +38,13 @@ export default function AdminLoginPage() {
   const onSubmit = async (values: LoginFormData) => {
     setLoading(true);
     try {
-      // TODO: Implement actual login API call here
-      // const response = await loginAdmin(values);
-
-      // Simulate API call delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // For demo purposes, check if email contains "admin"
-      if (values.email.includes("admin")) {
-        toast.success("Đăng nhập thành công!");
-        // Store admin token/session here
-        localStorage.setItem("adminToken", "demo-token");
-        localStorage.setItem(
-          "adminUser",
-          JSON.stringify({
-            email: values.email,
-            role: "admin",
-          })
-        );
-
-        // Redirect to admin dashboard
+      const { data, message } = await mutateAsync(values);
+      if (data.role === Role.ADMIN) {
+        dispatch(setUser(data));
+        showSuccess(message);
         router.push("/admin");
       } else {
-        toast.error("Email hoặc mật khẩu không đúng!");
+        toast.error("Bạn không có quyền truy cập vào trang này!");
       }
     } catch (error) {
       toast.error("Có lỗi xảy ra khi đăng nhập!");

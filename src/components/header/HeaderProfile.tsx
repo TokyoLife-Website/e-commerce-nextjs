@@ -13,15 +13,21 @@ import { redirect } from "next/navigation";
 import { NoteIcon } from "@/components/icons/NoteIcon";
 import ViewedIcon from "@/components/icons/ViewedIcon";
 import { LogoutIcon } from "@/components/icons/LogoutIcon";
+import { useLogoutMutation } from "@/hooks/api/auth.api";
 
 export const HeaderProfile = () => {
   const { firstName, lastName, avatar, id } = useAppSelector(
     (state: RootState) => state.user
   );
   const dispatch = useAppDispatch();
-  const handleLogout = () => {
-    dispatch(clearUser());
-    redirect("/");
+  const { mutateAsync: logout } = useLogoutMutation();
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } finally {
+      dispatch(clearUser());
+      redirect("/");
+    }
   };
 
   const [authModal, setAuthModal] = useState<boolean>(false);
