@@ -89,7 +89,7 @@ const columns: Column[] = [
 ];
 const ProductList = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const { data } = useProductsQuery(currentPage, PAGE_SIZE);
+  const { data } = useProductsQuery({ page: currentPage, size: PAGE_SIZE });
   const handleChangePage = (page: number) => {
     setCurrentPage(page);
   };
@@ -97,7 +97,7 @@ const ProductList = () => {
   return (
     <div>
       <PageBreadcrumb pageTitle="Products list" breadcrumbs={breadcrumbItems} />
-      {/* <ComponentCard title="General"> */}
+
       <CustomTable
         columns={columns}
         rows={items || []}
@@ -105,7 +105,6 @@ const ProductList = () => {
         rowsPerPage={PAGE_SIZE}
         totalPages={totalPages || 0}
       />
-      {/* </ComponentCard> */}
     </div>
   );
 };
