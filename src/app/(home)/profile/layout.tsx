@@ -1,6 +1,8 @@
 "use client";
 import SideBar from "@/components/layouts/SideBar";
+import { withAuth } from "@/hoc/withAuth";
 import { RootState, useAppSelector } from "@/redux/store";
+import { Role } from "@/types/role";
 import { Avatar } from "@mui/material";
 import React from "react";
 
@@ -38,4 +40,4 @@ const ProfileLayout = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export default ProfileLayout;
+export default withAuth(ProfileLayout, { role: Role.USER });

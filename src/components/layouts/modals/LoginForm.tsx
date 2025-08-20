@@ -12,6 +12,7 @@ import { closeModal, openModal } from "@/redux/modalSlice";
 import { ModalType } from "@/types/modal";
 import TextInput from "../../inputs/TextInput";
 import { setUser } from "@/redux/userSlice";
+import { Role } from "@/types/role";
 
 export type LoginFormData = z.infer<typeof loginSchema>;
 
@@ -21,7 +22,7 @@ const defaultValues = {
 };
 
 export const LoginForm = () => {
-  const { showSuccess } = useToast();
+  const { showSuccess, showError } = useToast();
   const { mutateAsync } = useLoginMutation();
   const dispatch = useAppDispatch();
 
@@ -38,9 +39,13 @@ export const LoginForm = () => {
   const onSubmit: SubmitHandler<LoginFormData> = async (payload) => {
     try {
       const { data, message } = await mutateAsync(payload);
-      dispatch(setUser(data));
-      showSuccess(message);
-      dispatch(closeModal());
+      if (data.role === Role.USER) {
+        dispatch(setUser(data));
+        showSuccess(message);
+        dispatch(closeModal());
+      } else {
+        showError("Admin không thể đăng nhập vào trang này!");
+      }
     } catch (error) {
       handleRequestError(error);
     }

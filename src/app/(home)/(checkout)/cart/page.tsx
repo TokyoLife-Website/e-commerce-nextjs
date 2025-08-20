@@ -16,8 +16,10 @@ import CouponBanner from "@/components/checkout/CouponBanner";
 import ShippingBanner from "@/components/checkout/ShippingBanner";
 import PaymentSummary from "@/components/checkout/PaymentSummary";
 import PaymentFailed from "@/components/checkout/PaymentFailed";
+import { withAuth } from "@/hoc/withAuth";
+import { Role } from "@/types/role";
 
-export default function CartPage() {
+function CartPage() {
   const { data: carts, isLoading, isFetching, error } = useCarts();
   const { mutateAsync: removeCartItem } = useRemoveCartItem();
   const { mutateAsync: updateCartItem } = useUpdateCartItem();
@@ -82,3 +84,5 @@ export default function CartPage() {
     </div>
   );
 }
+
+export default withAuth(CartPage, { role: Role.USER });

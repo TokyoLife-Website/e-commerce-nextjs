@@ -3,12 +3,10 @@
 import React from "react";
 import { usePathname } from "next/navigation";
 import CheckoutStepper from "@/components/checkout/CheckoutStepper";
+import { withAuth } from "@/hoc/withAuth";
+import { Role } from "@/types/role";
 
-export default function CheckoutLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+function CheckoutLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isOrderCompletePage = pathname === "/order-complete";
   return (
@@ -21,3 +19,5 @@ export default function CheckoutLayout({
     </div>
   );
 }
+
+export default withAuth(CheckoutLayout, { role: Role.USER });

@@ -4,13 +4,11 @@ import AppHeader from "@/components/admin/AppHeader";
 import AppSidebar from "@/components/admin/AppSidebar";
 import Backdrop from "@/components/admin/Backdrop";
 import { useSidebar } from "@/contexts/SidebarContext";
+import { withAuth } from "@/hoc/withAuth";
+import { Role } from "@/types/role";
 import React, { Suspense } from "react";
 
-export default function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+function AdminLayout({ children }: { children: React.ReactNode }) {
   const { isExpanded, isHovered, isMobileOpen } = useSidebar();
 
   // Dynamic class for main content margin based on sidebar state
@@ -39,3 +37,5 @@ export default function AdminLayout({
     </div>
   );
 }
+
+export default withAuth(AdminLayout, { role: Role.ADMIN });

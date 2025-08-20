@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -13,12 +13,14 @@ import { setUser } from "@/redux/userSlice";
 import useToast from "@/hooks/useToastify";
 import { Role } from "@/types/role";
 import { loginSchema } from "@/schemas";
+import { useAppSelector } from "@/redux/store";
 
 export type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function AdminLoginPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { firstName, role } = useAppSelector((state) => state.user);
   const { mutateAsync } = useLoginMutation();
   const dispatch = useDispatch();
   const { showSuccess } = useToast();
@@ -53,6 +55,13 @@ export default function AdminLoginPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (firstName) {
+      if (role === Role.ADMIN) router.replace("/admin");
+      else router.replace("/");
+    }
+  }, [firstName, role, router]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-4">
