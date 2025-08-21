@@ -12,4 +12,6 @@ export interface User {
   gender: Gender;
   dob: string;
   role: Role;
+  isActive: boolean;
+  createdAt: string;
 }

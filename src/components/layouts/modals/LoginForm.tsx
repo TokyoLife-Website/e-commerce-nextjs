@@ -39,13 +39,9 @@ export const LoginForm = () => {
   const onSubmit: SubmitHandler<LoginFormData> = async (payload) => {
     try {
       const { data, message } = await mutateAsync(payload);
-      if (data.role === Role.USER) {
-        dispatch(setUser(data));
-        showSuccess(message);
-        dispatch(closeModal());
-      } else {
-        showError("Admin không thể đăng nhập vào trang này!");
-      }
+      dispatch(setUser(data));
+      showSuccess(message);
+      dispatch(closeModal());
     } catch (error) {
       handleRequestError(error);
     }

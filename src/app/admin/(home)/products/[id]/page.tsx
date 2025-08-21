@@ -298,8 +298,12 @@ const EditProductPage = () => {
                 <CustomLabel label="Category" isRequired={true} />
                 <TreeSelect
                   {...field}
-                  className="w-full h-14 rounded-full"
-                  dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
+                  styles={{
+                    root: {
+                      maxHeight: 400,
+                      overflow: "auto",
+                    },
+                  }}
                   placeholder="Please select"
                   treeDefaultExpandAll
                   treeData={categoryData}

@@ -6,6 +6,7 @@ import axios, {
 } from "axios";
 import { store } from "@/redux/store";
 import { clearUser } from "@/redux/userSlice";
+import { ModalType } from "@/types/modal";
 
 class Http {
   private static instance: Http;
@@ -44,13 +45,18 @@ class Http {
         const originalRequest = error.config as AxiosRequestConfig & {
           _retry?: boolean;
         };
-
+        const modal = store.getState().modal;
         // If access token expired (401) and we haven't already tried to refresh
         if (
           error.response?.status === 401 &&
           originalRequest &&
           !originalRequest._retry
         ) {
+          if (
+            (modal.isOpen && modal.type === ModalType.LOGIN) ||
+            window.location.pathname.startsWith("/admin/login")
+          )
+            return Promise.reject(error);
           originalRequest._retry = true;
 
           try {
@@ -62,7 +68,6 @@ class Http {
           } catch (refreshError) {
             // Refresh failed, redirect to login
             console.error("Token refresh failed:", refreshError);
-
             // Clear any local auth state
             store.dispatch(clearUser());
             if (window.location.pathname.startsWith("/admin")) {

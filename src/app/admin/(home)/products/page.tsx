@@ -96,7 +96,7 @@ const ProductList = () => {
   const { items, totalPages } = data?.data || {};
   return (
     <div>
-      <PageBreadcrumb pageTitle="Products list" breadcrumbs={breadcrumbItems} />
+      <PageBreadcrumb pageTitle="Product list" breadcrumbs={breadcrumbItems} />
 
       <CustomTable
         columns={columns}

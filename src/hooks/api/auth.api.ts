@@ -34,6 +34,15 @@ export interface ResetPasswordPayload {
 
 const fetchLogin = async (data: LoginFormData): Promise<ResponseData<User>> => {
   const response = await axiosInstance.post("/auth/login", data);
+  console.log(response);
+  return response.data;
+};
+
+const fetchAdminLogin = async (
+  data: LoginFormData
+): Promise<ResponseData<User>> => {
+  const response = await axiosInstance.post("/auth/admin/login", data);
+  console.log("Admin login response:", response);
   return response.data;
 };
 
@@ -86,6 +95,12 @@ const fetchResetPassword = async (
 export const useLoginMutation = () => {
   return useMutation({
     mutationFn: (data: LoginFormData) => fetchLogin(data),
+  });
+};
+
+export const useAdminLoginMutation = () => {
+  return useMutation({
+    mutationFn: (data: LoginFormData) => fetchAdminLogin(data),
   });
 };
 

@@ -5,15 +5,14 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
-import { toast } from "react-toastify";
 import TextInput from "@/components/inputs/TextInput";
-import { useLoginMutation } from "@/hooks/api/auth.api";
 import { useDispatch } from "react-redux";
 import { setUser } from "@/redux/userSlice";
 import useToast from "@/hooks/useToastify";
-import { Role } from "@/types/role";
 import { loginSchema } from "@/schemas";
 import { useAppSelector } from "@/redux/store";
+import { handleRequestError } from "@/utils/errorHandler";
+import { useAdminLoginMutation } from "@/hooks/api/auth.api";
 
 export type LoginFormData = z.infer<typeof loginSchema>;
 
@@ -21,7 +20,7 @@ export default function AdminLoginPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { firstName, role } = useAppSelector((state) => state.user);
-  const { mutateAsync } = useLoginMutation();
+  const { mutateAsync } = useAdminLoginMutation();
   const dispatch = useDispatch();
   const { showSuccess } = useToast();
 
@@ -41,16 +40,12 @@ export default function AdminLoginPage() {
     setLoading(true);
     try {
       const { data, message } = await mutateAsync(values);
-      if (data.role === Role.ADMIN) {
-        dispatch(setUser(data));
-        showSuccess(message);
-        router.push("/admin");
-      } else {
-        toast.error("Bạn không có quyền truy cập vào trang này!");
-      }
+      // Admin role is already validated by the backend endpoint
+      dispatch(setUser(data));
+      showSuccess(message);
+      router.push("/admin");
     } catch (error) {
-      toast.error("Có lỗi xảy ra khi đăng nhập!");
-      console.error("Login error:", error);
+      handleRequestError(error);
     } finally {
       setLoading(false);
     }
@@ -58,7 +53,7 @@ export default function AdminLoginPage() {
 
   useEffect(() => {
     if (firstName) {
-      if (role === Role.ADMIN) router.replace("/admin");
+      if (role === "admin") router.replace("/admin");
       else router.replace("/");
     }
   }, [firstName, role, router]);
