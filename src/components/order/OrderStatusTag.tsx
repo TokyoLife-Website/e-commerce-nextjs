@@ -14,12 +14,31 @@ const STATUS_STYLES = {
   [OrderStatus.RETURNED]: "bg-red-100 text-red-600",
 } as const;
 
+export const getOrderStatusLabel = (status: OrderStatus) => {
+  switch (status) {
+    case OrderStatus.PENDING:
+      return "Pending";
+    case OrderStatus.PROCESSING:
+      return "Processing";
+    case OrderStatus.DELIVERING:
+      return "Delivering";
+    case OrderStatus.DELIVERED:
+      return "Delivered";
+    case OrderStatus.CANCELLED:
+      return "Cancelled";
+    case OrderStatus.RETURNED:
+      return "Returned";
+    default:
+      return status;
+  }
+};
+
 const OrderStatusTag: FC<OrderStatusTagProps> = ({ orderStatus }) => {
   return (
     <span
       className={`px-2 py-1 rounded text-xs font-medium ${STATUS_STYLES[orderStatus]}`}
     >
-      {orderStatus}
+      {getOrderStatusLabel(orderStatus)}
     </span>
   );
 };

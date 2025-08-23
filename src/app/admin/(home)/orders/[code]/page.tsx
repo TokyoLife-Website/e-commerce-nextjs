@@ -15,11 +15,16 @@ import React, { useEffect, useState } from "react";
 import { OrderStatus } from "@/types/orderStatus";
 import Image from "next/image";
 import { useUpdateOrderStatusMutation } from "@/hooks/api/order.api";
-import OrderStatusTag from "@/components/order/OrderStatusTag";
+import OrderStatusTag, {
+  getOrderStatusLabel,
+} from "@/components/order/OrderStatusTag";
+import OrderTimeline from "@/components/order/OrderTimeline";
+import PaymentTypeTag from "@/components/order/PaymentTypeTag";
 import useToastify from "@/hooks/useToastify";
+import Loading from "@/components/common/Loading";
+import NotFound from "@/app/not-found";
 
 const OrderDetailPage = () => {
-  console.log("OrderDetailPage");
   const params = useParams();
   const { showInfo, showSuccess, showError } = useToastify();
   const orderCode = params.code as string;
@@ -35,7 +40,7 @@ const OrderDetailPage = () => {
     { id: "", name: "All Status" },
     ...Object.values(OrderStatus).map((status) => ({
       id: status,
-      name: status,
+      name: getOrderStatusLabel(status),
     })),
   ];
 
@@ -138,11 +143,11 @@ const OrderDetailPage = () => {
   }, [order]);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <Loading size="large" />;
   }
 
   if (!order) {
-    return <div>Order not found</div>;
+    return <NotFound />;
   }
 
   const breadcrumbItems = [
@@ -241,7 +246,8 @@ const OrderDetailPage = () => {
         <ComponentCard title="Payment Information">
           <div className="space-y-2">
             <Typography variant="body2">
-              <strong>Method:</strong> {order.paymentMethod}
+              <strong>Method:</strong>{" "}
+              <PaymentTypeTag paymentMethod={order.paymentMethod} />
             </Typography>
             <Typography variant="body2">
               <strong>Status:</strong>{" "}
@@ -303,133 +309,11 @@ const OrderDetailPage = () => {
 
       {/* Order Timeline */}
       <ComponentCard title="Order Timeline">
-        <div className="relative">
-          <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-200"></div>
-          <div className="space-y-8">
-            <div className="relative flex items-start">
-              <div className="absolute left-0 w-8 h-8 bg-blue-500 rounded-full border-4 border-white shadow-lg flex items-center justify-center">
-                <div className="w-2 h-2 bg-white rounded-full"></div>
-              </div>
-              <div className="ml-12 flex-1">
-                <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                  <Typography
-                    variant="h6"
-                    component="span"
-                    className="text-blue-800"
-                  >
-                    Order Placed
-                  </Typography>
-                  <Typography className="text-blue-700 mt-1">
-                    Order #{order.code} has been created
-                  </Typography>
-                </div>
-                <div className="text-sm text-gray-500 mt-2 ml-4">
-                  {formatDate(order.createdAt)}
-                </div>
-              </div>
-            </div>
-
-            {order.status !== OrderStatus.PENDING && (
-              <div className="relative flex items-start">
-                <div className="absolute left-0 w-8 h-8 bg-blue-400 rounded-full border-4 border-white shadow-lg flex items-center justify-center">
-                  <div className="w-2 h-2 bg-white rounded-full"></div>
-                </div>
-                <div className="ml-12 flex-1">
-                  <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                    <Typography
-                      variant="h6"
-                      component="span"
-                      className="text-blue-800"
-                    >
-                      Processing
-                    </Typography>
-                    <Typography className="text-blue-700 mt-1">
-                      Order is being processed
-                    </Typography>
-                  </div>
-                  <div className="text-sm text-gray-500 mt-2 ml-4">
-                    {formatDate(order.createdAt)}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {order.status === OrderStatus.DELIVERING && (
-              <div className="relative flex items-start">
-                <div className="absolute left-0 w-8 h-8 bg-orange-500 rounded-full border-4 border-white shadow-lg flex items-center justify-center">
-                  <div className="w-2 h-2 bg-white rounded-full"></div>
-                </div>
-                <div className="ml-12 flex-1">
-                  <div className="bg-orange-50 p-4 rounded-lg border border-orange-200">
-                    <Typography
-                      variant="h6"
-                      component="span"
-                      className="text-orange-800"
-                    >
-                      Out for Delivery
-                    </Typography>
-                    <Typography className="text-orange-700 mt-1">
-                      Order is on its way
-                    </Typography>
-                  </div>
-                  <div className="text-sm text-gray-500 mt-2 ml-4">
-                    {formatDate(order.createdAt)}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {order.status === OrderStatus.DELIVERED && (
-              <div className="relative flex items-start">
-                <div className="absolute left-0 w-8 h-8 bg-green-500 rounded-full border-4 border-white shadow-lg flex items-center justify-center">
-                  <div className="w-2 h-2 bg-white rounded-full"></div>
-                </div>
-                <div className="ml-12 flex-1">
-                  <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-                    <Typography
-                      variant="h6"
-                      component="span"
-                      className="text-green-800"
-                    >
-                      Delivered
-                    </Typography>
-                    <Typography className="text-green-700 mt-1">
-                      Order has been delivered successfully
-                    </Typography>
-                  </div>
-                  <div className="text-sm text-gray-500 mt-2 ml-4">
-                    {formatDate(order.createdAt)}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {order.status === OrderStatus.CANCELLED && (
-              <div className="relative flex items-start">
-                <div className="absolute left-0 w-8 h-8 bg-red-500 rounded-full border-4 border-white shadow-lg flex items-center justify-center">
-                  <div className="w-2 h-2 bg-white rounded-full"></div>
-                </div>
-                <div className="ml-12 flex-1">
-                  <div className="bg-red-50 p-4 rounded-lg border border-red-200">
-                    <Typography
-                      variant="h6"
-                      component="span"
-                      className="text-red-800"
-                    >
-                      Cancelled
-                    </Typography>
-                    <Typography className="text-red-700 mt-1">
-                      Order has been cancelled
-                    </Typography>
-                  </div>
-                  <div className="text-sm text-gray-500 mt-2 ml-4">
-                    {formatDate(order.createdAt)}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
+        <OrderTimeline
+          orderCode={order.code}
+          orderStatusHistory={order.orderStatusHistory}
+          orderCreatedAt={order.createdAt}
+        />
       </ComponentCard>
     </div>
   );

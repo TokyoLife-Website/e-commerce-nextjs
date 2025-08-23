@@ -5,6 +5,13 @@ import { SKU } from "./sku";
 import { Address } from "./address";
 import { Coupon } from "./coupon";
 
+export interface OrderStatusHistory {
+  id: number;
+  orderId: number;
+  status: OrderStatus;
+  createdAt: Date;
+}
+
 export interface Order {
   id: number;
   code: string;
@@ -20,6 +27,7 @@ export interface Order {
   note?: string;
   items: OrderItem[];
   isReviewed: boolean;
+  orderStatusHistory?: OrderStatusHistory[];
   createdAt: Date;
 }
 
