@@ -63,7 +63,7 @@ const sizeOptions = Object.values(Size).map((value) => ({
 }));
 
 const breadcrumbItems = [
-  { label: "Home", path: "/" },
+  { label: "Home", path: "/admin/dashboard" },
   { label: "Product", path: "products" },
 ];
 

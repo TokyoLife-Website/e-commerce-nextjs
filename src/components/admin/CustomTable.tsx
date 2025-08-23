@@ -18,6 +18,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
   rowsPerPage,
   onPageChange,
   totalPages,
+  height,
 }) => {
   const handleChange = (_event: React.ChangeEvent<unknown>, page: number) => {
     onPageChange(page);
@@ -32,7 +33,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
   };
   return (
     <div>
-      <TableContainer sx={{ height: 450 }}>
+      <TableContainer sx={{ height: height || 450 }}>
         <Table stickyHeader>
           <TableHead>
             <TableRow>

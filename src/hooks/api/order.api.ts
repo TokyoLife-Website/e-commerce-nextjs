@@ -24,6 +24,28 @@ const fetchOrders = async (
   return response.data;
 };
 
+const fetchAdminOrders = async (
+  page?: number | string,
+  size?: number | string,
+  status?: OrderStatus,
+  userId?: number
+): Promise<ResponseData<Pagination<Order>>> => {
+  const response = await axiosInstance.get("/orders/admin/all", {
+    params: { page, size, status, userId },
+  });
+  return response.data;
+};
+
+const updateOrderStatus = async (
+  orderCode: string,
+  newStatus: OrderStatus
+): Promise<ResponseData<Order>> => {
+  const response = await axiosInstance.patch(`/orders/${orderCode}`, {
+    newStatus,
+  });
+  return response.data;
+};
+
 const fetchOrder = async (orderCode: string): Promise<ResponseData<Order>> => {
   const response = await axiosInstance.get(`/orders/${orderCode}`);
   return response.data;
@@ -48,6 +70,38 @@ export const useOrdersQuery = (
   return useQuery({
     queryKey: [QUERY_KEYS.ORDERS, status, page, size],
     queryFn: () => fetchOrders(page, size, status),
+  });
+};
+
+export const useAdminOrdersQuery = (
+  page?: number | string,
+  size?: number | string,
+  status?: OrderStatus,
+  userId?: number
+) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.ADMIN_ORDERS, page, size, status, userId],
+    queryFn: () => fetchAdminOrders(page, size, status, userId),
+  });
+};
+
+export const useUpdateOrderStatusMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      orderCode,
+      newStatus,
+    }: {
+      orderCode: string;
+      newStatus: OrderStatus;
+    }) => updateOrderStatus(orderCode, newStatus),
+    onSuccess: (data, variables) => {
+      // Invalidate both admin orders list and specific order
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.ADMIN_ORDERS] });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.ORDER(variables.orderCode)],
+      });
+    },
   });
 };
 

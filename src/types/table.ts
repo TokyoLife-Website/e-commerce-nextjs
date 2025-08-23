@@ -25,4 +25,5 @@ export interface CustomTableProps {
   rowsPerPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
+  height?: number;
 }

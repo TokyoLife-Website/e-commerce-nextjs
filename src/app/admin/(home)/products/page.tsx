@@ -11,7 +11,7 @@ import Image from "next/image";
 import React, { useState } from "react";
 import Link from "next/link";
 const breadcrumbItems = [
-  { label: "Home", path: "/" },
+  { label: "Home", path: "/admin/dashboard" },
   { label: "Product", path: "products" },
 ];
 const PAGE_SIZE = 5;

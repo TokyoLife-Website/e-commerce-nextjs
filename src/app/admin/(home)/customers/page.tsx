@@ -12,7 +12,7 @@ import Image from "next/image";
 import React, { useState } from "react";
 
 const breadcrumbItems = [
-  { label: "Home", path: "/" },
+  { label: "Home", path: "/admin/dashboard" },
   { label: "Customers", path: "/admin/customers" },
 ];
 

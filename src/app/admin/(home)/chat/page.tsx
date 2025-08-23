@@ -553,7 +553,7 @@ export default function ChatPage() {
   const [typingUsers, setTypingUsers] = useState<Set<string>>(new Set());
 
   // Constants
-  const breadcrumbItems = [{ label: "Home", path: "/" }];
+  const breadcrumbItems = [{ label: "Home", path: "/admin/dashboard" }];
   const currentUser = getCurrentUser();
 
   // API Hooks
