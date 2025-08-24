@@ -100,7 +100,7 @@ const ProductList = () => {
 
       <CustomTable
         columns={columns}
-        rows={items || []}
+        rows={(items || []) as any[]}
         onPageChange={handleChangePage}
         rowsPerPage={PAGE_SIZE}
         totalPages={totalPages || 0}

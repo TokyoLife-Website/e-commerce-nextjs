@@ -7,9 +7,12 @@ export interface Review {
   comment: string;
   userId: string | number;
   user: User;
-  sku: SKU;
   skuId: string | number;
+  sku: SKU;
+  orderItemId: number;
+  isActive: boolean;
   createdAt: string;
+  updatedAt: string;
 }
 
 export interface ReviewItem {

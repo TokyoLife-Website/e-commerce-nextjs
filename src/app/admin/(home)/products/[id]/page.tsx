@@ -216,7 +216,7 @@ const EditProductPage = () => {
         skus: product.skus.map((sku) => ({
           quantity: sku.quantity,
           sku: sku.sku,
-          id: sku.id,
+          id: Number(sku.id),
           color: sku.color as Color,
           size: sku.size as Size,
         })),

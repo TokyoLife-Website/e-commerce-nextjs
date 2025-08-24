@@ -1,5 +1,6 @@
 import { DiscountType } from "./discountType";
 import { SKU } from "./sku";
+import { Category } from "./category";
 
 export interface Product {
   id: string | number;
@@ -17,5 +18,6 @@ export interface Product {
   slug: string;
   images: string[];
   description: string;
+  category?: Category;
   createdAt: string;
 }

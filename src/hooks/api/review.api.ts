@@ -21,9 +21,21 @@ const fetchReviewItemByStatus = async (
   status: ReviewStatus,
   page?: number | string,
   size?: number | string
-): Promise<ResponseData<Pagination<ReviewItem>>> => {
+): Promise<ResponseData<Pagination<Review>>> => {
   const response = await axiosInstance.get("/reviews/products", {
     params: { page, size, status },
+  });
+  return response.data;
+};
+
+const fetchAllReviewsForAdmin = async (
+  rating?: number | string,
+  isActive?: boolean,
+  page?: number | string,
+  size?: number | string
+): Promise<ResponseData<Pagination<Review>>> => {
+  const response = await axiosInstance.get("/reviews/admin", {
+    params: { page, size, rating, isActive },
   });
   return response.data;
 };
@@ -38,6 +50,18 @@ export const useReviewsQuery = (
     queryKey: [QUERY_KEYS.REVIEWS, page, size, rating, productId],
     queryFn: () => fetchReviews(productId, rating, page, size),
     enabled: !!productId,
+  });
+};
+
+export const useAllReviewsForAdminQuery = (
+  rating?: number | string,
+  isActive?: boolean,
+  page?: number | string,
+  size?: number | string
+) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.REVIEWS, "admin", page, size, rating, isActive],
+    queryFn: () => fetchAllReviewsForAdmin(rating, isActive, page, size),
   });
 };
 
@@ -70,6 +94,30 @@ export const useCreateReviewMutation = () => {
     mutationFn: createReview,
     onSuccess: () => {
       // Invalidate review queries if needed
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.REVIEWS] });
+    },
+  });
+};
+
+const updateReviewStatus = async (reviewId: number, isActive: boolean) => {
+  const response = await axiosInstance.patch(`/reviews/${reviewId}/status`, {
+    isActive,
+  });
+  return response.data;
+};
+
+export const useUpdateReviewStatusMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      reviewId,
+      isActive,
+    }: {
+      reviewId: number;
+      isActive: boolean;
+    }) => updateReviewStatus(reviewId, isActive),
+    onSuccess: () => {
+      // Invalidate review queries to refresh the data
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.REVIEWS] });
     },
   });

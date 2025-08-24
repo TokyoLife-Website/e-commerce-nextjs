@@ -1,7 +1,8 @@
-export type Category = {
+export interface Category {
   id: number;
   name: string;
   slug: string;
   description: string;
-  children: Category[];
-};
+  children?: Category[];
+  parent?: Category;
+}
