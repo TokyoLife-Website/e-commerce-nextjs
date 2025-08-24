@@ -127,6 +127,7 @@ const CustomersListPage = () => {
       <CustomTable
         columns={columns(updateStatus)}
         rows={rows}
+        page={currentPage}
         onPageChange={handleChangePage}
         rowsPerPage={PAGE_SIZE}
         totalPages={totalPages || 0}

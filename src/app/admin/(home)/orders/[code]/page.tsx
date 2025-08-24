@@ -301,6 +301,7 @@ const OrderDetailPage = () => {
         <CustomTable
           columns={productColumns}
           rows={productRows}
+          page={1}
           onPageChange={() => {}} // No pagination needed for order detail
           rowsPerPage={productRows.length}
           totalPages={1}

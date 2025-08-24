@@ -16,6 +16,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
   rows,
   columns,
   rowsPerPage,
+  page,
   onPageChange,
   totalPages,
   height,
@@ -80,6 +81,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
         <Stack alignItems="center" pt={4}>
           <Pagination
             count={totalPages}
+            page={page}
             onChange={handleChange}
             variant="outlined"
             color="primary"

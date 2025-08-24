@@ -24,6 +24,7 @@ export interface CustomTableProps {
   rows: Data[];
   rowsPerPage: number;
   totalPages: number;
+  page: number;
   onPageChange: (page: number) => void;
   height?: number;
 }

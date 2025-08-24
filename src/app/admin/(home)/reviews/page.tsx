@@ -216,6 +216,7 @@ const AdminReviewsPage = () => {
         <CustomTable
           columns={columns}
           rows={(items || []) as any[]}
+          page={currentPage}
           onPageChange={handleChangePage}
           rowsPerPage={PAGE_SIZE}
           totalPages={totalPages || 0}

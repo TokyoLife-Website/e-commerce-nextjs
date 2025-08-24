@@ -160,6 +160,7 @@ const OrdersListPage = () => {
       <CustomTable
         columns={columns}
         rows={rows}
+        page={currentPage}
         onPageChange={handleChangePage}
         rowsPerPage={PAGE_SIZE}
         totalPages={totalPages || 0}
