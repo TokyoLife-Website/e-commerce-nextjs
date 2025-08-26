@@ -66,7 +66,10 @@ const navItems: NavItem[] = [
   {
     icon: <PlugInIcon />,
     name: "Coupons",
-    path: "/admin/coupons",
+    subItems: [
+      { name: "List", path: "/admin/coupons", pro: false },
+      { name: "Create", path: "/admin/coupons/create", pro: false },
+    ],
   },
   {
     icon: <PlugInIcon />,

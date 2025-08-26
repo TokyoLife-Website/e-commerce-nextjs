@@ -34,6 +34,7 @@ const TextInput = <T extends FieldValues>({
               error={isError}
               helperText={errMsg}
               type={type}
+              multiline={type === "textarea"}
               disabled={disabled}
               onChange={(e) =>
                 field.onChange(
