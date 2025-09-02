@@ -5,14 +5,24 @@ interface OrderStatusTagProps {
   orderStatus: OrderStatus;
 }
 
-const STATUS_STYLES = {
-  [OrderStatus.PENDING]: "bg-yellow-100 text-yellow-600",
-  [OrderStatus.PROCESSING]: "bg-blue-100 text-blue-600",
-  [OrderStatus.DELIVERING]: "bg-purple-100 text-purple-600",
-  [OrderStatus.DELIVERED]: "bg-green-100 text-green-600",
-  [OrderStatus.CANCELLED]: "bg-gray-100 text-gray-600",
-  [OrderStatus.RETURNED]: "bg-red-100 text-red-600",
-} as const;
+export const getStatusColor = (status: OrderStatus) => {
+  switch (status) {
+    case OrderStatus.DELIVERED:
+      return "bg-green-100 text-green-600";
+    case OrderStatus.PROCESSING:
+      return "bg-blue-100 text-blue-600";
+    case OrderStatus.DELIVERING:
+      return "bg-purple-100 text-purple-600";
+    case OrderStatus.PENDING:
+      return "bg-yellow-100 text-yellow-600";
+    case OrderStatus.CANCELLED:
+      return "bg-gray-100 text-gray-600";
+    case OrderStatus.RETURNED:
+      return "bg-red-100 text-red-600";
+    default:
+      return "bg-gray-100 text-gray-800";
+  }
+};
 
 export const getOrderStatusLabel = (status: OrderStatus) => {
   switch (status) {
@@ -36,7 +46,9 @@ export const getOrderStatusLabel = (status: OrderStatus) => {
 const OrderStatusTag: FC<OrderStatusTagProps> = ({ orderStatus }) => {
   return (
     <span
-      className={`px-2 py-1 rounded text-xs font-medium ${STATUS_STYLES[orderStatus]}`}
+      className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(
+        orderStatus
+      )}`}
     >
       {getOrderStatusLabel(orderStatus)}
     </span>

@@ -17,4 +17,5 @@ export const QUERY_KEYS = {
   CONVERSATIONS: "conversations",
   CHAT_MESSAGES: "chat-messages",
   AI_CONVERSATIONS: "ai-conversations",
+  DASHBOARD: "dashboard",
 };

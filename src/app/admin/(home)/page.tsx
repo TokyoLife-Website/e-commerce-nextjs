@@ -1,3 +1,5 @@
+import { redirect } from "next/navigation";
+
 export default function PeronalInfo() {
-  return <div>admin</div>;
+  redirect("/admin/dashboard");
 }

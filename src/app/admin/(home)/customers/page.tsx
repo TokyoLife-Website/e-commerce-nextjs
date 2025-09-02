@@ -16,7 +16,7 @@ const breadcrumbItems = [
   { label: "Customers", path: "/admin/customers" },
 ];
 
-const PAGE_SIZE = 1;
+const PAGE_SIZE = 5;
 
 const columns = (
   updateStatus: (args: { id: number; isActive: boolean }) => void
