@@ -26,7 +26,7 @@ export const VerifyCodeForm = () => {
   const dispatch = useAppDispatch();
   const { mutateAsync: verifyOTP } = useVerifyOTPMutation();
   const { mutateAsync: resendOTP } = useForgotPasswordMutation();
-  const { email } = useAppSelector((state: RootState) => state.auth);
+  const { email } = useAppSelector((state: RootState) => state.user);
   const [canResend, setCanResend] = useState(false);
   const [countdownKey, setCountdownKey] = useState(0);
 

@@ -11,6 +11,7 @@ import { AddressForm } from "./AddressForm";
 import SizeGuideForm from "./SizeGuideForm";
 import SelectAddressModal from "./SelectAddressModal";
 import ReviewProductForm from "./ReviewProductForm";
+import { ConfirmCancelOrderForm } from "./ConfirmCancelOrderForm";
 
 export const Modal = () => {
   const { isOpen, type } = useAppSelector((state: RootState) => state.modal);
@@ -35,6 +36,8 @@ export const Modal = () => {
         return <SizeGuideForm />;
       case ModalType.REVIEW_PRODUCT:
         return <ReviewProductForm />;
+      case ModalType.CONFIRM_CANCEL_ORDER:
+        return <ConfirmCancelOrderForm />;
       default:
         return null;
     }

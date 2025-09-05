@@ -49,6 +49,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
   const props: Record<string, any> = {
     href,
     onClick,
+    type: href ? undefined : "button", // Đảm bảo button không có href có type="button"
     ...rest,
   };
 

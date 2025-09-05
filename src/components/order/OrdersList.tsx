@@ -11,8 +11,32 @@ interface OrderTableProps {
 import React, { FC } from "react";
 import EmptyOrder from "../icons/EmptyOrder";
 import OrderStatusTag from "./OrderStatusTag";
+import { useAppDispatch } from "@/redux/store";
+import { openModal } from "@/redux/modalSlice";
+import { ModalType } from "@/types/modal";
+import { useVNPayURLMutation } from "@/hooks/api/payment.api";
+import useToast from "@/hooks/useToastify";
 
 const OrdersList: FC<OrderTableProps> = ({ orders }) => {
+  const dispatch = useAppDispatch();
+  const { showError } = useToast();
+  const { mutateAsync: createVNPayURL } = useVNPayURLMutation();
+  const handlePay = async (order: Order) => {
+    const paymentRes = await createVNPayURL({
+      orderId: order.code,
+      amount: order.finalAmount,
+      orderInfo: `Thanh toán đơn hàng #${order.code}`,
+      ipAddr: "127.0.0.1",
+    });
+    if (paymentRes?.data?.paymentUrl) {
+      window.location.href = paymentRes.data.paymentUrl;
+      return;
+    } else {
+      showError("Không lấy được link thanh toán VNPay");
+      return;
+    }
+  };
+
   if (!orders.length)
     return (
       <div className="flex flex-col gap-3 my-[100px] items-center">
@@ -53,14 +77,41 @@ const OrdersList: FC<OrderTableProps> = ({ orders }) => {
                 <OrderStatusTag orderStatus={order.status} />
               </td>
               <td className="p-4">
-                <CustomButton
-                  href={`/profile/orders/${order.code}`}
-                  variant="outline"
-                  size="small"
-                  className="border-gray-200 px-3 py-2 text-black hover:bg-primary hover:text-white"
-                >
-                  Xem chi tiết
-                </CustomButton>
+                {order.status === OrderStatus.PENDING ? (
+                  <CustomButton
+                    onClick={() => handlePay(order)}
+                    variant="outline"
+                    size="small"
+                    className="border-gray-200 px-3 py-2 text-black hover:bg-primary hover:text-white"
+                  >
+                    Thanh toán
+                  </CustomButton>
+                ) : order.status === OrderStatus.PROCESSING ? (
+                  <CustomButton
+                    variant="outline"
+                    size="small"
+                    className="border-gray-200 px-3 py-2 text-black hover:bg-primary hover:text-white"
+                    onClick={() =>
+                      dispatch(
+                        openModal({
+                          type: ModalType.CONFIRM_CANCEL_ORDER,
+                          data: order.code,
+                        })
+                      )
+                    }
+                  >
+                    Hủy đơn hàng
+                  </CustomButton>
+                ) : (
+                  <CustomButton
+                    href={`/profile/orders/${order.code}`}
+                    variant="outline"
+                    size="small"
+                    className="border-gray-200 px-3 py-2 text-black hover:bg-primary hover:text-white"
+                  >
+                    Xem chi tiết
+                  </CustomButton>
+                )}
               </td>
             </tr>
           ))}

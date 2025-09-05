@@ -10,4 +10,5 @@ export enum ModalType {
   SIZE_GUIDE = "size-guide",
   NONE = "none",
   REVIEW_PRODUCT = "review-product",
+  CONFIRM_CANCEL_ORDER = "confirm-cancel-order",
 }

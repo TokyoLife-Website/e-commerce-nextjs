@@ -19,7 +19,7 @@ export const ResetPasswordForm = () => {
   const { showSuccess } = useToast();
   const dispatch = useAppDispatch();
   const { mutateAsync } = useResetPasswordMutation();
-  const { email } = useAppSelector((state: RootState) => state.auth);
+  const { email } = useAppSelector((state: RootState) => state.user);
 
   const {
     control,

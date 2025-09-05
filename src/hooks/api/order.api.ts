@@ -96,8 +96,13 @@ export const useUpdateOrderStatusMutation = () => {
       newStatus: OrderStatus;
     }) => updateOrderStatus(orderCode, newStatus),
     onSuccess: (data, variables) => {
-      // Invalidate both admin orders list and specific order
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.ADMIN_ORDERS] });
+      // Invalidate all orders queries
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.ADMIN_ORDERS],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.ORDERS],
+      });
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.ORDER(variables.orderCode)],
       });
