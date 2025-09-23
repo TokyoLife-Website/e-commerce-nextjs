@@ -30,7 +30,8 @@ import {
   Stack,
   TextField,
 } from "@mui/material";
-import { TreeSelect } from "antd";
+import { createSlug } from "@/utils/createSlug";
+import AutoCompleteInput from "@/components/inputs/AutoCompleteInput";
 import Image from "next/image";
 import { notFound, useParams } from "next/navigation";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
@@ -70,25 +71,19 @@ const sizeOptions = Object.values(Size).map((value) => ({
   id: value,
 }));
 
-const useCategoryTreeData = (categories?: Category[]) => {
-  const mapCategoriesToTreeData = useCallback(
-    (categories: Category[], level = 1): any[] => {
-      return categories.map((category) => ({
-        title: category.name,
-        value: category.id,
-        disabled: level < 3,
-        children: category.children?.length
-          ? mapCategoriesToTreeData(category.children, level + 1)
-          : [],
-      }));
-    },
-    []
-  );
-
-  return useMemo(
-    () => mapCategoriesToTreeData(categories || []),
-    [categories, mapCategoriesToTreeData]
-  );
+// Find path [level1Id, level2Id, level3Id] for a given categoryId
+const findCategoryPath = (
+  categories: Category[] = [],
+  targetId: number
+): number[] | null => {
+  for (const cat of categories) {
+    if (cat.id === targetId) return [cat.id];
+    if (cat.children && cat.children.length > 0) {
+      const subPath = findCategoryPath(cat.children, targetId);
+      if (subPath) return [cat.id, ...subPath];
+    }
+  }
+  return null;
 };
 
 const EditProductPage = () => {
@@ -103,7 +98,7 @@ const EditProductPage = () => {
   const { data: categoriesData } = useCategoriesQuery();
   const { mutateAsync } = useUpdateProductMutation();
   const { mutateAsync: uploadImages } = useUploadImagesMutation();
-  const categoryData = useCategoryTreeData(categoriesData?.data);
+  const rootCategories = categoriesData?.data || [];
   const [option, setOption] = useState<{
     color: Color;
     size: Size;
@@ -140,6 +135,23 @@ const EditProductPage = () => {
   };
   const images = watch("images");
   const discountType = watch("discountType");
+  const watchedName = watch("name");
+  useEffect(() => {
+    if (watchedName) setValue("slug", createSlug(watchedName));
+  }, [watchedName, setValue]);
+
+  // Cascading category selects
+  const level1Id = watch("categoryLevel1Id") as number | undefined;
+  const level2Id = watch("categoryLevel2Id") as number | undefined;
+  useEffect(() => {
+    // when level1 changes, reset level2 and level3
+    setValue("categoryLevel2Id", undefined);
+    setValue("categoryId", 0, { shouldValidate: true });
+  }, [level1Id, setValue]);
+  useEffect(() => {
+    // when level2 changes, reset level3
+    setValue("categoryId", 0, { shouldValidate: true });
+  }, [level2Id, setValue]);
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files && files.length > 0) {
@@ -211,8 +223,18 @@ const EditProductPage = () => {
   useEffect(() => {
     if (productData?.data) {
       const product = productData.data;
+      // derive category levels from tree
+      const path = findCategoryPath(rootCategories, product.categoryId) || [];
+      const [l1, l2] =
+        path.length === 3
+          ? [path[0], path[1]]
+          : path.length === 2
+          ? [path[0], path[0]]
+          : [undefined, undefined];
       reset({
         ...product,
+        categoryLevel1Id: l1,
+        categoryLevel2Id: path.length >= 2 ? path[path.length - 2] : undefined,
         skus: product.skus.map((sku) => ({
           quantity: sku.quantity,
           sku: sku.sku,
@@ -223,7 +245,7 @@ const EditProductPage = () => {
       });
       setPreviewImages(product.images);
     }
-  }, [productData, reset]);
+  }, [productData, reset, rootCategories]);
   if (isError) return notFound();
   if (isLoading || isFetching) {
     return (
@@ -290,36 +312,77 @@ const EditProductPage = () => {
               </label>
             )}
           />
-          <Controller
-            name="categoryId"
-            control={control}
-            render={({ field }) => (
-              <Stack spacing={0.5}>
-                <CustomLabel label="Category" isRequired={true} />
-                <TreeSelect
-                  {...field}
-                  styles={{
-                    root: {
-                      maxHeight: 400,
-                      overflow: "auto",
-                    },
-                  }}
-                  placeholder="Please select"
-                  treeDefaultExpandAll
-                  treeData={categoryData}
-                  size="large"
-                />
-              </Stack>
-            )}
-          />
+          {/* Cascading Category Selects */}
+          <div className="grid grid-cols-1 gap-3">
+            <AutoCompleteInput
+              name="categoryLevel1Id"
+              control={control}
+              label="Category Level 1"
+              isRequired
+              isError={!!errors.categoryLevel1Id}
+              errMsg={errors.categoryLevel1Id?.message}
+              options={rootCategories
+                .filter((cat: Category) => !cat.parent)
+                .map((c: Category) => ({ id: c.id, name: c.name }))}
+              size="small"
+            />
+            <AutoCompleteInput
+              name="categoryLevel2Id"
+              control={control}
+              label="Category Level 2"
+              isRequired
+              isError={!!errors.categoryLevel2Id}
+              errMsg={errors.categoryLevel2Id?.message}
+              options={(() => {
+                const l1 = level1Id;
+                const level1 = rootCategories.find(
+                  (c: Category) => c.id === l1
+                );
+                return (level1?.children || []).map((c: Category) => ({
+                  id: c.id,
+                  name: c.name,
+                }));
+              })()}
+              size="small"
+              disabled={!level1Id}
+            />
+            <AutoCompleteInput
+              name="categoryId"
+              control={control}
+              label="Category Level 3"
+              isRequired
+              isError={!!errors.categoryId}
+              errMsg={errors.categoryId?.message}
+              options={(() => {
+                const l1 = level1Id;
+                const l2 = level2Id;
+                const level1 = rootCategories.find(
+                  (c: Category) => c.id === l1
+                );
+                const level2 = (level1?.children || []).find(
+                  (c: Category) => c.id === l2
+                );
+                return (level2?.children || []).map((c: Category) => ({
+                  id: c.id,
+                  name: c.name,
+                }));
+              })()}
+              size="small"
+              disabled={!level2Id}
+            />
+          </div>
           <TextInput
             label="Slug"
             name="slug"
             control={control}
+            isRequired
             errMsg={errors.slug?.message}
             isError={!!errors.slug}
-            placeHolder="Nhập slug cuả sản phẩm"
+            placeHolder="product-slug"
           />
+          <p className="text-xs text-gray-500 -mt-2">
+            Slug will be auto-generated from product name
+          </p>
         </ComponentCard>
         <ComponentCard title="Media" className="col-span-2">
           <div
@@ -604,6 +667,7 @@ const EditProductPage = () => {
         </ComponentCard>
       </div>
       <CustomButton
+        type="submit"
         disabled={isSubmitting}
         className="mt-6 text-white rounded-2xl"
       >

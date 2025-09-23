@@ -34,10 +34,8 @@ import { Size } from "@/types/size";
 import Image from "next/image";
 import { useUploadImagesMutation } from "@/hooks/api/upload.api";
 import CkEditor from "@/components/admin/Editor";
-// const ProductCkEditor = dynamic(() => import("@/components/admin/Editor"), {
-//   loading: () => <p>Loading ckeditor...</p>,
-//   ssr: false,
-// });
+import { createSlug } from "@/utils/createSlug";
+import AutoCompleteInput from "@/components/inputs/AutoCompleteInput";
 
 const defaultValues: CreateProductFormValues = {
   name: "",
@@ -48,6 +46,8 @@ const defaultValues: CreateProductFormValues = {
   discountType: DiscountType.NONE,
   isActive: true,
   categoryId: 3,
+  categoryLevel1Id: undefined,
+  categoryLevel2Id: undefined,
   skus: [],
   images: [],
 };
@@ -172,6 +172,24 @@ export default function ProductCreate() {
     }
   };
   const discountType = watch("discountType");
+  const watchedName = watch("name");
+  useEffect(() => {
+    if (watchedName) {
+      setValue("slug", createSlug(watchedName));
+    }
+  }, [watchedName, setValue]);
+  // Reset lower levels when parent changes
+  const categoryLevel1Id = watch("categoryLevel1Id") as number | undefined;
+  const categoryLevel2Id = watch("categoryLevel2Id") as number | undefined;
+  useEffect(() => {
+    // Clear level2 and level3 when level1 changes
+    setValue("categoryLevel2Id", undefined);
+    setValue("categoryId", 0, { shouldValidate: true });
+  }, [categoryLevel1Id, setValue]);
+  useEffect(() => {
+    // Clear level3 when level2 changes
+    setValue("categoryId", 0, { shouldValidate: true });
+  }, [categoryLevel2Id, setValue]);
   useEffect(() => {
     if (discountType === DiscountType.NONE) setValue("discountValue", null);
     else setValue("discountValue", 0);
@@ -234,36 +252,83 @@ export default function ProductCreate() {
               </label>
             )}
           />
-          <Controller
-            name="categoryId"
-            control={control}
-            render={({ field }) => (
-              <Stack spacing={0.5}>
-                <CustomLabel label="Category" isRequired={true} />
-                <TreeSelect
-                  {...field}
-                  styles={{
-                    root: {
-                      maxHeight: 400,
-                      overflow: "auto",
-                    },
-                  }}
-                  placeholder="Please select"
-                  treeDefaultExpandAll
-                  treeData={categoryData}
-                  size="large"
-                />
-              </Stack>
-            )}
-          />
+          {/* Cascading Category Selects */}
+          <div className="grid grid-cols-1 gap-3">
+            <AutoCompleteInput
+              name="categoryLevel1Id"
+              control={control}
+              label="Category Level 1"
+              isRequired
+              isError={!!errors.categoryLevel1Id}
+              errMsg={errors.categoryLevel1Id?.message}
+              options={(data?.data || [])
+                .filter((cat: Category) => !cat.parent)
+                .map((c: Category) => ({ id: c.id, name: c.name }))}
+              size="small"
+            />
+            <AutoCompleteInput
+              name="categoryLevel2Id"
+              control={control}
+              label="Category Level 2"
+              isRequired
+              isError={!!errors.categoryLevel2Id}
+              errMsg={errors.categoryLevel2Id?.message}
+              options={(() => {
+                const level1Id = watch("categoryLevel1Id") as
+                  | number
+                  | undefined;
+                const level1 = (data?.data || []).find(
+                  (c: Category) => c.id === level1Id
+                );
+                return (level1?.children || []).map((c: Category) => ({
+                  id: c.id,
+                  name: c.name,
+                }));
+              })()}
+              size="small"
+              disabled={!watch("categoryLevel1Id")}
+            />
+            <AutoCompleteInput
+              name="categoryId"
+              control={control}
+              label="Category Level 3"
+              isRequired
+              isError={!!errors.categoryId}
+              errMsg={errors.categoryId?.message}
+              options={(() => {
+                const level1Id = watch("categoryLevel1Id") as
+                  | number
+                  | undefined;
+                const level2Id = watch("categoryLevel2Id") as
+                  | number
+                  | undefined;
+                const level1 = (data?.data || []).find(
+                  (c: Category) => c.id === level1Id
+                );
+                const level2 = (level1?.children || []).find(
+                  (c: Category) => c.id === level2Id
+                );
+                return (level2?.children || []).map((c: Category) => ({
+                  id: c.id,
+                  name: c.name,
+                }));
+              })()}
+              size="small"
+              disabled={!watch("categoryLevel2Id")}
+            />
+          </div>
           <TextInput
             label="Slug"
             name="slug"
+            isRequired
             control={control}
             errMsg={errors.slug?.message}
             isError={!!errors.slug}
-            placeHolder="Nhập slug cuả sản phẩm"
+            placeHolder="product-slug"
           />
+          <p className="text-xs text-gray-500 -mt-2">
+            Slug will be auto-generated from product name
+          </p>
         </ComponentCard>
         <ComponentCard title="Media" className="col-span-2">
           <div
@@ -545,6 +610,7 @@ export default function ProductCreate() {
         </ComponentCard>
       </div>
       <CustomButton
+        type="submit"
         disabled={isSubmitting}
         className="mt-6 text-white rounded-2xl"
       >

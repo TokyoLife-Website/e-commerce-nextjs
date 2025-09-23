@@ -77,7 +77,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
           Không có dữ liệu
         </Typography>
       )}
-      {rows.length !== 0 && (
+      {totalPages > 1 && (
         <Stack alignItems="center" pt={4}>
           <Pagination
             count={totalPages}

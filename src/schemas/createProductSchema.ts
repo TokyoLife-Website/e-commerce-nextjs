@@ -5,9 +5,11 @@ import { z } from "zod";
 
 export const createProductSchema = z.object({
   name: z.string().min(1, "Product name is required"),
-  slug: z.string().optional(),
+  slug: z.string().min(1, "Slug is required"),
   description: z.string().min(1, "Description is required"),
   price: z.number().gt(0, "Price must be greater than 0"),
+  categoryLevel1Id: z.number().optional(),
+  categoryLevel2Id: z.number().optional(),
   discountValue: z
     .number()
     .gt(0, "Discount value must be greater than 0")
