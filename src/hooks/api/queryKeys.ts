@@ -4,6 +4,7 @@ export const QUERY_KEYS = {
   REVIEWS: "reviews",
   PRODUCTS: "products",
   CATEGORIES: "categories",
+  CATEGORY: "category",
   USER_ADDRESSES: "user-addresses",
   CARTS: "carts",
   ORDERS: "orders",

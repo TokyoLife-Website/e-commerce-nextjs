@@ -80,7 +80,9 @@ export const ResetPasswordForm = () => {
             placeHolder="Nhập lại mật khẩu"
           />
         </div>
-        <CustomButton className="w-full text-white">Hoàn thành</CustomButton>
+        <CustomButton type="submit" className="w-full text-white">
+          Hoàn thành
+        </CustomButton>
       </div>
     </form>
   );

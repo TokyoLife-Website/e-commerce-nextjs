@@ -84,7 +84,9 @@ export const LoginForm = () => {
       >
         Quên mật khẩu?
       </p>
-      <CustomButton className="w-full text-white mt-10">Đăng nhập</CustomButton>
+      <CustomButton type="submit" className="w-full text-white mt-10">
+        Đăng nhập
+      </CustomButton>
     </form>
   );
 };

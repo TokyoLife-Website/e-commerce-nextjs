@@ -22,7 +22,7 @@ const ProductItem: FC<ProductItemProps> = ({ product }) => {
   });
 
   return (
-    <Link href={product.slug} className="px-[6px] py-3">
+    <Link href={`/${product.slug}`} className="px-[6px] py-3">
       <Image
         width={300}
         height={200}

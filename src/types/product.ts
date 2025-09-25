@@ -19,5 +19,6 @@ export interface Product {
   images: string[];
   description: string;
   category?: Category;
+  categoryId: number;
   createdAt: string;
 }

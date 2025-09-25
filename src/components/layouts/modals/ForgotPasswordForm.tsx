@@ -66,7 +66,9 @@ export const ForgotPasswordForm = () => {
           isError={!!errors.email}
         />
       </div>
-      <CustomButton className="w-full text-white">GỬI</CustomButton>
+      <CustomButton type="submit" className="w-full text-white">
+        GỬI
+      </CustomButton>
     </form>
   );
 };

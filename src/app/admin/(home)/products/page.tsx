@@ -7,9 +7,11 @@ import { formatCurrency } from "@/utils/formatCurrency";
 import { formatDate } from "@/utils/timeFormat";
 import { Chip, Rating } from "@mui/material";
 import { LuEye } from "react-icons/lu";
+import { FiPlus } from "react-icons/fi";
 import Image from "next/image";
 import React, { useState } from "react";
 import Link from "next/link";
+import CustomButton from "@/components/layouts/CustomBtn";
 const breadcrumbItems = [
   { label: "Home", path: "/admin/dashboard" },
   { label: "Product", path: "products" },
@@ -97,6 +99,18 @@ const ProductList = () => {
   return (
     <div>
       <PageBreadcrumb pageTitle="Product list" breadcrumbs={breadcrumbItems} />
+
+      <div className="flex justify-end items-center mb-4">
+        <CustomButton
+          href="/admin/products/create"
+          variant="primary"
+          size="small"
+          className="flex items-center justify-center space-x-2"
+        >
+          <FiPlus className="w-4 h-4" />
+          <span>Add Product</span>
+        </CustomButton>
+      </div>
 
       <CustomTable
         columns={columns}

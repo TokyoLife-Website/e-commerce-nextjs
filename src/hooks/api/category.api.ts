@@ -9,6 +9,13 @@ const fetchCategory = async (): Promise<ResponseData<Category[]>> => {
   return response.data;
 };
 
+const fetchCategoryBySlug = async (
+  slug: string
+): Promise<ResponseData<Category>> => {
+  const response = await axiosInstance.get(`/categories/${slug}`);
+  return response.data;
+};
+
 // Interface cho dữ liệu tạo category mới
 export interface CreateCategoryData {
   name: string;
@@ -30,6 +37,15 @@ export const useCategoriesQuery = () => {
   return useQuery({
     queryKey: [QUERY_KEYS.CATEGORIES],
     queryFn: fetchCategory,
+  });
+};
+
+// Hook để fetch category theo slug
+export const useCategoryBySlugQuery = (slug: string) => {
+  return useQuery({
+    queryKey: slug ? [QUERY_KEYS.CATEGORY, slug] : [],
+    queryFn: () => fetchCategoryBySlug(slug),
+    enabled: !!slug,
   });
 };
 

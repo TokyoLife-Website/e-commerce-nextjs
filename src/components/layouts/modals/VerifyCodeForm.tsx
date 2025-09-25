@@ -99,7 +99,9 @@ export const VerifyCodeForm = () => {
         />
       </div>
 
-      <CustomButton className="w-full text-white">Hoàn thành</CustomButton>
+      <CustomButton type="submit" className="w-full text-white">
+        Hoàn thành
+      </CustomButton>
       {canResend && (
         <div className="mt-6 text-center font-medium text-xs leading-[18px]">
           Chưa nhận được mã OTP?{" "}

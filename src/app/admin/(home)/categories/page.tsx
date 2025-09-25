@@ -187,7 +187,7 @@ export default function CategoriesPage() {
           href="/admin/categories/create"
           variant="primary"
           size="small"
-          className="flex items-center space-x-2"
+          className="flex items-center justify-center space-x-2"
         >
           <FiPlus className="w-4 h-4" />
           <span>Add Category</span>

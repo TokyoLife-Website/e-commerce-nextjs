@@ -17,10 +17,11 @@ const fetchProducts = async (
   keyword?: string,
   color?: string,
   price?: string, // dạng 'min_max', ví dụ: '100_500'
-  sort?: string
+  sort?: string,
+  category?: string
 ): Promise<ResponseData<Pagination<Product>>> => {
   const response = await axiosInstance.get("/products", {
-    params: { page, size, keyword, color, price, sort },
+    params: { page, size, keyword, color, price, sort, category },
   });
   return response.data;
 };
@@ -84,6 +85,7 @@ type UseProductsQueryOptions = {
   color?: string;
   price?: string;
   sort?: string;
+  category?: string;
   enabled?: boolean;
 };
 
@@ -94,11 +96,22 @@ export const useProductsQuery = ({
   color,
   price,
   sort,
+  category,
   enabled = true,
 }: UseProductsQueryOptions) => {
   return useQuery({
-    queryKey: [QUERY_KEYS.PRODUCTS, page, size, keyword, color, price, sort],
-    queryFn: () => fetchProducts(page, size, keyword, color, price, sort),
+    queryKey: [
+      QUERY_KEYS.PRODUCTS,
+      page,
+      size,
+      keyword,
+      color,
+      price,
+      sort,
+      category,
+    ],
+    queryFn: () =>
+      fetchProducts(page, size, keyword, color, price, sort, category),
     placeholderData: enabled ? (prev) => prev : undefined,
     enabled: enabled,
   });

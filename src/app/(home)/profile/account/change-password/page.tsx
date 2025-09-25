@@ -78,7 +78,7 @@ export default function ChangePassword() {
         errMsg={errors.confirmNewPassword?.message}
         isError={!!errors.confirmNewPassword}
       />
-      <CustomButton size="small" className="text-white">
+      <CustomButton type="submit" size="small" className="text-white">
         Cập nhật
       </CustomButton>
     </form>
