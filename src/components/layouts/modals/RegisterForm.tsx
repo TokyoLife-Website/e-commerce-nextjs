@@ -174,7 +174,10 @@ export const RegisterForm = () => {
         </Link>{" "}
         của chúng tôi.
       </p>
-      <CustomButton className="text-white w-full my-10 whitespace-nowrap">
+      <CustomButton
+        type="submit"
+        className="text-white w-full my-10 whitespace-nowrap"
+      >
         Đăng ký
       </CustomButton>
     </form>

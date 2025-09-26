@@ -383,7 +383,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
             <p className="text-primary text-[24px] font-semibold leading-[30px]">
               {formatCurrency(product.finalPrice)}
             </p>
-            {product.stock > 0 && (
+            {product.stock > 0 ? (
               <div className="flex gap-1 items-center">
                 <p className="text-[16px] leading-6 font-semibold">Còn hàng</p>
                 <svg
@@ -398,6 +398,13 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
                     fill="#00B578"
                   ></path>
                 </svg>
+              </div>
+            ) : (
+              <div className="flex gap-2 items-center">
+                <BagIcon className="text-red-500" width={20} height={20} />
+                <p className="text-[16px] leading-6 font-semibold text-red-500">
+                  Hết hàng
+                </p>
               </div>
             )}
           </div>

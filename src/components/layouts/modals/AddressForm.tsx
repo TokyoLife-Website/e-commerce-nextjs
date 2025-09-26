@@ -204,7 +204,7 @@ export const AddressForm = () => {
           Đặt làm địa chỉ mặc định
         </label>
       </div>
-      <CustomButton size="small" className=" text-white">
+      <CustomButton type="submit" size="small" className=" text-white">
         Lưu thông tin
       </CustomButton>
     </form>

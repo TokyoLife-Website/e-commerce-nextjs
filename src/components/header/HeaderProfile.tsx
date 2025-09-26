@@ -45,9 +45,13 @@ export const HeaderProfile = () => {
       onMouseEnter={() => setShowDropdown(true)}
       onMouseLeave={() => setShowDropdown(false)}
     >
-      {avatar?.url ? (
+      {id ? (
         <Link href={"/profile"}>
-          <Avatar src={avatar?.url} alt={firstName} />
+          {id ? (
+            <Avatar src={avatar?.url} alt={firstName} />
+          ) : (
+            <HiOutlineUserCircle size={30} />
+          )}
         </Link>
       ) : (
         <HiOutlineUserCircle size={30} />
@@ -58,10 +62,14 @@ export const HeaderProfile = () => {
           showDropdown && !authModal ? "block" : "hidden"
         }`}
       >
-        {avatar?.url ? (
+        {id ? (
           <>
             <div className="mx-4 p-5 pb-2 flex border-b border-[#e9e9e9] gap-2">
-              <Avatar src={avatar?.url} alt={firstName} />
+              {id ? (
+                <Avatar src={avatar?.url} alt={firstName} />
+              ) : (
+                <HiOutlineUserCircle size={40} />
+              )}
               <div className="text-xs leading-4">
                 <div className="font-extrabold  ">{`${firstName} ${lastName}`}</div>
                 <div className="mt-[5px] font-medium"> Điểm thưởng: 0</div>

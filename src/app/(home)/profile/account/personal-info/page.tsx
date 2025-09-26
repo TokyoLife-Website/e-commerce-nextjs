@@ -8,7 +8,7 @@ import {
   useUploadAvatarMutation,
 } from "@/hooks/api/user.api";
 import useToast from "@/hooks/useToastify";
-import { RootState, useAppSelector } from "@/redux/store";
+import { RootState, useAppDispatch, useAppSelector } from "@/redux/store";
 import {
   personalInfoFormData,
   personalInfoSchema,
@@ -21,6 +21,7 @@ import dayjs from "dayjs";
 import Image from "next/image";
 import { ChangeEvent, useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { setUser } from "@/redux/userSlice";
 
 const defaultValues: personalInfoFormData = {
   avatar: "",
@@ -34,6 +35,7 @@ const defaultValues: personalInfoFormData = {
 
 export default function PeronalInfo() {
   const { showSuccess } = useToast();
+  const dispatch = useAppDispatch();
   const [file, setFile] = useState<File | null>(null);
   const userData = useAppSelector((state: RootState) => state.user);
   const handleFileInputChange = async (
@@ -89,7 +91,8 @@ export default function PeronalInfo() {
       }
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { avatar, ...other } = payload;
-      const { message } = await mutateAsync(other);
+      const { message, data } = await mutateAsync(other);
+      dispatch(setUser(data));
       showSuccess(message);
     } catch (error) {
       handleRequestError(error);
@@ -128,30 +131,34 @@ export default function PeronalInfo() {
         </div>
         <div className="flex flex-col gap-y-4 w-full">
           <div className="flex items-center">
-            <label htmlFor="name" className="text-[#525252] min-w-[30%]">
+            <label htmlFor="lastName" className="text-[#525252] min-w-[30%]">
               Họ và tên
             </label>
-            <div className="flex items-start gap-5 mb-[15px] w-full">
-              <TextInput
-                name="lastName"
-                control={control}
-                errMsg={errors.lastName?.message}
-                isError={!!errors.lastName}
-                size="small"
-                placeHolder="Nhập họ của bạn"
-              />
-              <TextInput
-                name="firstName"
-                control={control}
-                errMsg={errors.firstName?.message}
-                isError={!!errors.firstName}
-                size="small"
-                placeHolder="Nhập tên của bạn"
-              />
+            <div className="flex items-start gap-5 w-full">
+              <div className="flex-1">
+                <TextInput
+                  name="lastName"
+                  control={control}
+                  errMsg={errors.lastName?.message}
+                  isError={!!errors.lastName}
+                  size="small"
+                  placeHolder="Nhập họ của bạn"
+                />
+              </div>
+              <div className="flex-1">
+                <TextInput
+                  name="firstName"
+                  control={control}
+                  errMsg={errors.firstName?.message}
+                  isError={!!errors.firstName}
+                  size="small"
+                  placeHolder="Nhập tên của bạn"
+                />
+              </div>
             </div>
           </div>
           <div className="flex items-center">
-            <label htmlFor="name" className="text-[#525252] min-w-[30%]">
+            <label htmlFor="dob" className="text-[#525252] min-w-[30%]">
               Ngày sinh
             </label>
             <div className="w-full">
@@ -166,7 +173,7 @@ export default function PeronalInfo() {
             </div>
           </div>
           <div className="flex items-center">
-            <label htmlFor="name" className="text-[#525252] min-w-[30%]">
+            <label htmlFor="gender" className="text-[#525252] min-w-[30%]">
               Giới tính
             </label>
             <div className="w-full">
@@ -185,7 +192,7 @@ export default function PeronalInfo() {
             </div>
           </div>
           <div className="flex items-center">
-            <label htmlFor="name" className="text-[#525252] min-w-[30%]">
+            <label htmlFor="phone" className="text-[#525252] min-w-[30%]">
               Số điện thoại
             </label>
             <div className="w-full">
@@ -202,7 +209,7 @@ export default function PeronalInfo() {
             </div>
           </div>
           <div className="flex items-center">
-            <label htmlFor="name" className="text-[#525252] min-w-[30%]">
+            <label htmlFor="email" className="text-[#525252] min-w-[30%]">
               Email
             </label>
             <div className="w-full">
