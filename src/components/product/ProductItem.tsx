@@ -23,13 +23,15 @@ const ProductItem: FC<ProductItemProps> = ({ product }) => {
 
   return (
     <Link href={`/${product.slug}`} className="px-[6px] py-3">
-      <Image
-        width={300}
-        height={200}
-        alt="Product Image"
-        className="min-h-[300px] object-cover"
-        src={product.images[0]}
-      />
+      <div className="relative w-full h-[300px] min-h-[300px]">
+        <Image
+          fill
+          alt="Product Image"
+          className="object-cover"
+          src={product.images[0]}
+          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+        />
+      </div>
       <div className="py-3">
         <h3 className="leading-[18px] my-2 text-black line-clamp-2">
           {product.name}

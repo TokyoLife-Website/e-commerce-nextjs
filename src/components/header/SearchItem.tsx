@@ -24,13 +24,15 @@ const SearchItem: FC<ProductItemProps> = ({ product }) => {
       href={`/${product.slug}`}
       className="flex items-center gap-3 px-2 py-2 md:block md:px-[6px] transition hover:bg-gray-100 rounded"
     >
-      <Image
-        width={64}
-        height={64}
-        alt={product.name}
-        className="w-16 h-16 object-cover flex-shrink-0 md:w-full md:h-[300px] md:min-h-[300px] md:object-cover"
-        src={product.images[0]}
-      />
+      <div className="relative w-16 h-16 flex-shrink-0 md:w-full md:h-[300px] md:min-h-[300px]">
+        <Image
+          fill
+          alt={product.name}
+          className="object-cover"
+          src={product.images[0]}
+          sizes="(max-width: 768px) 64px, 300px"
+        />
+      </div>
       <div className="flex-1 py-0 md:py-3">
         <h3 className="leading-[18px] my-2 text-black line-clamp-2 text-sm md:text-base">
           {product.name}

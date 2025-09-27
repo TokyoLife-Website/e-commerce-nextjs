@@ -40,13 +40,15 @@ const ProductImageGallery = ({ images }: ProductImageGalleryProps) => {
         >
           {images.map((image: string, index: number) => (
             <SwiperSlide key={index}>
-              <Image
-                width={90}
-                height={90}
-                src={image}
-                alt={`Slide ${index}`}
-                className="w-full h-20 object-cover cursor-pointer"
-              />
+              <div className="relative w-full h-20">
+                <Image
+                  fill
+                  src={image}
+                  alt={`Slide ${index}`}
+                  className="object-cover cursor-pointer"
+                  sizes="80px"
+                />
+              </div>
             </SwiperSlide>
           ))}
         </Swiper>
@@ -67,13 +69,16 @@ const ProductImageGallery = ({ images }: ProductImageGalleryProps) => {
       >
         {images.map((image: string, index: number) => (
           <SwiperSlide key={index}>
-            <Image
-              width={90}
-              height={90}
-              src={image}
-              alt={`Slide ${index}`}
-              className="w-full h-auto object-contain"
-            />
+            <div className="relative w-full h-[700px]">
+              <Image
+                fill
+                src={image}
+                alt={`Slide ${index}`}
+                className="object-contain"
+                priority={index === 0}
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              />
+            </div>
           </SwiperSlide>
         ))}
         <div className="w-7 h-11 flex items-center justify-center swiper-button-prev-custom absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-black/50 text-white p-2 rounded-md cursor-pointer hover:bg-black">
