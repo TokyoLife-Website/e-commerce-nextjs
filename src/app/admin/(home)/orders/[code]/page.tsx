@@ -230,8 +230,7 @@ const OrderDetailPage = () => {
               <strong>Delivery Address:</strong>
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              {order.address?.detail}, {order.address?.ward?.name},{" "}
-              {order.address?.district?.name}, {order.address?.province?.name}
+              {order.address}
             </Typography>
             <Typography variant="body2">
               <strong>Shipping Fee:</strong> {formatCurrency(order.shippingFee)}

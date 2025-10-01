@@ -70,8 +70,7 @@ const OrderDetailPage = ({ params }: Props) => {
           </div>
           <div>
             <span className="text-[#555555]">Địa chỉ: </span>
-            {order.address.detail}, {order.address.ward.name},{" "}
-            {order.address.district.name}, {order.address.province.name}
+            {order.address}
           </div>
           <div>
             <span className="text-[#555555]">Điện thoại: </span>

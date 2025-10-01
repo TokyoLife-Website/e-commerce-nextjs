@@ -71,9 +71,33 @@ const OrderStatusChart: React.FC = () => {
 
   if (filteredStatuses.length === 0) {
     return (
-      <div className="flex items-center justify-center h-64 text-gray-500">
-        No orders found
-      </div>
+      <>
+        {/* Period Selector */}
+        <div className="flex items-center justify-end gap-2">
+          {(
+            [
+              { key: PeriodType.WEEK, label: "This Week" },
+              { key: PeriodType.MONTH, label: "This Month" },
+              { key: PeriodType.YEAR, label: "This Year" },
+            ] as const
+          ).map((p) => (
+            <button
+              key={p.key}
+              onClick={() => setPeriod(p.key)}
+              className={`px-3 py-1 rounded text-sm border transition-colors ${
+                period === p.key
+                  ? "bg-blue-600 text-white border-blue-600"
+                  : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+              }`}
+            >
+              {p.label}
+            </button>
+          ))}
+        </div>
+        <div className="flex items-center justify-center h-64 text-gray-500">
+          No orders found
+        </div>
+      </>
     );
   }
 

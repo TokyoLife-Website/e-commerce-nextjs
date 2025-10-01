@@ -16,7 +16,7 @@ export interface Order {
   id: number;
   code: string;
   user: User;
-  address: Address;
+  address: string;
   status: OrderStatus;
   paymentMethod: PaymentMethod;
   discount: number;

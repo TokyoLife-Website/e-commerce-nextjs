@@ -31,6 +31,7 @@ export const RegisterForm = () => {
   const {
     control,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<RegisterFormData>({
     defaultValues,
@@ -44,6 +45,7 @@ export const RegisterForm = () => {
     try {
       const { message } = await mutateAsync(payload);
       showSuccess(message);
+      reset(defaultValues);
     } catch (error) {
       handleRequestError(error);
     }
