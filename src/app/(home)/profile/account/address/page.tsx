@@ -7,11 +7,11 @@ import {
 import useToast from "@/hooks/useToastify";
 import { openModal } from "@/redux/modalSlice";
 import { useAppDispatch } from "@/redux/store";
-import { AddressType } from "@/types/address";
+import { Address, AddressType } from "@/types/address";
 import { ModalType } from "@/types/modal";
 import { handleRequestError } from "@/utils/errorHandler";
 
-export default function Address() {
+export default function AddressPage() {
   const { showSuccess } = useToast();
   const dispatch = useAppDispatch();
   const { data } = useUserAddressesQuery();
@@ -20,9 +20,18 @@ export default function Address() {
 
   const handleUpdateAddress = async (addressId: number) => {
     try {
+      const selectedAddress = data?.data.find(
+        (address) => address.id === addressId
+      ) as Address;
       const { message } = await updateAddress({
         addressId,
-        updateAddressDto: { isDefault: true },
+        updateAddressDto: {
+          ...selectedAddress,
+          isDefault: true,
+          provinceId: +selectedAddress.province.id,
+          districtId: +selectedAddress.district.id,
+          wardId: +selectedAddress.ward.id,
+        },
       });
       showSuccess(message);
     } catch (error) {

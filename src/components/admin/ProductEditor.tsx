@@ -7,22 +7,9 @@ interface Props {
   setEditorData: (data: string) => void;
 }
 const ProductCkEditor = ({ editorData, setEditorData }: Props) => {
-  const [data, setData] = useState<string>("");
-
-  const handleOnUpdate = (editor: string, field: string): void => {
-    if (field === "description") {
-      // console.log("Editor data field:", editor);
-      setData(editor);
-    }
-  };
-
   return (
     <div className="max-w-3xl mx-auto">
-      <CkEditor
-        editorData={editorData}
-        setEditorData={setEditorData}
-        handleOnUpdate={handleOnUpdate}
-      />
+      <CkEditor editorData={editorData} setEditorData={setEditorData} />
     </div>
   );
 };

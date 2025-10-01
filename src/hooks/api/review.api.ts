@@ -21,7 +21,7 @@ const fetchReviewItemByStatus = async (
   status: ReviewStatus,
   page?: number | string,
   size?: number | string
-): Promise<ResponseData<Pagination<Review>>> => {
+): Promise<ResponseData<Pagination<ReviewItem>>> => {
   const response = await axiosInstance.get("/reviews/products", {
     params: { page, size, status },
   });

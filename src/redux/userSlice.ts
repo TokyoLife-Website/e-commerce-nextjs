@@ -5,8 +5,8 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
-const initialState: User = {
-  id: "",
+const initialState = {
+  id: 0,
   avatar: {
     id: 0,
     url: "",

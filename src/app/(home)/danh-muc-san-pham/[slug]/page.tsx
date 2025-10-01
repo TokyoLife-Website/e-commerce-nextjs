@@ -15,9 +15,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { ITEMS_PER_PAGE } from "@/constants";
 import { useUrlSync } from "@/hooks/useUrlSync";
 
-type Props = { params: { slug: string } };
-
-const CategoryPage = ({ params }: Props) => {
+const CategoryPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const router = useRouter();
   const searchParams = useSearchParams();

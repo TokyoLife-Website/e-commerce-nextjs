@@ -138,7 +138,11 @@ const OTPInput: React.FC<OTPInputProps> = ({
       {new Array(length).fill(null).map((_, index) => (
         <div key={index}>
           <input
-            ref={(el) => (inputRefs.current[index] = el!)}
+            ref={(el) => {
+              if (el) {
+                inputRefs.current[index] = el;
+              }
+            }}
             type="text"
             value={value[index] ?? ""}
             onKeyDown={(event) => handleKeyDown(event, index)}

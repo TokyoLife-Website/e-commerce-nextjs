@@ -5,7 +5,7 @@ import Pagination from "@/components/common/Pagination";
 import PendingReviewList from "@/components/review/PendingReviewList";
 import ReviewedList from "@/components/review/ReviewedList";
 import { useReviewItemsQuery } from "@/hooks/api/review.api";
-import { ReviewItem, ReviewStatus } from "@/types/review";
+import { Review, ReviewItem, ReviewStatus } from "@/types/review";
 import { useMemo, useState } from "react";
 
 const TABS = [

@@ -22,7 +22,7 @@ export enum AddressType {
 }
 
 export interface Address {
-  id: string;
+  id: number;
   fullName: string;
   email: string;
   phone: string;
