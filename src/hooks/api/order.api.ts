@@ -51,6 +51,14 @@ const fetchOrder = async (orderCode: string): Promise<ResponseData<Order>> => {
   return response.data;
 };
 
+// Download order PDF
+const downloadOrderPdf = async (orderCode: string): Promise<Blob> => {
+  const response = await axiosInstance.get(`/orders/${orderCode}/pdf`, {
+    responseType: "blob",
+  });
+  return response.data;
+};
+
 export const useCreateOrderMutation = () => {
   const queryClient = useQueryClient();
 
@@ -115,5 +123,21 @@ export const useOrderQuery = (orderCode: string) => {
     queryKey: [QUERY_KEYS.ORDER(orderCode), orderCode],
     queryFn: () => fetchOrder(orderCode),
     enabled: !!orderCode,
+  });
+};
+
+export const useDownloadOrderPdfMutation = () => {
+  return useMutation({
+    mutationFn: downloadOrderPdf,
+    onSuccess: (blob, orderCode) => {
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `order-${orderCode}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    },
   });
 };

@@ -8,7 +8,6 @@ import CustomButton from "@/components/layouts/CustomBtn";
 import useToast from "@/hooks/useToastify";
 import { FaMinus } from "react-icons/fa6";
 import { FaPlus } from "react-icons/fa6";
-import { TreeSelect } from "antd";
 import {
   CreateProductFormValues,
   createProductSchema,
@@ -16,18 +15,16 @@ import {
 import { DiscountType } from "@/types/discountType";
 import { handleRequestError } from "@/utils/errorHandler";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Controller,
   SubmitHandler,
   useFieldArray,
   useForm,
 } from "react-hook-form";
-import dynamic from "next/dynamic";
-import { Autocomplete, Stack, TextField } from "@mui/material";
+import { Autocomplete, TextField } from "@mui/material";
 import { useCategoriesQuery } from "@/hooks/api/category.api";
 import { Category } from "@/types/category";
-import CustomLabel from "@/components/layouts/CustomLabel";
 import { useProductMutation } from "@/hooks/api/product.api";
 import { Color } from "@/types/color";
 import { Size } from "@/types/size";
@@ -67,33 +64,11 @@ const breadcrumbItems = [
   { label: "Product", path: "products" },
 ];
 
-const useCategoryTreeData = (categories?: Category[]) => {
-  const mapCategoriesToTreeData = useCallback(
-    (categories: Category[], level = 1): any[] => {
-      return categories.map((category) => ({
-        title: category.name,
-        value: category.id,
-        disabled: level < 3,
-        children: category.children?.length
-          ? mapCategoriesToTreeData(category.children, level + 1)
-          : [],
-      }));
-    },
-    []
-  );
-
-  return useMemo(
-    () => mapCategoriesToTreeData(categories || []),
-    [categories, mapCategoriesToTreeData]
-  );
-};
-
 export default function ProductCreate() {
   const { showSuccess } = useToast();
   const { data } = useCategoriesQuery();
   const { mutateAsync } = useProductMutation();
   const { mutateAsync: uploadImages } = useUploadImagesMutation();
-  const categoryData = useCategoryTreeData(data?.data);
   const [option, setOption] = useState<{
     color: Color;
     size: Size;
@@ -162,7 +137,7 @@ export default function ProductCreate() {
         images = res?.data;
       }
       const newProductData = { ...data, images };
-      const { message, data: product } = await mutateAsync(newProductData);
+      const { message } = await mutateAsync(newProductData);
       showSuccess(message);
       reset(defaultValues);
       setOption({ color: Color.BLACK, size: Size.S, quantity: 0 });

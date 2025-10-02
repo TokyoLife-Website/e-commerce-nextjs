@@ -14,7 +14,10 @@ import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { OrderStatus } from "@/types/orderStatus";
 import Image from "next/image";
-import { useUpdateOrderStatusMutation } from "@/hooks/api/order.api";
+import {
+  useUpdateOrderStatusMutation,
+  useDownloadOrderPdfMutation,
+} from "@/hooks/api/order.api";
 import OrderStatusTag, {
   getOrderStatusLabel,
 } from "@/components/order/OrderStatusTag";
@@ -33,6 +36,8 @@ const OrderDetailPage = () => {
   const { data: orderData, isLoading } = useOrderQuery(orderCode);
   const { mutate: updateStatus, isPending: isUpdating } =
     useUpdateOrderStatusMutation();
+  const { mutate: downloadPdf, isPending: isDownloading } =
+    useDownloadOrderPdfMutation();
   const order = orderData?.data;
 
   // Create status options for BasicSelectInput
@@ -138,6 +143,15 @@ const OrderDetailPage = () => {
     );
   };
 
+  const handleDownloadPdf = () => {
+    downloadPdf(orderCode, {
+      onError: (error) => {
+        showError("Failed to download PDF");
+        console.error("PDF download error:", error);
+      },
+    });
+  };
+
   useEffect(() => {
     setNewStatus(order?.status || OrderStatus.PENDING);
   }, [order]);
@@ -174,6 +188,15 @@ const OrderDetailPage = () => {
             </Typography>
           </div>
           <div className="flex items-center gap-4">
+            <CustomButton
+              onClick={handleDownloadPdf}
+              disabled={isDownloading}
+              size="small"
+              variant="outline"
+              className="min-w-[120px]"
+            >
+              {isDownloading ? "Generating..." : "Download PDF"}
+            </CustomButton>
             {/* Status Update Form */}
             <div className="flex items-center gap-2">
               <OrderStatusTag orderStatus={order.status} />
