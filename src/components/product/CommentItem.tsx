@@ -24,7 +24,7 @@ export default function CommentItem({
   return (
     <div className="flex gap-4 border-b pt-[24px] w-full overflow-hidden">
       <div className="flex-shrink-0">
-        <Avatar alt={avatarAlt} />
+        <Avatar alt={avatarAlt} src={avatarAlt} />
       </div>
       <div className="flex-1">
         <h6 className="font-semibold text-base">{userName}</h6>

@@ -56,7 +56,7 @@ const CommentList: FC<CommentListProps> = ({ productId }) => {
         data?.data.items.map((item) => (
           <CommentItem
             key={item.id}
-            avatarAlt={item.user.firstName}
+            avatarAlt={item.user?.avatar?.url || item.user.firstName}
             color={item.sku.color}
             rating={item.rating}
             comment={item.comment}

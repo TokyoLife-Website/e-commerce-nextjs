@@ -64,8 +64,8 @@ export default function AdminDashboardPage() {
         />
         <StatsCard
           title="Conversion Rate"
-          value={conversionRate?.value || "0%"}
-          change={conversionRate?.change || "0%"}
+          value={`${conversionRate?.value || 0}%`}
+          change={conversionRate?.change}
           icon={FaChartLine}
           color="bg-orange-500"
         />

@@ -2,7 +2,11 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { FaTimes, FaPaperPlane, FaRobot } from "react-icons/fa";
-import { useChatCompletion, extractAIResponse } from "@/hooks/api/deepseek.api";
+// import { useChatCompletion, extractAIResponse } from "@/hooks/api/deepseek.api"; // tạm thời disable DeepSeek
+import {
+  useGeminiChatCompletion,
+  extractGeminiResponse,
+} from "@/hooks/api/gemini.api";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -41,11 +45,16 @@ const AIChatInterface: React.FC<AIChatInterfaceProps> = ({
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+  // const {
+  //   mutate: chatCompletion,
+  //   isPending: isChatLoading,
+  //   reset,
+  // } = useChatCompletion();
   const {
     mutate: chatCompletion,
     isPending: isChatLoading,
     reset,
-  } = useChatCompletion();
+  } = useGeminiChatCompletion();
 
   const handleSendMessage = async () => {
     if (!inputMessage.trim() || isChatLoading) return;
@@ -64,14 +73,14 @@ const AIChatInterface: React.FC<AIChatInterfaceProps> = ({
     setMessages((prev) => [...prev, userMessage]);
     setInputMessage(""); // Clear input sau khi đã thêm message
 
-    // Gọi API chat completion
+    // Gọi API chat completion (Gemini)
     chatCompletion(
       { messages: currentMessage },
       {
         onSuccess: (data) => {
           const aiMessage: Message = {
             id: (Date.now() + 1).toString(),
-            content: extractAIResponse(data.data),
+            content: extractGeminiResponse(data.data),
             isUser: false,
             timestamp: new Date(),
           };

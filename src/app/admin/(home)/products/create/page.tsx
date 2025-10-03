@@ -42,9 +42,9 @@ const defaultValues: CreateProductFormValues = {
   discountValue: null,
   discountType: DiscountType.NONE,
   isActive: true,
-  categoryId: 3,
-  categoryLevel1Id: undefined,
-  categoryLevel2Id: undefined,
+  categoryId: 0,
+  categoryLevel1Id: 0,
+  categoryLevel2Id: 0,
   skus: [],
   images: [],
 };
@@ -136,7 +136,11 @@ export default function ProductCreate() {
         const res = await uploadImages(data.images as File[]);
         images = res?.data;
       }
-      const newProductData = { ...data, images };
+      const newProductData = {
+        ...data,
+        images,
+        categoryId: data.categoryId || data.categoryLevel2Id,
+      };
       const { message } = await mutateAsync(newProductData);
       showSuccess(message);
       reset(defaultValues);
@@ -158,7 +162,7 @@ export default function ProductCreate() {
   const categoryLevel2Id = watch("categoryLevel2Id") as number | undefined;
   useEffect(() => {
     // Clear level2 and level3 when level1 changes
-    setValue("categoryLevel2Id", undefined);
+    setValue("categoryLevel2Id", 0);
     setValue("categoryId", 0, { shouldValidate: true });
   }, [categoryLevel1Id, setValue]);
   useEffect(() => {

@@ -8,8 +8,8 @@ export const createProductSchema = z.object({
   slug: z.string().min(1, "Slug is required"),
   description: z.string().min(1, "Description is required"),
   price: z.number().gt(0, "Price must be greater than 0"),
-  categoryLevel1Id: z.number().optional(),
-  categoryLevel2Id: z.number().optional(),
+  categoryLevel1Id: z.number().default(0),
+  categoryLevel2Id: z.number().default(0),
   discountValue: z
     .number()
     .gt(0, "Discount value must be greater than 0")
@@ -19,7 +19,7 @@ export const createProductSchema = z.object({
     .optional()
     .default(DiscountType.NONE),
   isActive: z.boolean(),
-  categoryId: z.number().default(0),
+  categoryId: z.number().optional(),
   skus: z
     .array(
       z.object({
