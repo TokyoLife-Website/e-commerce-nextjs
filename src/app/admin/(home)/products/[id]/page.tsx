@@ -56,7 +56,9 @@ const defaultValues: CreateProductFormValues = {
   discountValue: null,
   discountType: DiscountType.NONE,
   isActive: true,
-  categoryId: 3,
+  categoryLevel1Id: 0,
+  categoryLevel2Id: 0,
+  categoryId: 0,
   skus: [],
   images: [],
 };
@@ -74,7 +76,7 @@ const sizeOptions = Object.values(Size).map((value) => ({
 // Find path [level1Id, level2Id, level3Id] for a given categoryId
 const findCategoryPath = (
   categories: Category[] = [],
-  targetId: number
+  targetId: number,
 ): number[] | null => {
   for (const cat of categories) {
     if (cat.id === targetId) return [cat.id];
@@ -124,7 +126,7 @@ const EditProductPage = () => {
     name: "skus",
   });
   const isSKUDuplicate = fields.some(
-    (sku) => sku.color === option.color && sku.size === option.size
+    (sku) => sku.color === option.color && sku.size === option.size,
   );
 
   const watchSkus = watch("skus");
@@ -145,7 +147,7 @@ const EditProductPage = () => {
   const level2Id = watch("categoryLevel2Id") as number | undefined;
   useEffect(() => {
     // when level1 changes, reset level2 and level3
-    setValue("categoryLevel2Id", undefined);
+    setValue("categoryLevel2Id", 0, { shouldValidate: true });
     setValue("categoryId", 0, { shouldValidate: true });
   }, [level1Id, setValue]);
   useEffect(() => {
@@ -157,7 +159,7 @@ const EditProductPage = () => {
     if (files && files.length > 0) {
       const fileArray = Array.from(files);
       const newPreviewImages = fileArray.map((file) =>
-        URL.createObjectURL(file)
+        URL.createObjectURL(file),
       );
       setPreviewImages((prev) => [...prev, ...newPreviewImages]);
       setValue("images", [...(watch("images") || []), ...fileArray], {
@@ -186,7 +188,7 @@ const EditProductPage = () => {
     const uploaded: string[] = [];
     const newFiles = images.filter((file) => file instanceof File) as File[];
     const oldFiles = images.filter(
-      (file) => !(file instanceof File)
+      (file) => !(file instanceof File),
     ) as string[];
     if (newFiles.length > 0) {
       const res = await uploadImages(newFiles);
@@ -336,7 +338,7 @@ const EditProductPage = () => {
               options={(() => {
                 const l1 = level1Id;
                 const level1 = rootCategories.find(
-                  (c: Category) => c.id === l1
+                  (c: Category) => c.id === l1,
                 );
                 return (level1?.children || []).map((c: Category) => ({
                   id: c.id,
@@ -357,10 +359,10 @@ const EditProductPage = () => {
                 const l1 = level1Id;
                 const l2 = level2Id;
                 const level1 = rootCategories.find(
-                  (c: Category) => c.id === l1
+                  (c: Category) => c.id === l1,
                 );
                 const level2 = (level1?.children || []).find(
-                  (c: Category) => c.id === l2
+                  (c: Category) => c.id === l2,
                 );
                 return (level2?.children || []).map((c: Category) => ({
                   id: c.id,
@@ -482,7 +484,7 @@ const EditProductPage = () => {
                     const currentSize = fields[index].size;
                     const usedColors = fields
                       .filter(
-                        (sku, i) => sku.size === currentSize && i !== index
+                        (sku, i) => sku.size === currentSize && i !== index,
                       )
                       .map((sku) => sku.color);
                     return !usedColors.includes(option.id);
@@ -490,7 +492,7 @@ const EditProductPage = () => {
                   getOptionLabel={(option) => option.name}
                   value={
                     colorOptions.find(
-                      (item) => item.name === watch(`skus.${index}.color`)
+                      (item) => item.name === watch(`skus.${index}.color`),
                     ) || null
                   }
                   onChange={(_, newValue) => {
@@ -515,7 +517,7 @@ const EditProductPage = () => {
                     const currentColor = fields[index].color;
                     const usedSizes = fields
                       .filter(
-                        (sku, i) => sku.color === currentColor && i !== index
+                        (sku, i) => sku.color === currentColor && i !== index,
                       )
                       .map((sku) => sku.size);
                     return !usedSizes.includes(option.id);
@@ -523,7 +525,7 @@ const EditProductPage = () => {
                   getOptionLabel={(option) => option.name}
                   value={
                     sizeOptions.find(
-                      (item) => item.name === watch(`skus.${index}.size`)
+                      (item) => item.name === watch(`skus.${index}.size`),
                     ) || null
                   }
                   onChange={(_, newValue) => {
